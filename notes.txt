@@ -1,0 +1,4 @@
+
+git rebase origin/main
+
+git reset --hard HEAD

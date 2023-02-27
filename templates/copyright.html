@@ -1,0 +1,13 @@
+<div style="background-color: #e6e6e6; padding: 45px 0; min-height: 100vh;">
+	
+	<div class="container">
+	
+		<% if (site.title || node.title) { %>
+			<p style="margin: 0;"><%- site.title || node.title %></p>
+		<% } %>
+		
+		<div style="margin-top: 5px; font-weight: bold;"><%- _hostname %></div>
+	
+	</div>
+	
+</div>

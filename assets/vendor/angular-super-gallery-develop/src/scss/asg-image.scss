@@ -1,0 +1,154 @@
+.asg-image {
+
+  position: relative;
+  overflow: hidden;
+
+  >.images {
+
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: auto;
+    overflow: hidden;
+    perspective: $perspective;
+
+    >.img {
+    
+      background-size: auto;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+
+      >.placeholder {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        z-index: auto;
+        overflow: hidden;
+        background-size: auto;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        filter: blur(10px);
+        
+        &.cover {
+          background-size: cover;
+        }
+  
+        &.contain {
+          background-size: contain;
+        }
+  
+        &.stretch {
+          background-size: 100% 100%;
+        }
+
+      } 
+
+      >.source {      
+        
+        cursor: pointer;
+        background-size: auto;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;      
+        transition: all ease .5s;
+        opacity: 0;
+  
+        &.cover {
+          background-size: cover;
+        }
+  
+        &.contain {
+          background-size: contain;
+        }
+  
+        &.stretch {
+          background-size: 100% 100%;
+        }
+
+      }
+
+      &.loaded {
+      
+        background-image: none;
+
+        .source {            
+          opacity: 1;
+        }
+
+      }
+
+    }
+
+    @import "asg-transitions";
+
+  }
+
+  &.modalon .source {
+    cursor: pointer;
+  }
+
+  &.modalon .arrows {
+    cursor: pointer;
+  }
+
+  .asg-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .asg-control {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+
+  .arrows {
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 700;
+    opacity: 0;
+    transition: all ease 0.2s;
+    transform: scale(1.1);
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .toBackward, .toForward {
+
+      position: absolute;
+      top: 45%;
+
+      .btn {
+        padding: 10px 16px;
+        opacity: 0.7;
+
+        &:hover {
+          opacity: 1;
+        }
+
+      }
+
+    }
+
+    .toBackward {
+      left: 0;
+    }
+
+    .toForward {
+      right: 0;
+    }
+
+  }
+
+}
