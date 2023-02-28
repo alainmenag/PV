@@ -1,5 +1,6 @@
 ### Features
 
+- Budget deployment compatible.
 - Light weight.
 - Node based.
 - File driven.
