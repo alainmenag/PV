@@ -66,6 +66,14 @@ config.runtime_directory = __dirname + '/';
 config.install_directory = __dirname + '/../';
 config.storage_directory = __dirname + '/storage';
 
+const { gitToJs } = require('git-parse');
+
+const commitsPromise = gitToJs(__dirname);
+
+commitsPromise.then(function(commits) {
+	config.commit = commits[0];
+});
+
 // ==========================================================================
 // TUDAYS - MODUELS - ADDONS
 // ==========================================================================
@@ -263,8 +271,11 @@ modules.exp.use(function(req, res, next)
 	if (pathname.indexOf('.') > -1) return next();
 	
 	if (pathname == '/') pathname = '/home';
+	
+	//return res.send(config.commit);
 
 	var payload = {
+		commit: config.commit || {},
 		host: req.headers.host.split(':')[0],
 		_hostname: modules.os.hostname(),
 		__dirname: __dirname,
