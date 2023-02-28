@@ -66,6 +66,7 @@ config.runtime_directory = __dirname + '/';
 config.install_directory = __dirname + '/../';
 config.storage_directory = __dirname + '/storage';
 
+/*
 const { gitToJs } = require('git-parse');
 
 const commitsPromise = gitToJs(__dirname);
@@ -73,6 +74,7 @@ const commitsPromise = gitToJs(__dirname);
 commitsPromise.then(function(commits) {
 	config.commit = commits[0];
 });
+*/
 
 // ==========================================================================
 // TUDAYS - MODUELS - ADDONS
