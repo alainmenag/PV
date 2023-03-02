@@ -13,6 +13,7 @@
     "@sealsystems/ipp": "2.7.9",
     "@thiagoelg/node-printer": "0.6.2",
     "angular-material": "1.2.5",
+    "angular-super-gallery": "2.2.12",
     "axios": "1.2.1",
     "body-parser": "1.19.0",
     "body-parser-xml": "2.0.0",

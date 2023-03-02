@@ -259,6 +259,15 @@ modules.exp.use(function (req, res, next)
     }
 });
 
+
+
+modules.exp.get('/preload.svg', function(req, res)
+{
+	var data = modules.fs.readFileSync(__dirname + '/assets/vendor/SVG-Loaders-master/svg-loaders/audio.svg', 'utf8');
+	
+	res.send(data);
+});
+
 modules.exp.use(function(req, res, next)
 {
 	res.header('Access-Control-Allow-Origin', '*');

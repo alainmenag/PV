@@ -5,6 +5,7 @@ var app = angular.module('app', [
 	'ngMessages',
 	'xeditable',
 	'ngTagsInput',
+	'angularSuperGallery'
 ]);
 
 app.config(function($locationProvider, $routeProvider, $controllerProvider)
