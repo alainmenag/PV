@@ -4,15 +4,16 @@
 	
 	if (site.colors && site.colors.links) colors.links = site.colors.links;
 %>
-<div style="background-color: #ffffff; padding: 25px 0;">
+<div style="background-color: #ffffff;">
 
 	<style>
 		
 		#main_nav a {
-			margin: 0 7px;
+			margin: 3px 7px;
 			font-weight: bold;
 			text-decoration: none;
-			color: #9e9e9e;
+			color: #000000;
+			display: inline-block;
 		}
 		
 		#main_nav a[href="{{$location.$$path}}"],
@@ -30,17 +31,17 @@
 		
 	</style>
 	
-	<div class="container">
+	<div>
 		
 		<div id="main_nav_wrapper" class="row align-items-center">
 		
-			<div class="col-3" style="padding: 0;">
-				<a href="/" target="_top" style="display: block; width: 100%; height: 60px; background-image: url(<%- node.logo || site.logo || '/assets/img/logo.svg' %>); background-repeat: no-repeat; background-position: center left; background-size: contain;"></a>
+			<div class="col-3" style="padding: 20px 15px;">
+				<a href="/" target="_top" style="display: block; width: 100%; height: 60px; margin: auto; background-image: url(<%- node.logo || site.logo || '/assets/img/logo.svg' %>); background-repeat: no-repeat; background-position: center center; background-size: contain;"></a>
 			</div>
 			
 			<div class="col">
 				
-				<nav id="main_nav" style="padding: 0 15px;">
+				<nav id="main_nav" style="padding: 15px;">
 					
 					<% nav.forEach(function(item) { %>
 					
@@ -51,6 +52,12 @@
 				</nav>
 				
 			</div>
+			
+			<% if (site.menu && site.menu.snippet && site.menu.snippet.src) { %>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-4" style="text-align: center; background-color: #f2f2f2; padding: 25px 25px;">
+					<%- include(__dirname + site.menu.snippet.src) %>
+				</div>
+			<% } %>
 			
 		</div>
 	

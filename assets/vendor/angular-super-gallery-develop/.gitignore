@@ -1,9 +1,0 @@
-.idea
-.vscode
-temp
-typings
-node_modules
-test/node_modules
-test/fonts
-test/bundle.js
-test/yarn*
