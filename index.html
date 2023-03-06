@@ -46,27 +46,28 @@
 	<body>
 
 		<% if (site.message) { %>
-			<div><%- include(__dirname + '/templates/message.html'); %></div>
+		<div><%- include(__dirname + '/templates/message.html'); %></div>
 		<% } %>
 
 		<div><%- include(__dirname + '/templates/header.html'); %></div>
-		
+
 		<% if (site.menu && site.menu.src) { %>
-			<div><%- include(__dirname + '/templates/navigator.html'); %></div>
+		<div><%- include(__dirname + '/templates/navigator.html'); %></div>
 		<% } %>
-		
+
 		<% if (node.template && node.template.src) { %>
-			<div><%- include(__dirname + node.template.src); %></div>
+		<div><%- include(__dirname + node.template.src); %></div>
 		<% } else if (node.template && node.template.content) { %>
-			<div><%- include(__dirname + '/templates/page.html'); %></div>
+		<div><%- include(__dirname + '/templates/page.html'); %></div>
 		<% } %>
-		
+
+		<div><%- include(__dirname + '/templates/footer.html'); %></div>
 		<div><%- include(__dirname + '/templates/copyright.html'); %></div>
-		
+
 		<footer>
-			
+
 			<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-			
+
 			<script type="text/javascript" src="/assets/js/functions.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/assets/js/socket.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/assets/vendor/html5-qrcode.min.js?cid=<%- cid; %>"></script>
@@ -86,23 +87,23 @@
 			<script type="text/javascript" src="/node_modules/angular-messages/angular-messages.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/node_modules/angular-material/angular-material.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/node_modules/ng-tags-input/build/ng-tags-input.min.js?cid=<%- cid; %>"></script>
-			
-			
-			
+
+
+
 			<script type="text/javascript" src="/assets/vendor/angular-super-gallery-develop/demo/assets/js/angular-touch.min.js?cid=<%- cid %>"></script>
 			<script type="text/javascript" src="/assets/vendor/angular-super-gallery-develop/demo/assets/js/screenfull.js?cid=<%- cid %>"></script>
 			<script type="text/javascript" src="/assets/vendor/angular-super-gallery-develop/dist/angular-super-gallery.js?cid=<%- cid %>"></script>
-			
-			
-			
+
+
+
 			<script type="text/javascript" src="/assets/vendor/royalslider/jquery.royalslider.min.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/assets/vendor/FitText.js-master/jquery.fittext.js?cid=<%- cid; %>"></script>
-			
+
 			<script type="text/javascript" src="/assets/js/app.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/assets/js/filters.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/assets/js/directive.js?cid=<%- cid; %>"></script>
 			<script type="text/javascript" src="/assets/js/main.js?cid=<%- cid; %>"></script>
-			
+
 		</footer>
 
 	</body>
