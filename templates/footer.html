@@ -7,7 +7,7 @@
             <% if (site.contact && site.contact.location) { %>
             <div class="col-sm-12 col-md-6" style="padding: 0 15px;">
 
-                <h3>Our Location</h3>
+                <h3>Location</h3>
 
                 <% if (site.contact.location.street) { %>
                 <p style="margin: 0;"><%- site.contact.location.street %></p>
@@ -28,10 +28,28 @@
             </div>
             <% } %>
 
+            <% if (site.contact) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 0 15px;">
+
+                <h3>Contact</h3>
+
+                <p style="margin: 0;"><%- site.contact.name %></p>
+
+                <p style="margin: 0;"><%- site.contact.phone || 'Available.' %></p>
+
+
+
+            </div>
+            <% } %>
+
+        </div>
+
+        <div class="row">
+
             <% if (site.hours) { %>
             <div class="col-sm-12 col-md-6" style="padding: 0 15px;">
 
-                <h3>Our Hours</h3>
+                <h3>Schedule</h3>
 
                 <% if (site.hours.memo) { %><p><%- site.hours.memo %></p><% } %>
 
@@ -51,6 +69,46 @@
 
                     </tbody>
                 </table>
+
+            </div>
+            <% } %>
+
+            <% if (site.payment) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 0 15px;">
+
+                <h3>Payment Methods</h3>
+				
+                <p><%- site.payment.memo || 'Please contact us.' %></p>
+
+				<% if (site.payment.methods) { %>
+                <div class="row">
+					
+					<% if (site.payment.methods.apple) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Apple_Pay-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.google) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Google_Pay-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.visa) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Visa_Inc.-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.mc) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Mastercard-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.ae) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/American_Express-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.discover) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/discover-card-logo-vector.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+                </div>
+				<% } %>
 
             </div>
             <% } %>
@@ -98,47 +156,7 @@
 
             </div>
             <% } %>
-
-            <% if (site.payment) { %>
-            <div class="col-sm-12 col-md-6" style="padding: 0 15px;">
-
-                <h3>Payment Methods</h3>
-				
-                <p><%- site.payment.memo || 'Please contact us.' %></p>
-
-				<% if (site.payment.methods) { %>
-                <div class="row">
-					
-					<% if (site.payment.methods.apple) { %>
-                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Apple_Pay-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
-					<% } %>
-
-					<% if (site.payment.methods.google) { %>
-                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Google_Pay-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
-					<% } %>
-
-					<% if (site.payment.methods.visa) { %>
-                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Visa_Inc.-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
-					<% } %>
-
-					<% if (site.payment.methods.mc) { %>
-                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Mastercard-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
-					<% } %>
-
-					<% if (site.payment.methods.ae) { %>
-                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/American_Express-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
-					<% } %>
-
-					<% if (site.payment.methods.discover) { %>
-                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/discover-card-logo-vector.svg');background-repeat: no-repeat;background-position: center center;"></div>
-					<% } %>
-
-                </div>
-				<% } %>
-
-            </div>
-            <% } %>
-
+            
         </div>
 
     </div> <!-- END CONTAINER -->
