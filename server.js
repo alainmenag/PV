@@ -170,6 +170,16 @@ modules.exp.use('/assets', function(req, res, next)
 	}
 });
 
+modules.exp.use(['/node_modules', '/cdn'], function(req, res, next)
+{
+	res.set({
+	    "Cache-Control": "public, max-age=86400",
+	    "Expires": new Date(Date.now() + 86400000).toUTCString()
+	});
+	
+	next();
+});
+
 modules.exp.use('/nodes', modules.express.static(__dirname + '/nodes'));
 modules.exp.use('/assets', modules.express.static(__dirname + '/assets'));
 modules.exp.use('/cdn', modules.express.static(__dirname + '/cdn'));

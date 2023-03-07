@@ -1,0 +1,17 @@
+<% if (node.sections) node.sections.forEach(function(section) { %>
+	
+	<div>
+		
+		<div class="container" style="overflow: auto;">
+			<% if (section.title) { %>
+				<h1 style="font-weight: 300;">
+					<a href="<%- section.link %>" target="_top" style="text-decoration: none; color: #000000;"><%- section.title %></a>
+				</h1>
+			<% } %>
+		</div>
+		
+		<%- include(__dirname + section.template, {section: section}); %>
+	
+	</div>
+	
+<% }) %>
