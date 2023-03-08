@@ -1,34 +1,14 @@
 <%
 
-	var images = section.data;
-	
-	var imagesd = [
-		{src: '/cdn/headshots/storm.jpg'},
-		{src: '/cdn/headshots/cody.jpg'},
-		{src: '/cdn/headshots/sn.jpg'},
-		{src: '/cdn/headshots/si.jpg'},
-		{src: '/cdn/headshots/sean.jpg'},
-		{src: '/cdn/headshots/patrik-o-c.jpg'},
-		{src: '/cdn/headshots/mckyley.jpg'},
-		{src: '/cdn/headshots/devin.jpg'},
-		{src: '/cdn/headshots/marie-ray.jpg'},
-		{src: '/cdn/headshots/josh.jpg'},
-		{src: '/cdn/headshots/josh-p.jpg'},
-		{src: '/cdn/headshots/jim.jpg'},
-		{src: '/cdn/headshots/jenn.jpg'},
-		{src: '/cdn/headshots/jay-h.jpg'},
-		{src: '/cdn/headshots/chris-wadley.jpg'},
-		{src: '/cdn/headshots/candice.jpg'},
-		{src: '/cdn/headshots/ari.jpg'},
-	];
+	var images = section.data || [];
 
 %>
 <div class="row">
 
 	<% images.forEach(function(img) { %>
-	<div class="col" data-img="<%- img.src %>" style="overflow: hidden;">
-		<div style="width: 100%; min-height: 220px; background-size: cover; background-image: url(<%- img.src %>);"></div>
+	<div class="col" data-img="<%- img.src %>" style="overflow: hidden; min-width: 220px;">
+		<div style="width: 100%; min-height: 220px; background-size: cover; background-position: top center; background-image: url(<%- img.src %>);"></div>
 	</div>
 	<% }) %>
-	
+
 </div>

@@ -1,0 +1,85 @@
+<%
+
+	var items = section.data || [];
+
+%>
+<div class="container">
+	<div class="row" style="margin: -5px;">
+	
+		<% items.forEach(function(item, i) { %>
+		
+			<div class="col" style="padding: 5px; min-width: 200px;">
+		
+				<table width="100%" height="100%" style="border-radius: 5px; background-color: #ffffff; min-height: 100%;">
+					<tbody>
+						
+						<tr>
+							<td style="padding: 20px; padding-bottom: 0;">
+							 	<h2 style="margin: 0;"><%- item.title || item.name || ('Item ' + (i + 1)) %></h2>
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="padding: 0 20px;">
+								
+								<% if (item.description) { %>
+								<div style="padding: 10px 0;"><%- item.description %></div>
+								<% } %>
+								
+								<% if (item.bullets) { %>
+								<ul style="margin: 0; padding-left: 15px; font-size: 14px;">
+									<% item.bullets.forEach(function(bullet, i) { %>
+									<li><%- bullet %></li>
+									<% }) %>
+								</ul>
+								<% } %>
+								
+							</td>
+						</tr>
+						
+						<tr height="100%">
+							<td valign="bottom" style="padding: 20px;">
+								
+								<table width="100%">
+									<tbody>
+										<tr>
+											<td align="left" valign="bottom">
+
+
+												<span style="font-size: 32px; text-decoration: <%- item.sale ? 'line-through' : 'none' %>; opacity: <%- item.sale ? '25%' : '100%' %>; font-weight: <%- item.sale ? '300' : 'normal' %>;"><%- item.price %></span>
+
+
+												<span style="font-size: 32px;"><%- item.sale %></span>
+
+											</td>
+											<td align="right" valign="bottom">
+												
+												<% if (item.book) { %>
+												<a href="<%- item.book %>" target="_book" class="btn btn-success btn-round" style="width: 65px; height: 65px; padding: 0;">
+													<table width="100%" height="100%">
+														<tbody>
+															<tr>
+																<td align="center" valign="middle">Book</td>
+															</tr>
+														</tbody>
+													</table>
+												</a>
+												<% } %>
+												
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+
+			</div>
+		
+		<% }) %>
+	
+	</div>
+</div>

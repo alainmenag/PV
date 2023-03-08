@@ -1,6 +1,6 @@
-<% if (node.sections) node.sections.forEach(function(section) { %>
+<% if (node.sections) node.sections.forEach(function(section, i) { %>
 	
-	<div>
+	<div id="<%- section.id || ('section_' + i) %>" style="padding: 15px 0;">
 		
 		<div class="container" style="overflow: auto;">
 			<% if (section.title) { %>
