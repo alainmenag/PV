@@ -44,9 +44,6 @@
 			}
 		}
 
-		
-		
-		
 		, {
 			"id": "api",
 			"if": "session.profile._id",
