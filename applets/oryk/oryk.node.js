@@ -14,8 +14,8 @@ module.exports = function(modules, config) {
 	
 	exports.sip.db = new modules.pg.Client({
 		host: (config.postgres && config.postgres.host ? config.postgres.host : '0.0.0.0'),
-		user: config.postgres.user,
-		password: config.postgres.password,
+		user: config?.postgres?.user,
+		password: config?.postgres?.password,
 		database: 'freeswitch',
 	});
 	
@@ -26,8 +26,8 @@ module.exports = function(modules, config) {
 	
 	exports.sip.xmpp = new modules.pg.Client({
 		host: (config.postgres && config.postgres.host ? config.postgres.host : '0.0.0.0'),
-		user: config.postgres.user,
-		password: config.postgres.password,
+		user: config?.postgres?.user,
+		password: config?.postgres?.password,
 		database: 'prosody',
 	});
 	
