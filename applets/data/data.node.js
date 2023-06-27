@@ -22,6 +22,28 @@ module.exports = function(modules, config) {
 		});
 	};
 	
+	exports._id = async function(collection, id, callback = function() {})
+	{
+		var collection = modules.mongo[collection];
+			
+		return new Promise(resolve =>
+		{
+			var done = function(doc = {})
+			{
+				var _id = doc?._id.toString();
+				
+				callback(_id); resolve(_id);
+			};
+			
+			if (!collection) return done();
+	
+			collection.findOne({id: id}, function(err, doc)
+			{
+				done(doc);
+			});
+		});
+	};
+	
 	exports.find = async function(options, callback = function() {})
 	{
 		var collection = modules.mongo[options.collection];
@@ -146,11 +168,19 @@ module.exports = function(modules, config) {
 			});
 		})();
 		
+		var collection = modules.mongo[req.query.collection]; if (!collection) return res.end();
+		
+		// convert a custom ID to mongo _id
+		if (!req.body._id && req.body.id)
+		{
+			req.body._id = await exports._id(req.query.collection, req.body.id);
+		}
+		
+		//console.log(req.body); return res.end();
+
 		// insert document
 		if (!req.body._id && Object.keys(req.body).length) return (function()
 		{
-			var collection = modules.mongo[req.query.collection];
-			
 			if (!collection) return res.end();
 			
 			req.body._id = new modules.mongodb.ObjectId();

@@ -811,6 +811,9 @@ var main = function (
 			};
 			
 			return $rootScope.state.list;
+		},
+		clear: function() {
+			$rootScope.state.list = []; $rootScope.state.store();
 		}
 	};
 	

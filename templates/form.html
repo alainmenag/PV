@@ -48,17 +48,35 @@
 
 												<label ng-if="<%- model %> == undefined">
 													<span style="vertical-align: middle;">No</span>
-													<input name="<%- item.id %>" type="radio" ng-model="<%- model %>" style="vertical-align: middle;" data-ng-value="" />
+													<input
+														name="<%- item.id %>"
+														type="radio"
+														style="vertical-align: middle;"
+														data-ng-value=""
+														<%- item.model ? ('ng-model="' + model + '"') : '' %>
+													/>
 												</label>
 												
 												<label ng-if="<%- model %> != undefined">
 													<span style="vertical-align: middle;">No</span>
-													<input name="<%- item.id %>" type="radio" ng-model="<%- model %>" style="vertical-align: middle;" data-ng-value="0" />
+													<input
+														name="<%- item.id %>"
+														type="radio"
+														style="vertical-align: middle;"
+														data-ng-value="0"
+														<%- item.model ? ('ng-model="' + model + '"') : '' %>
+													/>
 												</label>
 										
 												<label>
 													<span style="vertical-align: middle;">Yes</span>
-													<input name="<%- item.id %>" type="radio" ng-model="<%- model %>" style="vertical-align: middle;" data-ng-value="1" />
+													<input
+														name="<%- item.id %>"
+														type="radio"
+														style="vertical-align: middle;"
+														data-ng-value="1"
+														<%- item.model ? ('ng-model="' + model + '"') : '' %>
+													/>
 												</label>
 												
 											</div>
@@ -68,9 +86,12 @@
 											<select
 												class="smooth-corners"
 												name="<%- item.id %>"
-												ng-model="<%- model %>"
 												placeholder="<%- item.placeholder || '...' %>"
-												style="width: 100%; margin: 5px 0;" <% if (item.multiple) { %>multiple<% } %>
+												style="width: 100%; margin: 5px 0;"
+												_value="<%- query[item.id] || item.value %>"
+												<%- item.required === true ? 'required' : '' %>
+												<% if (item.multiple) { %>multiple<% } %>
+												<%- item.model ? ('ng-model="' + model + '"') : '' %>
 											>
 												<option value=""><%- item.placeholder || '...' %></option>
 												<option ng-repeat="option in <%- _model %>.options">{{option}}</option>
@@ -82,9 +103,9 @@
 												style="width: 100%; margin: 5px 0; min-height: 200px;"
 												class="smooth-corners"
 												name="<%- item.id %>"
-												ng-model="<%- model %>"
 												placeholder="<%- item.placeholder || '...' %>"
 												autocomplete="<%- item.autocomplete || 'yes' %>"
+												<%- item.model ? ('ng-model="' + model + '"') : '' %>
 											></textarea>
 										
 										<% } else if (item.type == 'place' || item.type == 'coordinates') { %>

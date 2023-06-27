@@ -15,9 +15,11 @@
 				<a ng-if="$last" title="{{item.title}}" ng-click="state.list = []; state.store();" href="{{item.url}}">
 					<b>{{item.title}}</b>
 				</a>
--->
 				
 				<b ng-if="$last">{{item.title}}</b>
+-->
+				
+				<b ng-if="$last" ng-click="state.clear();">{{item.title}}</b>
 				
 			</div>
 			
