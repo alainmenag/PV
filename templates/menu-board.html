@@ -1,0 +1,186 @@
+<%
+
+	//var layout = node.template.layout;
+	var layout = section.layout || node.template.layout;
+
+%>
+
+<div id="menu_board_wrapper" oncontextmenu="event.preventDefault(); window.location.reload(true);">
+
+	<style>
+		
+		#_menu_board_wrapper {
+			min-height: 100vh;
+		}
+		
+		#menu_board_wrapper * {
+			font-family: sans-serif;
+		}
+		
+		#menu_board_wrapper a {
+			text-decoration: none;
+		}
+		
+		#menu_board_wrapper .opening-hours {
+			margin: 0;
+		}
+		
+		#menu_board_wrapper .opening-hours .hours {
+			font-weight: bold;
+		}
+		
+		#menu_board_wrapper h4 {
+			font-family: cursive;
+			font-weight: normal;
+			margin: 0;
+			padding: 0 8px;
+			font-size: 1.125rem;
+		}
+		
+		#menu_board_wrapper .item + .section-heading {
+			margin-top: 5px;
+		}
+		
+		#menu_board_wrapper .col {
+			display: inline-block;
+			vertical-align: top;
+		}
+		
+		#menu_board_wrapper .item {
+			padding: 5px;
+		}
+		
+		#menu_board_wrapper [data-name="Cuban"] {
+			padding: 10px !important;
+			border: 2px solid #000000;
+		}
+		
+		#menu_board_wrapper .item-variations {
+			margin-top: 3px;
+		}
+		
+		#menu_board {
+		    background-color: #f2f2f2;
+		}
+		
+		#_menu_board {
+		    min-height: 100vh;
+		}
+		
+		#menu_board .col.category {
+		    padding: 25px 0;
+		}
+		
+		@media screen and (max-width: 760px) {
+			#menu_board .col.category {
+			    display: block;
+			    flex-basis: unset;
+			    margin-top: 10px;
+			}
+		}
+		
+		#menu_board .col.category:nth-child(even) {
+		    background-color: #fff;
+		}
+
+		#menu_board_wrapper {
+			background-color: #f2f2f2;
+		}
+		#menu_board {
+			padding: 25px 15px;
+		}
+		
+	</style>
+	
+	<div id="menu_board" class="row no-gutters">
+		
+		<% var p = 0; for (var prop in layout) {p++; items = layout[prop] %>
+	
+			<div class="col category">
+				
+				<div class="container" style="padding: 0 25px;">
+				
+				<% var i = 0; for (var prop in items) {i++; item = items[prop];
+				
+					if (item.active === false) continue;
+				
+					var _item = node.data.payload ? (node.data.payload.items[item.id] || {}) : {};
+					
+					if (_item.item_data)
+					{
+						if (!item.title && _item.item_data.name) item.title = _item.item_data.name;
+						if (!item.description && _item.item_data.description) item.description = _item.item_data.description;
+						
+						if (!item.price && item.price !== false && _item.item_data.variations) item.price = _item.item_data.variations[0].item_variation_data.price_money.amount / 100;
+					}
+				
+				%>
+					
+					<% if (!item.id) { %>
+					<h4 class="section-heading"><%- item.title %></h4>
+					<% } %>
+					
+					<% if (item.id) { %>			
+					<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
+					   
+						<table class="item-heading" width="100%" style="margin: 0;">
+							<tbody>
+								<tr style="border: none;">
+									
+									<td width="100%" style="padding: 0;" valign="middle">
+										
+										<h3 class="item-title" style="margin: 0; font-weight: bolder; text-decoration: ;">
+											<% if (item.popular) { %>
+											<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
+											<% } %>
+											
+											<% if (item.new) { %>
+											<span style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
+											<% } %>
+											
+											<% if (item.limited) { %>
+											<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
+											<% } %>
+											
+											<span class="item-title-name" style="vertical-align: middle;"><%- item.title %></span>
+										</h3>
+										
+									</td>
+									
+									<td align="right" style="padding: 0; padding-left: 5px; white-space: nowrap;" valign="middle">
+										<% if (item.price) { %>
+										<div class="item-price">
+											<span>$<%- item.price %></span>
+										</div>
+										<% } %>
+									
+									</td>
+									
+								</tr>
+							</tbody>
+						</table>
+					   
+						<% if (item.description) { %>
+						<div class="item-description">
+							<span>—</span>
+							<span><%- item.description %></span>
+						</div>
+						<% } %>
+					   
+					</div>
+					<% } %>
+					
+				
+				<% } %>
+					
+					
+				</div>
+				
+			</div>
+	
+	
+		<% } %>
+	
+	</div>
+
+</div>

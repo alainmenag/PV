@@ -1,0 +1,27 @@
+<div style="padding: 25px 45px;">
+	
+	<style>
+		
+		[data-template="/templates/trust.html"] h1 {
+			text-align: center;
+		}
+		
+	</style>
+	
+    <div class="row">
+		
+		<% var i = 0; for (var prop in section.data) {i++; item = section.data[prop] %>
+		
+		<div class="col" style="min-width: 33.33%; padding: 35px 15px;">
+        	<a style="background-size: contain; background-image: url('<%- item.logo %>'); background-repeat: no-repeat;background-position: center center; width: 100%; max-width: 255px; margin: auto; min-height: 100px; display: block; position: relative;" title="<%- item.title %>" href="<%- item.href %><%- item.qs ? ('?' + encodeURI(item.qs)) : '' %>" target="<%- item.target || '_new' %>">
+	        	<% if (item.alt) { %>
+	        	<div style="position: absolute; top: 100%; width: 100%; text-align: center; padding-top: 5px; word-break: break-all;"><%- item.alt %></div>
+	        	<% } %>
+        	</a>
+		</div>
+        
+		<% } %>
+
+    </div>
+	
+</div>

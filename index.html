@@ -1,0 +1,143 @@
+<%
+	cid = '7473e' + cid;
+	var image = node.image || site.image;
+%>
+<!DOCTYPE html>
+<html lang="en-US" ng-app="app" ng-controller="main" class="_no-select ng-cloak" platform="{{platform.type || 'desktop'}}" data-hash="{{query.hash}}">
+
+	<head>
+		
+		<title><%- (node.title || site.title) %></title>
+		
+		<meta charset="UTF-8">
+		
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta http-equiv="content-language" content="en-US">
+		
+		<meta name="description" content="<%- (node.description || site.description) %>">
+		<meta name="keywords" content="<%- (node.keywords || site.keywords) %>">
+		<meta name="author" content="<%- (node.author || site.author) %>">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+		<meta name="viewport" content="user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="robots" content="index, follow">
+		<meta name="application-name" content="<%- (site.title) %>" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name="msapplication-TileColor" content="#000000" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="google" content="notranslate" />
+		
+		<meta name="twitter:card" content="summary_large_image">
+		
+		<meta property="og:title" content="<%- (node['og:title'] || node.title || site.title) %>">
+		<meta property="og:type" content="<%- (node['og:type'] || 'article') %>" />
+		<meta property="og:description" content="<%- (node['og:description'] || node.description || site.description) %>">
+		<meta property="og:url" content="<%- (node['og:url']) %>">
+		
+		<% if (image) { %><meta property="og:image" content="<%- image.src || image %>"><% } %>
+		<% if (image) { %><meta property="twitter:image" content="<%- image.src || image %>"><% } %>
+		
+		<base href="/">
+		
+		<link rel="shortcut icon" href="<%- node.favicon || site.favicon || node.logo || site.logo || '/assets/img/logo.svg' %>" />
+		
+		<link rel="stylesheet" type="text/css" href="/node_modules/angular-material/angular-material.css?cid=<%- cid; %>">
+		<link rel="stylesheet" type="text/css" href="/node_modules/ng-tags-input/build/ng-tags-input.min.css?cid=<%- cid; %>">
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/sweetalert2/dist/sweetalert2.min.css?cid=<%- cid %>" />
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap-4.1.3-dist/css/bootstrap-grid.css?cid=<%- cid; %>">
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/angular-super-gallery-develop/demo/assets/css/font-awesome.min.css?cid=<%- cid; %>">
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/angular-super-gallery-develop/dist/angular-super-gallery.min.css?cid=<%- cid; %>" />
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/angular-xeditable-0.9.0/css/xeditable.min.css?cid=<%- cid; %>">
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/royalslider/royalslider.css?cid=<%- cid; %>">
+		<link rel="stylesheet" type="text/css" href="/assets/vendor/DataTables/datatables.min.css?cid=<%- cid; %>">
+		
+		<style><%- include('assets/css/defaults.css'); %></style>
+		
+		<script>
+			
+			window.DOMURL = window.URL || window.webkitURL || window;
+			
+			window.platform = window.platform || {};
+			window.localStorage = window.localStorage || {};
+			window.sessionStorage = window.sessionStorage || {};
+			
+			window.platform.type = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+			
+			window.site = JSON.parse(atob('<%- modules.btoa(JSON.stringify(site)); %>'));
+			window.node = JSON.parse(atob('<%- modules.btoa(JSON.stringify(node)); %>'));
+			window.session = JSON.parse(atob('<%- modules.btoa(JSON.stringify(session)); %>'));
+			window.uid = <% if (session.uid) { %>'<%- session.uid %>'<% } else { %>null<% } %>; // user id
+			window.gid = window.uid || (window.sessionStorage.gid) || Date.now().toString(); // guest id
+			window.tid = window.sessionStorage.tid || Date.now().toString(); // tab id
+			
+			window.sessionStorage.gid = window.gid;
+			window.sessionStorage.tid = window.tid;
+			
+			window.cache = {}; try {
+				//window.cache = localStorage['cache'] ? JSON.parse(localStorage['cache']) : {};
+			} catch(err) {
+				window.cache = {};
+			};
+			
+		</script>
+		
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAP7UPbHoUIaEAl0F_c0UKEQWv06PwMOuI&ts=1&libraries=places"></script>
+
+		<!--<script type="text/javascript" src="/assets/vendor/google-maps.js"></script>-->
+		
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+		<script type="text/javascript" src="/assets/js/functions.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/js/socket.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/jssip.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/html2canvas.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/html5-qrcode.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/swiped-events.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/underscore-min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/jquery-1.11.1.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/jquery-ui-1.13.2.custom/jquery-ui.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/angular-1.7.3/angular.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/angular-1.6.1/angular-route.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/typeahead.bundle.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/moment.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/moment-timezone-with-data.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/angular-moment-master/angular-moment.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/angular-xeditable-0.9.0/js/xeditable.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/sweetalert2/dist/sweetalert2.min.js?cid=<%- cid %>"></script>
+		<script type="text/javascript" src="/assets/vendor/DataTables/datatables.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/mustache.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/ng-file-upload-master/dist/ng-file-upload.min.js?cid=<%- cid %>"></script>
+		
+		<script type="text/javascript" src="/node_modules/angular-aria/angular-aria.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/node_modules/angular-animate/angular-animate.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/node_modules/angular-messages/angular-messages.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/node_modules/angular-material/angular-material.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/node_modules/ng-tags-input/build/ng-tags-input.min.js?cid=<%- cid; %>"></script>
+
+		<script type="text/javascript" src="/assets/vendor/angular-super-gallery-develop/demo/assets/js/angular-touch.min.js?cid=<%- cid %>"></script>
+		<script type="text/javascript" src="/assets/vendor/angular-super-gallery-develop/demo/assets/js/screenfull.js?cid=<%- cid %>"></script>
+		<script type="text/javascript" src="/assets/vendor/angular-super-gallery-develop/dist/angular-super-gallery.js?cid=<%- cid %>"></script>
+
+		<script type="text/javascript" src="/assets/vendor/royalslider/jquery.royalslider.min.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/vendor/FitText.js-master/jquery.fittext.js?cid=<%- cid; %>"></script>
+
+		<script type="text/javascript" src="/assets/js/app.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/js/filters.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/js/directive.js?cid=<%- cid; %>"></script>
+		<script type="text/javascript" src="/assets/js/main.js?cid=<%- cid; %>"></script>
+		
+	</head>
+	
+	<body>
+		<div id="main"><%- include(__dirname + '/body.html'); %></div>
+	</body>
+		
+	<script type="text/javascript" src="/assets/vendor/utterscroll-master/jquery-scrollable.js?cid=<%- cid; %>"></script>
+	<script type="text/javascript" src="/assets/vendor/utterscroll-master/debiki-utterscroll.js?cid=<%- cid; %>"></script>
+	<script type="text/javascript" src="/assets/vendor/utterscroll-master/script.js?cid=<%- cid; %>"></script>
+	
+</html>

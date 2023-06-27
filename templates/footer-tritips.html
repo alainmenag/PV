@@ -1,0 +1,57 @@
+<%
+	//var nav = JSON.parse(include(__dirname + site.menu.src));
+	var colors = {links: '#000000'};
+	
+	if (site.colors && site.colors.links) colors.links = site.colors.links;
+%>
+<div id="tritips" class="row" style="padding-bottom: 25px;">
+	
+	<style>
+		
+		#tritips a {
+			text-decoration: none;
+			color: #000000;
+			display: block;
+			padding: 5px 15px;
+		}
+		
+		#tritips a[href="{{$location.$$path}}"],
+		#tritips a[href^="{{$location.$$path == '/' ? '' : $location.$$path}}"],
+		#tritips a[href="<%- pathname %>"],
+		#tritips a[href^="<%- pathname == '/' ? '' : pathname %>"],
+		#tritips a[href="<%- pathname == '/home' ? '/' : pathname %>"] {
+			color: <%- colors.links; %>;
+		}
+		
+		#tritips a:hover,
+		#tritips a.active {
+			color: <%- colors.links; %>;
+		}
+		
+	</style>
+	
+	<% var i = 0; for (var prop in site.tritips) {i++; tritip = site.tritips[prop] %>
+    <div class="col-sm-12 col-md-<%- tritip.width || 3 %>" style="padding: 25px 15px;">
+
+        <h3 style="margin-top: 0;"><%- tritip.title %></h3>
+        
+        <nav style="margin: -15px;">
+        <% var l = 0; for (var prop in tritip.data) {l++; link = tritip.data[prop] %>
+        	<div>
+	        	<a href="<%- link.href %>" target="<%- link.target || '' %>" style="display: <%- link.img ? 'block' : 'inline-block' %>;">
+		        	
+		        	<% if (link.title) { %><%- link.title %><% } %>
+		        	
+		        	<% if (link.img) { %>
+		        		<img src="<%- link.img %>" style="max-width: 320px; margin: auto; display: block;" />
+		        	<% } %>
+		        	
+	        	</a>
+	        </div>
+		<% } %>
+		</nav>
+
+    </div>
+	<% } %>
+    
+</div>

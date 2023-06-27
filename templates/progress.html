@@ -1,0 +1,19 @@
+<%
+
+	var data = section.data || {};
+	var goal = (data.total || 0);
+	var raised = Object.values(data.sources || {}).reduce(function(accumulator, a) {return accumulator + a;}, 0);
+
+%>
+
+<div style="padding: 55px 0; background-color: #cccccc; text-align: center;">
+	<div class="container">
+		
+		<div style="font-size: 72px; font-weight: bold;">
+			<span>$<%- (raised).toLocaleString() %></span>
+		</div>
+		
+		<div style="font-size: 20px;"><%- data.title %></div>
+	
+	</div>
+</div>

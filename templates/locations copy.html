@@ -1,0 +1,117 @@
+<%
+	var _locations = include(__dirname + '/nodes/data/locations.json');
+	var locations = JSON.parse(_locations, true);
+	var location_id = query.location_id || Object.keys(locations)[0];
+%>
+
+<div class="row">
+	
+	<div class="col-3">
+		
+		<script>
+			window.cache.locations = <%- _locations %>; console.log(window.locations);
+			window.cache.location_id = '<%- location_id %>';
+		</script>
+		
+		<% for (var prop in locations) { item = locations[prop] %>
+		<div style="padding: 15px;">
+			
+			<div style="margin: 0; word-break: break-all; font-size: 14px; font-weight: bold;"><%- item.title %></div>
+			
+			<div class="row" style="margin-top: 10px;">
+				<div class="col">
+					<a href="/locations?location_id=<%- item.location_id %>" class="btn btn-easy text-center" ng-class="{'active': cache.location_id == '<%- item.location_id %>'}" ng-click="cache.location_id = '<%- item.location_id %>';" style="width: 100%;">View</a>
+				</div>
+			</div>
+			
+		</div>
+		<% } %>
+		
+	</div>
+	
+	<div class="col-9"> <div id="map" class="no-scroll" style="min-height: 100vh;"></div></div>
+	
+</div>
+
+
+<script>
+	
+/*
+var geocoder = new google.maps.Geocoder();
+geocoder.geocode({
+    "address": inputAddress
+}, function(results) {
+    console.log(results[0].geometry.location); //LatLng
+});
+*/
+	
+	//https://www.google.com/maps/place/St.+Petersburg,+FL+33713/@27.8161324,-82.7850402,11.92z/data=!4m6!3m5!1s0x88c2e3b0856467eb:0xe5ffb80ae1d35349!8m2!3d27.7896783!4d-82.6807458!16s%2Fm%2F03dp5tm
+	
+	//27.8389008,-82.7629268
+	
+	//https://www.google.com/maps/place/Tudays+(2+Day+Deli)/@27.7805799,-82.7396434,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2e3cd0868ed53:0x1a4b59a0cd9aa6c4!8m2!3d27.7805799!4d-82.7370631!16s%2Fg%2F11fqz603ps
+
+
+	//map.center.lat()
+	//map.center.lng()
+	
+ const center = { lat: 27.780560, lng: -82.737060 };
+  const map = new google.maps.Map(document.getElementById("map"), {
+	zoom: 12,
+	center,
+	streetViewControl: false,
+	mapTypeControl: false,
+	clickableIcons: false,
+	styles: [{
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [
+              { visibility: "off" }
+        ]
+    }]
+});
+
+  // use a FontAwesome svg
+  var marker = new google.maps.Marker({
+    position: { lat: 27.780560, lng: -82.737060 },
+    map,
+    icon: {
+      url: '/cdn/sun-half.svg',
+      scaledSize: new google.maps.Size(40, 40),
+      fillColor: "#ffffff",
+      fillOpacity: 1,
+      anchor: new google.maps.Point(
+        20, // width
+        20 // height
+      ),
+      strokeWeight: 3,
+      strokeColor: "#ffffff",
+      scale: 0.075,
+    },
+    title: "FontAwesome SVG Marker",
+  });
+  
+   marker.addListener("click", (e) => {
+	   
+	   console.log(e);
+  });
+
+
+  map.addListener("click", (e) => {
+	  
+	  console.log(e);
+	  console.log(e.placeId);
+	  
+	  return false;
+/*
+    // 3 seconds after the center of the map has changed, pan back to the
+    // marker.
+    window.setTimeout(() => {
+      map.panTo(marker.getPosition());
+    }, 3000);
+*/
+  });
+  
+  
+  
+  </script>

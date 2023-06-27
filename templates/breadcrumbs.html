@@ -1,0 +1,27 @@
+<div ng-if="state.list.length > 1">
+	<div class="container">
+		
+		<div style="padding: 15px;">
+			
+			<div ng-if="state.list.length > 3" style="display: inline-block; vertical-align: middle; margin-right: 5px;">...</div>
+			
+			<div ng-repeat="item in state.list" ng-show="$index > (state.list.length - 4)" style="display: inline-block; vertical-align: middle; margin-right: 15px; border-left: 3px solid #ccc; padding-left: 10px;">
+				
+				<a ng-if="!$last" title="{{item.title}}" ng-click="state.list.splice(state.list.indexOf(item));" href="{{item.url}}">
+					<span>{{item.title}}</span>
+				</a>
+				
+<!--
+				<a ng-if="$last" title="{{item.title}}" ng-click="state.list = []; state.store();" href="{{item.url}}">
+					<b>{{item.title}}</b>
+				</a>
+-->
+				
+				<b ng-if="$last">{{item.title}}</b>
+				
+			</div>
+			
+		</div>
+		
+	</div>
+</div>

@@ -1,0 +1,32 @@
+<%
+
+	var reviews = (section.data || null) || node.reviews;
+
+%>
+<div style="padding-bottom: 55px;">
+	
+	<div class="container">
+		<div>
+			
+			<div class="row">
+				
+				<% reviews.forEach(function(review) { %>
+			
+				<div class="col-sm-12 col-md-6" style="padding: 5px;">
+					<div style="padding: 25px; background-color: #ffffff; border-radius: 5px; min-height: 100%;">
+					<% if (review.body) {%><div><%- review.body %></div><% } %>
+					
+					<div style="font-weight: bold; font-size: 12px; margin: 15px 0;"><%- review.ts %></div>
+					
+					<div style="font-weight: bold; font-size: 16px;">— <%- review.author || 'Review' %></div>
+					</div>
+				</div>
+		
+				<% }) %>
+				
+			</div>
+			
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" ng-app="testApp">
+<head>
+    <meta charset="UTF-8">
+    <title>angular-on-screen-keyboard Demo 3</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.5.0/angular-sanitize.min.js"></script>
+    <script src="dist/angular-on-screen-keyboard.min.js"></script>
+    <link href="dist/angular-on-screen-keyboard.min.css" rel="stylesheet" />
+</head>
+<body style="margin: 50px;">
+    <div>
+        <div>Enter your full name:</div>
+        <input type="text" style="width:800px;"/>
+        <br/>
+        <br/>
+        <div ng-controller="testController">
+            <on-screen-keyboard rows="rows" uppercase-all-words></on-screen-keyboard>
+        </div>
+    </div>
+    <script type="text/javascript">
+        angular.module('testApp', ['onScreenKeyboard'])
+            .controller('testController', function($scope){
+                $scope.rows = [
+                    ['q','w','e','r','t','y','u','i','o','p'],
+                    ['a','s','d','f','g','h','j','k','l', {type: 'erase', text: '&lArr;'}],
+                    [{type: 'shift', upperCase: '&dArr;', lowerCase: '&uArr;'}, 'z','x','c','v','b','n','m',',', '.'],
+                    [{type: 'space', colspan: 10, text: ' '}]
+                ];
+        });
+        setTimeout(function(){
+            document.getElementsByTagName('INPUT')[0].focus();
+        }, 150);
+    </script>
+</body>
+</html>

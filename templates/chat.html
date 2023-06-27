@@ -1,0 +1,54 @@
+
+
+<% if (true) { %>
+
+<% if (site['3cx']['phonesystem-url'] && site['3cx']['party']) { %>
+<div ng-cloak ng-if="platform.type == 'desktop'">	
+	<call-us-selector phonesystem-url="<%- site['3cx']['phonesystem-url'] %>" party="<%- site['3cx']['party'] %>"></call-us-selector>
+</div>
+<% } %>
+
+<% if (site['3cx']['click2dial']) { %>
+<div ng-cloak ng-if="platform.type == 'mobile'" style="position: fixed; bottom: 0; right: 0; z-index: 1; padding: 10px;">	
+	<a href="<%- site['3cx']['click2dial'] %>" class="btn btn-info" style="border-radius: 100%; font-size: 27px; padding: 0; text-align: center; width: 55px; height: 55px; line-height: 55px; box-shadow: 2px 4px 0px 0px rgb(0 0 0 / 20%); background-color: #03a9f4;" title="Chat">
+		<i class="fa fa-comments"></i>
+	</a>
+</div>
+<% } %>
+
+<!--Incase you don't want real time updates to the live chat plugin when options are changed, use the below code snippet. Please note that each time you change the settings you will need to copy and paste the snippet code to your website--> 
+<!--<call-us 
+phonesystem-url="https://tudays.fl.3cx.us" 
+style="position:fixed;font-size:16px;line-height:17px;z-index: 99999;right: 20px; bottom: 20px;" 
+id="wp-live-chat-by-3CX" 
+minimized="true" 
+animation-style="noanimation" 
+party="LiveChat172714" 
+minimized-style="bubbleright" 
+allow-call="true" 
+allow-video="false" 
+allow-soundnotifications="true" 
+enable-mute="true" 
+enable-onmobile="true" 
+offline-enabled="true" 
+enable="true" 
+ignore-queueownership="false" 
+authentication="both" 
+show-operator-actual-name="true" 
+aknowledge-received="true" 
+gdpr-enabled="false" 
+message-userinfo-format="both" 
+message-dateformat="both" 
+lang="browser" 
+button-icon-type="default" 
+greeting-visibility="none" 
+greeting-offline-visibility="none" 
+chat-delay="2000" 
+enable-direct-call="true" 
+enable-ga="false" 
+></call-us>--> <!--
+
+<script defer src="https://downloads-global.3cx.com/downloads/livechatandtalk/v1/callus.js" id="tcx-callus-js" charset="utf-8"></script>
+-->
+
+<% } %>

@@ -1,0 +1,96 @@
+{
+	"title": "Services / Departments",
+	"description": "Start lining up.",
+
+	"sections": [
+		
+		{
+			"id": "list",
+			"title": "Departments",
+			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
+			"template": "/templates/datatable.html",
+			"src": "/api/data?collection=profiles&category=departments",
+			"columns": [
+				{
+					"title": "",
+					"data": "id",
+					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a>",
+					"searchable": true
+				},
+				{
+					"title": "Name",
+					"data": "title",
+					"searchable": true
+				},
+				{
+					"title": "Members",
+					"data": "members",
+					"format": "{{members.length}}",
+					"searchable": false,
+					"sortable": false
+				},
+				{
+					"title": "PIN",
+					"data": "pin",
+					"sortable": false
+				}
+			]
+		}
+
+		
+		
+		, {
+			"id": "departments",
+			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
+			"template": "/templates/form.html",
+			"title": "Add Department",
+			"background": "#f2f2f2",
+			"action": "/api/services/departments",
+			"method": "POST",
+			"reload": true,
+			"reset": true,
+			"_key": "session.profile",
+			"data": {
+				
+				"uid": {
+					"id": "uid",
+					"value": "{{session.profile._id}}",
+					"type": "hidden"
+				},
+				
+				"access_token": {
+					"id": "access_token",
+					"value": "{{session.profile.password}}",
+					"type": "hidden"
+				},
+				
+				"title": {
+					"required": false,
+					"id": "name",
+					"title": "Name",
+					"type": "text",
+					"autocomplete": false,
+					"model": false
+				},
+				
+				"pin": {
+					"required": true,
+					"id": "pin",
+					"title": "Pin",
+					"type": "number",
+					"min": 100000,
+					"help": "6 digit pin code to secure the department and for others to join.",
+					"autocomplete": false,
+					"model": false
+				}
+				
+			}
+		}
+		
+		
+		
+		
+	],
+	"resources": []
+	
+}

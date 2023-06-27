@@ -1,0 +1,178 @@
+<%
+
+	var items = section.data || [];
+	
+	if (!items.length && node.data && node.data.payload) items = node.data.payload || []; // load data from a view
+	if (!items.length && node.data && node.data.list) items = node.data.list || []; // load data from a view
+
+%>
+
+<style>
+	
+	.catalog [type="number"].ng-invalid {
+		background-color: #ffcdd2 !important;
+	}
+	
+</style>
+
+<div class="container catalog" style="padding-top: 5px; padding-bottom: 35px;">
+	<div class="row" style="margin: -5px;">
+	
+		<% var i = 0; for (var prop in items)
+		{
+			i ++;
+			
+			var item = items[prop];
+			var title = item.title || item.name || item._id;
+			
+			if (item.active === false) continue;
+			
+			if (!item.page) item.page = section.page;
+			
+			if (item.page)
+			{
+				item.page = modules.mustache.render(item.page, {item: item});
+			}
+			
+		%>
+		
+			<div class="col-sm-12 col-md-4 col-lg-3" style="padding: 5px;">
+		
+				<table width="100%" height="100%" style="border-radius: 5px; overflow: hidden; background-color: #ffffff; min-height: 100%; word-break: break-word;">
+					<tbody>
+						
+						<tr>
+							<td style="padding: 20px;">
+							 	<h2 style="margin: 0;">
+								 	
+								 	<% if (item.popular) { %>
+								 	<i class="fa fa-star" style="color: #ff9800;"></i>
+								 	<% } %>
+								 	
+								 	<% if (item.modify) { %>
+								 	<a href="<%- item.modify %>"><i class="fa fa-cog" style=""></i></a>
+								 	<% } %>
+								 	
+								 	<<%- item.page ? 'a' : 'span'; %> href="<%- item.page %>" style="text-decoration: none;"><%- title %></<%- item.page ? 'a' : 'span'; %>>
+								 	
+							 	</h2>
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="padding: 0 20px;">
+								
+								<% if (item.description) { %>
+								<div style="margin-bottom: 20px;"><%- item.description %></div>
+								<% } %>
+								
+								<% if (item.bullets) { %>
+								<ul style="margin-bottom: 20px; padding-left: 15px; font-size: 14px;">
+									<% item.bullets.forEach(function(bullet, i) { %>
+									<li><%- bullet %></li>
+									<% }) %>
+								</ul>
+								<% } %>
+								
+							</td>
+						</tr>
+						
+						<tr height="100%">
+							<td valign="bottom">
+								
+								<table width="100%">
+									<tbody>
+										<tr>
+											
+											<td valign="bottom">
+												
+												<% if (item.quanitifale) { %>
+												
+												<div style="margin-bottom: 5px; padding: 0 5px; text-align: center;">
+													
+													<button ng-disabled="!cache['<%- section.id %>']['<%- item.id %>'] || cache['<%- section.id %>']['<%- item.id %>'] < 1" class="btn btn-easy btn-round" style="height: 25px; width: 25px; padding: 0; font-size: 12px;" ng-click="cache['<%- section.id %>']['<%- item.id %>'] = cache['<%- section.id %>']['<%- item.id %>'] - 1; $rootScope.uncashed = Date.now();"><i class="fa fa-minus"></i></button>
+													
+													<button ng-disabled="cache['<%- section.id %>']['<%- item.id %>'] == <%- item.max %>" class="btn btn-basic btn-round" style="height: 25px; width: 25px; padding: 0; font-size: 12px; margin-left: 5px;" ng-click="cache['<%- section.id %>']['<%- item.id %>'] = cache['<%- section.id %>']['<%- item.id %>'] + 1; $rootScope.uncashed = Date.now();"><i class="fa fa-plus"></i></button>
+													
+												</div>
+												
+												<input type="number" min="0" style="width: 100%; border: 0; background-color: {{cache['<%- section.id %>']['<%- item.id %>'] ? '#e8eaf6' : '#f2f2f2'}}; border-top-right-radius: 10px !important; text-align: center; width: 80px;" placeholder="Qty." ng-model="cache['<%- section.id %>']['<%- item.id %>']" ng-init="cache['<%- section.id %>']['<%- item.id %>'] = parseFloat(query['<%- item.id %>']) || query['<%- item.id %>'] || cache['<%- section.id %>']['<%- item.id %>'] || <%- item.value || 0 %>;" ng-change="$rootScope.uncashed = Date.now();" max="<%- item.max %>" min="0" step=".25" />
+												
+												<% } %>
+												
+											</td>
+											
+											<% if ((item.sale || item.price) || (item.weight && item.weight.amount)) { %>
+											<td align="right" valign="bottom" style="padding: 10px;" width="100%">
+
+												<span style="font-size: 25px; text-decoration: <%- item.sale ? 'line-through' : 'none' %>; opacity: <%- item.sale ? '25%' : '100%' %>; font-weight: <%- item.sale ? '300' : 'bold' %>; word-break: break-word; line-height: 25px;"><%- item.price %></span>
+
+												<span style="font-size: 25px; word-break: break-word; font-weight: bold;"><%- item.sale %></span>
+												
+												<% if (item.weight && item.weight.amount) { %>
+												<span style="font-size: 13px; word-break: break-word; line-height: 25px; font-weight: bold;" ng-if="cache['<%- section.id %>']['<%- item.id %>']">({{(<%- item.weight.amount %> * (cache['<%- section.id %>']['<%- item.id %>'] || item.multiplier || 1) | toLocaleString)}}<%- item.weight.unit %>/{{(<%- item.weight.amount %> * (cache['<%- section.id %>']['<%- item.id %>'] || item.multiplier || 1) / 16 | toLocaleString)}}lb)</span>
+												<% } %>
+
+											</td>
+											<% } %>
+											
+											<% if (item.book) { %>
+											<td align="right" valign="bottom" style="padding: 10px;">
+												
+												<a href="<%- item.book %>" target="_book" class="btn btn-success btn-round" style="width: 65px; height: 65px; padding: 0; display: block;">
+													<table width="100%" height="100%">
+														<tbody>
+															<tr>
+																<td align="center" valign="middle">Book</td>
+															</tr>
+														</tbody>
+													</table>
+												</a>
+
+											</td>
+											<% } %>
+											
+											<% if (item.link) { %>
+											<td align="right" valign="bottom" style="padding: 10px;">
+												
+												<a href="<%- item.link %>" class="btn btn-basic btn-round" style="width: 65px; height: 65px; padding: 0; display: block;">
+													<table width="100%" height="100%">
+														<tbody>
+															<tr>
+																<td align="center" valign="middle">View</td>
+															</tr>
+														</tbody>
+													</table>
+												</a>
+
+											</td>
+											<% } %>
+											
+											<% if (item.toggle) { %>
+											<td align="right" valign="bottom">
+												<%- include( '..' + item.toggle, {item: item, session: session}); %>
+											</td>
+											<% } %>
+											
+											<% if (section.toggle) { %>
+											<td align="right" valign="bottom">
+												<%- include( '..' + '/templates/catalog-toggler.html', {section: section, item: item, session: session}); %>
+											</td>
+											<% } %>
+											
+										</tr>
+									</tbody>
+								</table>
+								
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+
+			</div>
+		
+		<% } %>
+	
+	</div>
+</div>

@@ -1,0 +1,177 @@
+<%
+
+	var items = section.data || [];
+
+%>
+
+<div style="position: relative;">
+	
+	<script>cache['_<%- section.id %>'] = {};</script>
+	
+	<form system-form style="padding-bottom: 55px; padding-top: 25px; padding-left: 30px; padding-right: 30px; position: relative;" name="<%- section.id %>" key="<%- section.key %>" method="<%- section.method || 'GET' %>" class="container" ng-init="cache['<%- section.id %>'] = cache['<%- section.id %>'] || {};" onsubmit="<%- section.onsubmit %>" reset="<%- section.reset %>" confirm="<%- section.confirm %>" reload="<%- section.reload %>" <% if (section.action) { %>action="<%- section.action %>"<% } %>>
+		
+		<fieldset style="margin: 0; border: none; padding: 0;" ng-disabled="$form.$saving">
+			
+			<div class="row" style="margin: -5px;">
+			
+				<% for (var prop in items) {item = items[prop]; if (item.type == 'hidden') continue;
+				
+					model = "cache['" + section.id + "']['" + (item.id || i) + "']";
+					_model = "cache['_" + section.id + "']['" + (item.id || i) + "']";
+					
+					if (item.model != undefined) model = item.model;
+				
+				%>
+				
+					<div class="col-sm-12 col-md-6 <%- item.class %> no-scroll" style="min-width: 200px; padding: 5px;">
+						
+						<script>
+							cache['_<%- section.id %>']['<%- item.id || i %>'] = JSON.parse('<%- JSON.stringify(item) %>');
+						</script>
+						
+						<label>
+						
+							<i class="<%- item.icon %>"></i>
+							
+							<% if (item.required) { %><span class="text-danger">*</span><% } %>
+							
+							<span><%- item.title %></span>
+							
+							<table width="100%">
+								<tr>
+									
+									<td width="100%" style="position: relative;">
+										
+										<% if (item.type == 'boolean') { %>
+											
+											<div style="margin: 5px 0;">
+
+												<label ng-if="<%- model %> == undefined">
+													<span style="vertical-align: middle;">No</span>
+													<input name="<%- item.id %>" type="radio" ng-model="<%- model %>" style="vertical-align: middle;" data-ng-value="" />
+												</label>
+												
+												<label ng-if="<%- model %> != undefined">
+													<span style="vertical-align: middle;">No</span>
+													<input name="<%- item.id %>" type="radio" ng-model="<%- model %>" style="vertical-align: middle;" data-ng-value="0" />
+												</label>
+										
+												<label>
+													<span style="vertical-align: middle;">Yes</span>
+													<input name="<%- item.id %>" type="radio" ng-model="<%- model %>" style="vertical-align: middle;" data-ng-value="1" />
+												</label>
+												
+											</div>
+										
+										<% } else if (item.type == 'select') { %>
+										
+											<select
+												class="smooth-corners"
+												name="<%- item.id %>"
+												ng-model="<%- model %>"
+												placeholder="<%- item.placeholder || '...' %>"
+												style="width: 100%; margin: 5px 0;" <% if (item.multiple) { %>multiple<% } %>
+											>
+												<option value=""><%- item.placeholder || '...' %></option>
+												<option ng-repeat="option in <%- _model %>.options">{{option}}</option>
+											</select>
+										
+										<% } else if (item.type == 'textarea') { %>
+										
+											<textarea
+												style="width: 100%; margin: 5px 0; min-height: 200px;"
+												class="smooth-corners"
+												name="<%- item.id %>"
+												ng-model="<%- model %>"
+												placeholder="<%- item.placeholder || '...' %>"
+												autocomplete="<%- item.autocomplete || 'yes' %>"
+											></textarea>
+										
+										<% } else if (item.type == 'place' || item.type == 'coordinates') { %>
+										
+											<input
+												name="<%- item.id %>"
+												type="hidden"
+												value="<%- query[item.id] || item.value %>"
+											/>
+											
+											<input
+												type="text"
+												autocomplete="<%- item.type %>"
+												for="[name='<%- item.id %>']"
+												placeholder="..."
+												style="width: 100%; margin: 5px 0;"
+												<%- item.required === true ? 'required' : '' %>
+											/>
+											
+										<% } else { %>
+										
+										<input
+											input-fill
+											class="smooth-corners"
+											type="<%- item.type || 'text' %>"
+											id="<%- item.id %>"
+											name="<%- item.id %>"
+											style="width: 100%; margin: 5px 0;"
+											min="<%- item.min %>"
+											max="<%- item.max %>"
+											minlength="<%- item.minlength %>"
+											maxlength="<%- item.maxlength %>"
+											placeholder="<%- item.placeholder || '...' %>"
+											value="<%- query[item.id] || item.value %>"
+											<%- item.model ? ('ng-model="' + model + '"') : '' %>
+											<%- item.required === true ? 'required' : '' %>
+											<%- item.autocomplete === false ? 'autocomplete="off"' : ('autocomplete="on"') %>
+										/>
+										
+										<% } %>
+
+										<% if (item.help) { %>
+											<div style="font-size: 12px; margin-top: 3px; margin-bottom: 3px; word-break: break-word;"><%- item.help %></div>
+										<% } %>
+
+									</td>
+									
+									<% if (item.type == 'number' && item.model) { %>
+									<td>
+										
+										<div style="white-space: nowrap;">
+											
+											<button ng-if="cache['<%- section.id %>']['<%- item.id || i %>']" class="btn btn-easy btn-round" style="height: 25px; width: 25px; padding: 0; font-size: 12px; margin-left: 5px;" ng-click="cache['<%- section.id %>']['<%- item.id || i %>'] = cache['<%- section.id %>']['<%- item.id || i %>'] - 1; $rootScope.uncashed = Date.now();" type="button"><i class="fa fa-minus"></i></button>
+											
+											<button class="btn btn-basic btn-round" style="height: 25px; width: 25px; padding: 0; font-size: 12px; margin-left: 5px; margin-left: 5px;" ng-click="cache['<%- section.id %>']['<%- item.id || i %>'] = cache['<%- section.id %>']['<%- item.id || i %>'] + 1; $rootScope.uncashed = Date.now();" type="button"><i class="fa fa-plus"></i></button>
+										
+										</div>
+										
+									</td>
+									<% } %>
+									
+								</tr>
+							</table>
+							
+						</label>
+						
+						<div><%- item.description %></div>
+						
+					</div>
+				
+				<% } %>
+				
+				<% for (var prop in items) {item = items[prop]; if (item.type != 'hidden') continue; %>
+					<div style="display: none;">
+						<textarea name="<%- item.id %>"><%- query[item.id] || item.value %></textarea>
+					</div>
+				<% } %>
+			
+			</div>
+			
+			<% if (section.action) { %>
+				<div style="margin-top: 15px;">
+					<button type="submit" class="btn {{$form.$dirty ? 'btn-danger' : 'btn-info'}} smooth-corners" style="width: 100%; max-width: 120px;">{{$form.$saving ? '...' : ($form.$dirty ? 'Save' : 'Submit')}}</button>
+				</div>
+			<% } %>
+		
+		</fieldset>
+		
+	</form>
+</div>

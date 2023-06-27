@@ -1,0 +1,47 @@
+<div class="row">
+	<div class="col" style="padding: 45px;">
+		
+		<div>
+
+			<a
+				href="#"
+				editable-select="cache.profile.mode"
+				ng-disabled="<%- readOnly %>"
+				buttons="yes"
+				style="color: #000; font-style: inherit; font-weight: bold;"
+				e-ng-options="s.value as s.text for s in [
+					{text: 'Offline', value: 'Offline'},
+					{text: 'Online', value: 'Online'},
+					{text: 'Available', value: 'Available'},
+					{text: 'Unavailable', value: 'Unavailable'},
+					{text: 'Logged Out', value: 'Logged Out'},
+					{text: 'On Demand', value: 'On Demand'},
+				]"
+				onaftersave="$http.post('/api/data?collection=profiles&category=<%- node.data.profile.category %>', {_id: '<%- node.data.profile._id %>', mode: cache.profile.mode || ''}).then(templates.load, notify); cache.profile = {};"
+			><%- node.data.profile.mode || 'Offline' %></a>						
+
+			<span>&</span>
+
+			<a
+				href="#"
+				editable-select="cache.profile.state"
+				ng-disabled="<%- readOnly %>"
+				buttons="yes"
+				style="color: #000; font-style: inherit; font-weight: bold;"
+				e-ng-options="s.value as s.text for s in [
+					{text: 'Idle', value: 'Idle'},
+					{text: 'Waiting', value: 'Waiting'},
+					{text: 'Receiving', value: 'Receiving'},
+					{text: 'Busy', value: 'Busy'},
+					{text: 'Away', value: 'Away'},
+					{text: 'Lunch', value: 'Lunch'},
+					{text: 'Break', value: 'Break'},
+					{text: 'Wrap-up', value: 'Wrap-up'}
+				]"
+				onaftersave="$http.post('/api/data?collection=profiles&category=<%- node.data.profile.category %>', {_id: '<%- node.data.profile._id %>', state: cache.profile.state || ''}).then(templates.load, notify); cache.profile = {};"
+			><%- node.data.profile.state || 'Away' %></a>
+
+		</div>
+		
+	</div>
+</div>

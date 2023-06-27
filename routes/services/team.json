@@ -1,0 +1,66 @@
+{
+	"title": "Services / Team",
+	"description": "Teammates.",
+	"sections": [
+		
+		{
+			"template": "/templates/breadcrumbs.html"
+		},
+		
+		{
+			"id": "list",
+			"title": "Teammates",
+			"if": "session.profile.services['6486efa055bedc996a215d36'].added",
+			"template": "/templates/datatable.html",
+			"src": "/api/data?collection=profiles&category=users",
+			"columns": [
+				{
+					"title": "",
+					"data": "id",
+					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a><div style=\"margin-top: 5px; font-size: 12px;\"><a href=\"/api/access/login/{{_id}}\" target=\"_top\">(LOGIN)</a></div>",
+					"searchable": true
+				},
+				{
+					"title": "Name",
+					"data": "title",
+					"searchable": true
+				},
+				{
+					"title": "Status",
+					"data": "mode",
+					"searchable": true
+				},
+				{
+					"title": "State",
+					"data": "state",
+					"searchable": true
+				}
+			]
+		}
+		
+		, {
+			"id": "add",
+			"if": "session.profile.services['6486efa055bedc996a215d36'].added",
+			"template": "/templates/form.html",
+			"title": "Add Teammate",
+			"background": "#f2f2f2",
+			"action": "/api/data?collection=profiles&category=users",
+			"method": "POST",
+			"reload": true,
+			"reset": true,
+			"data": {
+				
+				"title": {
+					"required": true,
+					"id": "title",
+					"title": "Name",
+					"type": "text",
+					"autocomplete": true,
+					"model": false
+				}
+				
+			}
+		}
+
+	]
+}

@@ -1,0 +1,35 @@
+<%
+
+	var items = section.data || [];
+
+%>
+<div class="container">
+	<div class="row" style="margin: -10px; padding: 10px 0;">
+		
+		<% for (var prop in items) { item = items[prop] %>
+		
+			<div class="col" style="padding: 10px;">
+				
+				<table>
+					<tbody>
+						<tr>
+							<td style="padding: 0 10px;" valign="top">
+								<i class="fa fa-angle-double-right" style="font-size: 45px; opacity: .25; line-height: 15px;"></i>
+							</td>
+							<td width="100%" valign="top">
+								
+								<div><b><%- item.title %></b></div>
+								<div><%- item.description %></div>
+								
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			</div>
+				
+		
+		<% } %>
+		
+	</div>
+</div>

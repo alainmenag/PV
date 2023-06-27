@@ -1,0 +1,62 @@
+<%
+
+	var items = section.data || [];
+
+%>
+
+<div class="container catalog" style="padding-bottom: 45px; padding-top: 25px;">
+	<div class="row" style="margin: -5px;">
+	
+		<% for (var prop in items) { item = items[prop] %>
+		
+			<div class="col-sm-12 col-md-4" style="padding: 15px 5px;">
+				<h1 style="color: #E91E63; font-weight: 300; margin: 0; border-bottom: 15px dashed #efefef;"><%- item.ts %></h1>
+				<p style="margin: 0; margin-top: 10px; text-transform: uppercase;"><%- item.subject %></p>
+			</div>
+		
+			<div class="col-sm-12 col-md-8" style="padding: 15px 5px;">
+		
+				<table width="100%" height="100%" style="border-radius: 5px; overflow: hidden; background-color: #ffffff; min-height: 100%; word-break: break-word;">
+					<tbody>
+						
+						<tr>
+							<td style="background-image: url(<%- item.image %>); background-size: cover; background-position: center center;" ng-preview="<%- item.image %>">
+								<img src="<%- item.image %>" style="max-width: 100px; opacity: 0; display: block;" />
+							</td>
+							<td style="padding: 20px;" width="100%">
+								
+							 	<h2 style="margin: 0;">
+								 	<span><%- item.title || item.name || ('Item ' + (i + 1)) %></%->
+							 	</h2>
+								
+								<% if (item.description) { %>
+								<div style="color: #9e9e9e; margin-top: 10px;"><%- item.description %></div>
+								<% } %>
+								
+								<% if (item.bullets) { %>
+								<ul style="margin-bottom: 20px; padding-left: 15px; font-size: 14px;">
+									<% item.bullets.forEach(function(bullet, i) { %>
+									<li><%- bullet %></li>
+									<% }) %>
+								</ul>
+								<% } %>
+								
+								<% if (item.more) { %>
+								<nav style="margin-top: 15px;">
+									<a href="<%- item.more %>" class="btn btn-basic" target="_top">Learn More</a>
+								</nav>
+								<% } %>
+								
+							</td>
+						</tr>
+					
+						
+					</tbody>
+				</table>
+
+			</div>
+		
+		<% } %>
+	
+	</div>
+</div>

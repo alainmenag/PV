@@ -1,0 +1,325 @@
+<%
+	var _locations = include(__dirname + '/nodes/data/locations.json');
+	var locations = JSON.parse(_locations, true);
+	var location_id = query.location_id || Object.keys(locations)[0];
+%>
+
+<style>
+	
+	.locations .item.active {
+		background-color: #ffffff;
+	}
+	
+</style>
+		
+<script>
+	window.cache.locations = <%- _locations %>; console.log(window.locations);
+	window.cache.location_id = '<%- location_id %>';
+	window.cache.map = null;
+</script>
+
+<div class="row locations">
+	
+	<% if (Object.keys(locations).length) { %>
+	<div class="col-3">
+		
+		<div style="height: 45px;" class="d-none d-lg-block"></div>
+		
+		<% for (var prop in locations) { item = locations[prop] %>
+		<div style="padding: 15px; position: relative;" class="item" ng-class="{'active': cache.location_id == '<%- item.location_id %>'}">
+			
+			<div ng-if="cache.location_id == '<%- item.location_id %>'" style="height: 100%; position: absolute; right: -5px; top: 0; bottom: 0; width: 5px; background-color: #000; z-index: 1;"></div>
+			
+			<div style="word-break: break-all; font-size: 14px; font-weight: bold;"><%- item.name %></div>
+			
+			<% if (item.services && item.services.length) { %>
+			<div style="margin-top: 7px;">
+				<div class="row">
+					<div class="col-xs-12 col-sm-auto" style="padding-right: 10px;">
+						<img src="<%- item.marker %>" width="20" style="max-width: 20px; max-height: 20px; vertical-align: middle;" />
+					</div>
+					<div class="col-xs-12 col-sm">
+						<span style="word-break: break-word; font-size: 12px; line-height: 12px; text-transform: uppercase;"><%- item.services.join(', ') %></span>
+					</div>
+				</div>
+			</div>
+			<% } %>
+			
+			<% if (item.contacts && item.contacts.length) { %>
+			<div style="margin-top: 7px;" ng-if="cache.location_id == '<%- item.location_id %>'">
+				<div class="row">
+					<div class="col-xs-12 col-sm-auto" style="padding-right: 10px;">
+						<img src="/assets/vendor/Font-Awesome-SVG-PNG/black/svg/phone-square.svg" width="20" style="max-width: 20px; max-height: 20px; vertical-align: middle;" />
+					</div>
+					<div class="col-xs-12 col-sm">
+						<div style="margin: 3px 0;">
+							<div style="font-size: 12px; font-weight: bold;" class="d-sm-none"><%- item.contacts[0].name %></div>
+							<div><%- item.contacts[0].phone %></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% } %>
+			
+			<% if (item.hours && item.hours.memo) { %>
+			<div style="margin-top: 7px; font-size: 14px;"><%- item.hours.memo %></div>
+			<% } %>
+			
+			<div class="row" style="margin-top: 10px;">
+				
+				<div class="col">
+					<a href="/locations?location_id=<%- item.location_id %>#locations" class="btn btn-easy text-center" ng-class="{'active': cache.location_id == '<%- item.location_id %>'}" style="width: 100%; padding: 0 10px; height: 45px; line-height: 45px; min-width: 35px;">
+						<span style="font-size: 12px;">View</span>
+					</a>
+				</div>
+				
+				<% if (!item.info && item.lat && item.lng) { %>
+				<div class="col">
+					<a href="https://www.google.com/maps/dir//<%- item.lat %>,<%- item.lng %>" target="_blank" class="btn btn-basic text-center" style="width: 100%; padding: 0; height: 45px; line-height: 45px; min-width: 35px;">
+						<i class="fa fa-location-arrow" aria-hidden="true"></i>
+					</a>
+				</div>
+				<% } %>
+				
+				<% if (item.info) { %>
+				<div class="col">
+					<a href="<%- item.info %>" target="_top" class="btn btn-basic text-center" style="width: 100%; padding: 0; height: 45px; line-height: 45px; min-width: 35px;">
+						<i class="fa fa-info" aria-hidden="true"></i>
+					</a>
+				</div>
+				<% } %>
+				
+				<% if (item.invite) { %>
+				<div class="col">
+					<a href="<%- item.invite %>" target="_blank" class="btn btn-info text-center" style="width: 100%; padding: 0 10px; min-height: 45px; line-height: 45px; min-width: 35px;">
+						<div style="font-size: 12px;">Invite</div>
+					</a>
+				</div>
+				<% } %>
+				
+			</div>
+			
+		</div>
+		<% } %>
+		
+	</div>
+	<% } %>
+	
+	<div class="col"> <div id="map" class="no-scroll" style="min-height: 100vh;"></div></div>
+	
+</div>
+
+
+<script>
+	
+	var center = {
+		lat: (cache.locations[cache.location_id] || {}).lat || 27.780560,
+		lng: (cache.locations[cache.location_id] || {}).lng || -82.737060
+	};
+	
+	var markers = {};
+	
+	var map = new google.maps.Map(document.getElementById("map"), {
+		zoom: 12,
+		center,
+		streetViewControl: false,
+		mapTypeControl: false,
+		clickableIcons: false,
+		styles: [{
+			featureType: "poi",
+			elementType: "labels",
+			stylers: [{
+				visibility: "off"
+			}]
+		}]
+	});
+	
+	window.cache.map = map;
+	window.cache.map.markers = markers;
+
+	window.cache.map.addListener("click", (e) =>
+	{
+		var lat = e.latLng.lat();
+		var lng = e.latLng.lng();
+		
+		cache.map.panTo({lat: lat, lng: lng});
+		
+		//cache.map.setZoom(cache.map.getZoom() == 18 ? 13 : 18);
+
+		$timeout(function()
+		{
+			window.cache.map.lat = lat;
+			window.cache.map.lng = lng;
+			
+			if (markers['pointer']) markers['pointer'].setPosition({
+				lat:lat,
+				lng: lng
+			});
+		});
+	});
+	
+	cache.locations['pointer'] = {
+		name: 'Pointer',
+		location_id: 'pointer',
+		lat: 27.780560,
+		lng: -82.737060,
+		draggable: true,
+		marker: '/assets/img/noun-waving-2409412.svg'
+	};
+	
+
+	for (const _id in cache.locations)
+	{
+	    (function(loc)
+	    {
+			window.cache.map.markers[loc.location_id] = new google.maps.Marker({
+		        //animation: google.maps.Animation.DROP,
+		        draggable: loc.draggable,
+				position: {
+					lat: loc.lat,
+					lng: loc.lng
+				},
+				map,
+				icon: {
+					url: loc.marker || null,
+					scaledSize: new google.maps.Size(40, 40),
+					fillColor: "#ffffff",
+					fillOpacity: 1,
+					//origin: new google.maps.Point(0, 0),
+					anchor: new google.maps.Point(
+						20, // width
+						20 // height
+					),
+					strokeWeight: 3,
+					strokeColor: "#ffffff",
+					scale: 0.075,
+				},
+				name: loc.name,
+			});
+	
+	        google.maps.event.addDomListener(window.cache.map.markers[loc.location_id], 'click', function(e, b, c)
+	        {
+		        var marker = window.cache.map.markers[loc.location_id];
+				var lat = e.latLng.lat();
+				var lng = e.latLng.lng();
+				
+				cache.map.panTo({lat: lat, lng: lng});
+			
+				cache.map.setZoom(cache.map.getZoom() == 18 ? 13 : 18);
+		        
+				//if (marker.animating) cache.map.setZoom(cache.map.getZoom() == 12 ? 18 : 12);
+			
+				if (!loc.draggable) $location.path('/locations').search({
+					location_id: loc.location_id
+				}).hash('locations');
+				
+				$rootScope.$apply();
+	        });
+	        
+	    })(cache.locations[_id]);
+	}
+	
+	
+	
+/*
+	window.cache.map.markers['pointer'] = new google.maps.Marker({
+		animation: google.maps.Animation.DROP,
+		position: {
+			"lat": 27.780560,
+			"lng": -82.737060
+		},
+		draggable: true,
+		map,
+		icon: {
+			url: '/assets/img/noun-waving-2409412.svg',
+			scaledSize: new google.maps.Size(40, 40),
+			fillColor: "#ffffff",
+			fillOpacity: 1,
+			//origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(
+				20, // width
+				20 // height
+			),
+			strokeWeight: 3,
+			strokeColor: "#ffffff",
+			scale: 0.075,
+		},
+		name: 'Pointer',
+	});
+	
+	google.maps.event.addListener(window.cache.map.markers['pointer'], 'dragend', function(e) 
+	{
+		$timeout(function()
+		{
+			window.cache.map.markers['pointer'].lat = e.latLng.lat();
+			window.cache.map.markers['pointer'].lng = e.latLng.lng();
+		});
+	});
+	
+    google.maps.event.addDomListener(window.cache.map.markers['pointer'], 'click', function(e)
+    {
+		cache.map.panTo({lat: e.latLng.lat(), lng: e.latLng.lng()});
+		
+		//cache.map.setZoom(cache.map.getZoom() > 15 ? 12 : cache.map.getZoom() + 3);
+		cache.map.setZoom(cache.map.getZoom() == 18 ? 13 : 18);
+    });
+*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+/*
+var geocoder = new google.maps.Geocoder();
+geocoder.geocode({
+    "address": e.latLng.lat() + ' ' + e.latLng.lng()
+}, function(results) {
+    console.log(results); //LatLng
+});
+*/
+	
+	//https://www.google.com/maps/place/St.+Petersburg,+FL+33713/@27.8161324,-82.7850402,11.92z/data=!4m6!3m5!1s0x88c2e3b0856467eb:0xe5ffb80ae1d35349!8m2!3d27.7896783!4d-82.6807458!16s%2Fm%2F03dp5tm
+	
+	//27.8389008,-82.7629268
+	
+	//https://www.google.com/maps/place/Tudays+(2+Day+Deli)/@27.7805799,-82.7396434,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2e3cd0868ed53:0x1a4b59a0cd9aa6c4!8m2!3d27.7805799!4d-82.7370631!16s%2Fg%2F11fqz603ps
+
+
+	//map.center.lat()
+	//map.center.lng()
+  
+  </script>
+  
+<div ng-if="cache">
+	<script>
+	
+		if (window.$rootScope) $rootScope.$on('$locationChangeStart', function(e, newPath, oldPath) // success
+		{
+			//$rootScope.cache.location_id
+			var marker = $rootScope.cache.map.markers[$rootScope.cache.location_id];
+			
+			if (marker) marker.setAnimation(null);
+			
+			$rootScope.cache.location_id = $rootScope.query.location_id || Object.keys($rootScope.cache.locations)[0];
+			
+			var location_id = $rootScope.cache.location_id;
+			var loc = $rootScope.cache.locations[location_id];
+			
+			marker = $rootScope.cache.map.markers[location_id];
+			
+			if (!marker) return;
+			
+			cache.map.panTo({lat: loc.lat, lng: loc.lng});
+			
+			//if (cache.map.getZoom() != 12) cache.map.setZoom(12);
+			
+			marker.setAnimation(google.maps.Animation.BOUNCE);
+		});
+	
+	</script>
+</div>

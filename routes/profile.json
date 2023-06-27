@@ -1,0 +1,31 @@
+{
+	"title": "Profile",
+	"description": "A profile.",
+	"_keywords": ["website", "pages", "presence"],
+	"_template": {"src": "/nodes/home.html"},
+	"_image": {"src": "/nodes/home/spacex-uj3hvdfQujI-unsplash.jpg"},
+	"sections": [
+		
+		{
+			"template": "/templates/breadcrumbs.html"
+		},
+		
+		{
+			"id": "profile",
+			"template": "/templates/profile.html"
+		}
+
+	],
+	"resources": [
+		{
+			"src": "profiles.node",
+			"fn": "get",
+			"key": "profile"
+		},
+		{
+			"src": "oryk.node",
+			"fn": "queues.list",
+			"key": "departments"
+		}
+	]
+}

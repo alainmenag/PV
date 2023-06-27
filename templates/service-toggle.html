@@ -1,0 +1,28 @@
+<%
+	item = item;
+	profile = node.data.profile;
+	service = (profile && profile[item.category] && profile[item.category][item._id]) || {};
+	
+	if (!profile) return;
+%>
+<div style="text-align: center; display: inline-block; vertical-align: middle;">
+	<form
+		system-form
+		name="_<%- item._id %>"
+		method="POST"
+		action="/api/services"
+		reload="true"
+		style="display: inline-block; margin: auto;"
+	>
+		
+		<input type="hidden" name="_id" value="<%- item._id %>" />
+		<input type="hidden" name="action" value="<%- service.added ? 'remove' : 'add' %>" />
+		<input type="hidden" name="uid" value="<%- profile._id %>" />
+		<input type="hidden" name="category" value="<%- item.category %>" />
+		
+		<button type="submit" class="btn btn-basic btn-round" style="margin: 0;" <%- readOnly ? 'disabled' : '' %>>
+			<i class="fa <%- service.added ? 'fa-toggle-on text-success' : 'fa-toggle-off' %>"></i>
+		</button>
+		
+	</form>
+</div>

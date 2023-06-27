@@ -1,0 +1,26 @@
+<%
+	item = item || {};
+	model = section.toggle.model || null;
+%>
+<div ng-if="session.profile._id" style="text-align: center;">
+	<form
+		system-form
+		name="_<%- item._id %>"
+		method="POST"
+		action="/api/services"
+		key="session.profile"
+		confirm="false"
+		style="padding: 10px; display: inline-block; margin: auto;"
+	>
+		
+		<input type="hidden" name="_id" value="<%- item._id %>" />
+		<input type="hidden" name="action" value="{{<%- model %>['<%- item._id %>'].added ? 'remove' : 'add'}}" />
+		<input type="hidden" name="uid" value="{{session.profile._id}}" />
+		<input type="hidden" name="category" value="<%- item.category %>" />
+		
+		<button type="submit" class="btn btn-basic btn-round">
+			<i class="fa {{<%- model %>['<%- item._id %>'].added ? 'fa-toggle-on text-success' : 'fa-toggle-off'}}"></i>
+		</button>
+		
+	</form>
+</div>

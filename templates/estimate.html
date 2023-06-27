@@ -1,0 +1,207 @@
+<script>
+	
+app.directive('runEstimate', function($timeout) {
+    return {
+        restrict:'A',
+        link: function(scope, elem, attrs)
+        {
+	        var params = [];
+	        
+	        scope.estimate.per = 0;
+	        scope.estimate.price = 0;
+	        scope.estimate.guests = 0;
+	        scope.estimate.weight = 0;
+	        scope.estimate.coverage = 0;
+	        scope.estimate.needed = 0;
+	        scope.estimate.data = {};
+	        
+	        try {
+		        scope.estimate.guests += cache.guests.adults;
+		        scope.estimate.needed += cache.guests.adults * 12;
+		        
+		        scope.estimate.guests += cache.guests.children;
+		        scope.estimate.needed += cache.guests.children * 8;
+	        } catch(err) {};
+	        
+	        // roll through each category to calculate
+	        _.each(scope.section.data.aggrigate, function(category)
+	        {
+		        scope.estimate.data[category] = {weight: 0, price: 0};
+		        
+		        // check out what values for items within the category
+		        _.each(scope.cache[category], function(cacheValue, cacheName)
+		        {
+			        if (!cacheValue) return;
+			        
+			        params.push(cacheName + '=' + cacheValue);
+			        
+			        // match category item to object
+			        var item = {}; try {
+				        item = scope.node.sections[category].data[cacheName];
+			        } catch(err) {};
+			        
+			        if (!item) return;
+			        
+			        scope.estimate.data[category].price += item.estimate ? (item.estimate * cacheValue) : 0; 
+			        scope.estimate.price += item.estimate ? (item.estimate * cacheValue) : 0;
+			        scope.estimate.data[category].weight += (item.weight.amount * cacheValue); 
+			        	
+			        if (item.weight && item.weight.amount > 0)
+			        {
+				    	scope.estimate.weight += (item.weight.amount * cacheValue);   
+			        }
+		        });
+	        });
+	        
+	        function isInfinite(n) {return n === n/0;}
+
+			if (scope.estimate.weight && scope.estimate.needed)
+			{
+	        	scope.estimate.coverage = Math.round((scope.estimate.weight / scope.estimate.needed) * 100);
+	        
+		        if (isInfinite(scope.estimate.coverage)) scope.estimate.coverage = null;
+		        if (isNaN(scope.estimate.coverage)) scope.estimate.coverage = null;
+			}
+
+			if (scope.estimate.guests && scope.estimate.price)
+			{
+				scope.estimate.per = (scope.estimate.price / scope.estimate.guests).toFixed(2);
+			}
+			
+			scope.estimate.params = params.join('&');
+			
+	        console.log('***** Estimate:', scope.estimate);
+        }        
+    };
+});
+	
+</script>
+
+<div class="container" ng-init="node = <%= JSON.stringify(node) %>; section = <%= JSON.stringify(section) %>; estimate = {};" style="padding-bottom: 55px;">
+	
+	<div ng-if="!uncashed" run-estimate></div>
+	
+	<div style="line-height: 24px;">
+		
+		<span><%- section.data.quote %></span>
+		
+	</div>
+		
+	<div style="font-size: 24px; line-height: 35px; margin-top: 25px;">
+		<div ng-repeat="category in section.data.aggrigate">
+			
+			<table width="100%">
+				<tr>
+					
+					<td>
+						
+						<a href="#{{category}}" style="text-decoration: none; color: #000000; font-weight: bold;">{{node.sections[category].title || category}}</a>
+
+					</td>
+					
+					<td align="right">
+						<b>{{(estimate.data[category].weight || 0 | toLocaleString)}}oz/{{(estimate.data[category].weight / 16 || 0 | toLocaleString)}}lb</b>
+					</td>
+					
+				</tr>
+			</table>
+				
+			
+			<table width="100%">
+				
+				<tr ng-repeat="(ck, cv) in cache[category]" ng-if="cv">
+					
+					<td style="font-weight: 300; font-size: 20px;">
+						
+						<b>({{cv}})</b>
+						<span>{{node.sections[category].data[ck].title}}</span>
+
+					</td>
+					
+					<td align="right">
+						<span>{{node.sections[category].data[ck].weight.amount * cv}}oz/{{(node.sections[category].data[ck].weight.amount * cv) / 16}}lb</span>
+					</td>
+					
+				</tr>
+				
+			</table>
+			
+		</div>
+	</div>
+	
+	<table width="100%" style="font-size: 24px; line-height: 35px; margin-top: 25px;">
+		
+		<tr>
+			<td width="100%" style="padding-top: 10px;">
+				
+				<b>WEIGHT:</b>
+				
+			</td>
+			<td align="right" valign="bottom" style="padding-top: 10px; white-space: nowrap;">
+				<b>{{estimate.weight}}oz/{{estimate.weight / 16}}lb</b>
+			</td>
+		</tr>
+		
+		<tr>
+			<td width="100%" style="padding-top: 10px;">
+				
+				<b>ESTIMATE:</b>
+				
+				<div>
+					<span style="font-size: 18px;">~ ${{(estimate.per | toLocaleString)}} Per. person.</span>
+				</div>
+				
+			</td>
+			<td align="right" valign="bottom" style="padding-top: 10px; white-space: nowrap;">
+				<b>~ ${{(estimate.price | toLocaleString)}}</b>
+			</td>
+		</tr>
+		
+	</table>
+	
+	<div style="margin-bottom: 25px; margin-top: 15px; line-height: 24px;">
+		
+		<span>** Exact cost (+ tax) and any special pricing will be calculated upon invoicing.</span>
+		
+	</div>
+	
+	<div ng-if="estimate.params" style="margin-bottom: 25px; margin-top: 15px; line-height: 24px;">
+		
+			<b>Link:</b>
+			
+			<div><a href="{{location.origin}}/catering?{{estimate.params}}#estimate" style="width: 100%; word-break: break-all;" target="_top">{{location.origin}}/catering?{{estimate.params}}#estimate</a></div>
+		
+	</div>
+
+</div>
+
+<div style="position: fixed; bottom: 0; left: 0; right: 0; text-align: left; z-index: 1; pointer-events: none;">
+	<div style="width: 100%; max-width: 500px; background-color: #dddddd; margin: auto; display: block; text-decoration: none; line-height: 22px; pointer-events: all;">
+		
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td width="33.33%" align="center">
+						<a href="/catering?{{estimate.params}}#guests" style="text-decoration: none; display: block; padding: 15px;">
+							<b style="font-size: 22px;">{{estimate.guests || 'Add'}}</b>
+							<div>Guests</div>
+						</a>
+					</td>
+					<td width="33.33%" align="center" style="background-color: rgba(0,0,0,.1);">
+						<a href="/catering?{{estimate.params}}#sandwiches" style="text-decoration: none; display: block; padding: 15px;">
+							<b style="font-size: 22px;">{{estimate.coverage}}%</b>
+							<div>Coverage</div>
+						</a>
+					</td>
+					<td width="33.33%" align="center">
+						<a href="/catering?{{estimate.params}}#estimate" style="text-decoration: none; display: block; padding: 15px;">
+							<b style="font-size: 22px;">${{(estimate.price | toLocaleString)}}</b>
+							<div>Estimate</div>
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+</div>

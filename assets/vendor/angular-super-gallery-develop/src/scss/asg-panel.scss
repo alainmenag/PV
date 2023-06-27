@@ -1,0 +1,27 @@
+.asg-panel {
+
+  .item {
+    overflow: hidden;
+    position: relative;
+
+    img {
+      cursor: pointer;
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .index {
+      position: absolute;
+      top: 7px;
+      z-index: 9999;
+      right: 7px;
+      padding: 2px 4px;
+      font-size: 9px;
+    }
+
+  }
+
+}

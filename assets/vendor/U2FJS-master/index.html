@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>U2F Demo</title>
+ </head>
+ <body>
+  <script src="u2f.js"></script>
+  <script src="u2f-Parse.js"></script>
+  <input type="button" onclick="Register()" value="Register">
+  <input type="button" onclick="Sign()" value="Sign">
+  <div id="divMessage"></div>
+  <script>
+
+   var parser = new U2FParse();
+   var U2FRegistration = {};
+   var U2FSign = {};
+
+   function Register()
+   {
+		let registerRequest = {
+			challenge: 'RegisterChallenge',
+			version: 'U2F_V2'
+		}
+		u2f.register('https://localhost', [registerRequest], [],
+		(response) => {				
+				console.log(response);
+				U2FRegistration = parser.parseRegistration(response.registrationData);
+				console.log(U2FRegistration);
+
+				document.getElementById("divMessage").innerHTML = "Key Handle:" + U2FRegistration.keyHandle;
+			}
+		);
+   }
+
+   function Sign()
+   {	  
+		let registeredKey = {
+		  keyHandle:  U2FRegistration.keyHandle,
+		  version: 'U2F_V2'
+		}
+		u2f.sign('https://localhost', 'SigningChallenge', [registeredKey], 
+		  (response) => {
+			console.log(response);
+			U2FSign = parser.parseSign(response.signatureData);
+			console.log(U2FSign);
+			document.getElementById("divMessage").innerHTML = "User Counter:" + U2FSign.userCounter;
+		  }
+		);
+   }
+  </script>
+ </body>
+</html>

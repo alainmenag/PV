@@ -1,0 +1,186 @@
+<%
+	
+	var contacts = site.contact && site.contact.name ? [site.contact] : site.contact;
+	
+%>
+<div style="background-color: #ffffff;">
+
+    <div class="container">
+
+        <div class="row" style="">
+
+            <% if (contacts && contacts[0] && contacts[0].location) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 45px 15px;">
+
+                <h3>Location</h3>
+
+                <% if (contacts[0].location.street) { %>
+                <p style="margin: 0;"><%- contacts[0].location.street %></p>
+                <% } %>
+
+                <% if (contacts[0].location.csz) { %>
+                <p style="margin: 0; margin-top: 5px;"><%- contacts[0].location.csz %></p>
+                <% } %>
+
+                <% if (contacts[0].location.map && contacts[0].location.map.src) { %>
+                <div ng-preview="<%- contacts[0].location.map.src %>">
+	                <div style="width: 100%; height: 100%; min-height: 300px; margin-top: 15px; background-position: center center; background-size: auto 575px; background-repeat: no-repeat; border-radius: 15px; background-image: url('<%- contacts[0].location.map.src %>');"></div>
+                </div>
+                <% } %>
+
+                <% if (contacts[0].location.link) { %>
+                <div style="margin-top: 5px;"><a href="<%- contacts[0].location.link %>" target="_blank" style="font-size: 12px; text-decoration: none;">Get Directions</a></div>
+                <% } %>
+
+                <% if (contacts[0].location.logo) { %>
+                <div style="margin-top: 15px;">
+	                <img src="<%- contacts[0].location.logo %>" style="max-width: 300px;" />
+                </div>
+                <% } %>
+
+            </div>
+            <% } %>
+
+            <% if (contacts && contacts[0]) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 45px 15px;">
+
+                <h3>Contact</h3>
+
+				<% if (contacts[0]) {var c = 0; for (var prop in contacts) {c++; contact = contacts[prop] %>
+				
+				<div style="margin: 5px 0;">
+					
+	                <p style="margin: 0; font-weight: bold;"><%- contact.name %></p>
+	                
+	                <p style="margin: 0;"><%- contact.phone || '' %></p>
+	                
+	                <p style="margin: 0;"><%- contact.email || '' %></p>
+	                
+                </div>
+                
+	            <% }} %>
+
+            </div>
+            <% } %>
+
+        </div>
+
+        <div class="row">
+
+            <% if (site.hours) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 25px 15px;">
+
+                <h3>Schedule</h3>
+
+                <% if (site.hours.memo) { %><div style="margin-bottom: 15px;"><%- site.hours.memo %></div><% } %>
+
+                <table>
+                    <tbody>
+
+                        <% if (site.hours.days) for (var prop in site.hours.days ) { %>
+                        <tr>
+                            <td>
+                                <b><%- prop %>:</b>
+                            </td>
+                            <td>
+                                <span style="margin-left: 7px;"><%- site.hours.days[prop] %></span>
+                            </td>
+                        </tr>
+                        <% } %>
+
+                    </tbody>
+                </table>
+
+            </div>
+            <% } %>
+
+            <% if (site.payment) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 25px 15px;">
+
+                <h3>Payment Methods</h3>
+				
+                <p><%- site.payment.memo || 'Please contact us.' %></p>
+
+				<% if (site.payment.methods) { %>
+                <div class="row">
+					
+					<% if (site.payment.methods.apple) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Apple_Pay-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.google) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Google_Pay-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.visa) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Visa_Inc.-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.mc) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/Mastercard-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.ae) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/American_Express-Logo.wine_.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+					<% if (site.payment.methods.discover) { %>
+                    <div class="col" style="min-width: 33.33%;background-size: contain;min-height: 80px;background-image: url('/assets/img/payment-networks/discover-card-logo-vector.svg');background-repeat: no-repeat;background-position: center center;"></div>
+					<% } %>
+
+                </div>
+				<% } %>
+
+            </div>
+            <% } %>
+
+        </div>
+
+        <div class="row">
+
+            <% if (site.wifi) { %>
+            <div class="col-sm-12 col-md-6" style="padding: 25px 15px;">
+
+                <h3>WiFi Details</h3>
+
+                <div style="
+					background: #eee;
+				    font-family: 'courier 10 pitch',Courier,monospace;
+				    font-size: 15px;
+				    font-size: .9375rem;
+				    line-height: 1.6;
+				    max-width: 100%;
+				    overflow: auto;
+				    padding: 1.6em;
+				">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="padding-right: 10px;">
+                                    <b>WiFi Name:</b>
+                                </td>
+                                <td>
+                                    <span><%- site.wifi.name || 'N/A' %></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-right: 10px;">
+                                    <b>Password:</b>
+                                </td>
+                                <td>
+                                    <span><%- site.wifi.password || 'N/A' %></span>
+                                </td>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <% } %>
+            
+        </div>
+		
+		<div><%- site.tritips ? include(__dirname + '/templates/footer-tritips.html') : ''; %></div>
+
+    </div> <!-- END CONTAINER -->
+
+</div>

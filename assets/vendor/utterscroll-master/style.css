@@ -1,0 +1,11 @@
+body[data-utterscroll="true"] {
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: grab;
+}
+
+body[data-utterscroll="true"][style*="all-scroll"] {
+	cursor: -webkit-grabbing !important;
+	cursor: -moz-grabbing !important;
+	cursor: grabbing !important;
+}

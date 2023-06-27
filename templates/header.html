@@ -1,0 +1,64 @@
+<style>
+	
+	.section-header {
+		background-position: center center;
+		background-size: cover;
+	}
+	
+/*
+	[platform="desktop"] .section-header {
+		background-attachment: fixed;
+	}
+	
+	[platform="mobile"] .section-header {
+		background-size: auto 150%;
+	}
+*/
+	
+/*
+@media only screen and (max-width: 768px) {
+	.section-header {
+		background-attachment: fixed;
+	}
+}
+*/
+	
+</style>
+
+<div class="section-header" style="background-image: url(<%- node.image && node.image.src ? node.image.src : '' %>);">
+	
+	<div style="background: <%- node.header && node.header.background ? node.header.background : 'rgba(0,0,0,.5);' %>; position: relative; overflow: auto; height: 100%; backdrop-filter: blur(5px);">
+		
+		<div class="container">
+			<table width="100%" height="100%" style="min-height: <%- node.header && node.header.height ? node.header.height : '100%' %>;">
+				<tbody>
+					<tr>
+						<td align="center" valign="middle">
+							
+							<% if (node.header && node.header.title) { %>
+								<h1 style="color: #ffffff; font-size: 65px; font-weight: 300;"><%- node.header.title %></h1>
+							<% } %>
+							
+							<% if (node.header && node.header.image && node.header.image.src) { %>
+							
+								<div style="padding: 25px;">
+									<img src="<%- node.header.image.src %>" style="max-height: 20vh;" />
+								</div>
+							
+<!--
+								<div style="max-width: 480px; padding: 15px; margin: auto;">
+									<div style="max-width: 420px; height: 120px; background-image: url(<%- node.header.image.src %>); background-repeat: no-repeat; background-position: center center; margin: auto; background-size: contain;"></div>
+								</div>
+-->
+								
+							<% } %>
+							
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	
+</div>

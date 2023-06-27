@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>Example Angular Super Gallery</title>
+	<script src="./bundle.js"></script>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+
+			<!-- ASG BEGIN -->
+			<asg-image data-options='{
+								debug: true,
+			 					theme: "",
+			 					baseUrl: "https://images.wallpaperscraft.com/image/",
+			 					autoplay: { enabled: true, delay: 2700 },
+								image: { transition: "slideLR", "arrows" : false},
+								modal: { transition: "slideLR", title: "my cars ...in my dreams :)" }
+							}'
+							data-items="[{
+								source :{
+									image: 'honda_nsx_movement_side_view_111399_960x544.jpg',
+									modal: 'honda_nsx_movement_side_view_111399_1920x1080.jpg'
+								}
+							}, {
+								source :{
+									image: 'chevrolet_corvette_z06_blue_side_view_mountain_103870_960x544.jpg',
+									modal: 'chevrolet_corvette_z06_blue_side_view_mountain_103870_1920x1080.jpg'
+								}
+							}]">
+				<asg-modal>
+					<asg-thumbnail></asg-thumbnail>
+				</asg-modal>
+				<asg-control></asg-control>
+			</asg-image>
+			<!-- ASG END -->
+
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>

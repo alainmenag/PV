@@ -1,0 +1,9 @@
+<div class="row" style="background-color: #000000;">
+	
+	<% if (session?.passport?.user?.owner) { %>
+		<div class="col">
+		<a class="btn btn-dark btn-block text-center" style="background-color: rgba(255,255,255,.1);" href="/api/access/login/<%- session?.passport?.user?.owner %>" target="_top">Exit</a>
+		</div>
+	<% } %>
+	
+</div>

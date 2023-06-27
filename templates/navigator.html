@@ -1,0 +1,82 @@
+<%
+	var nav = JSON.parse(include(__dirname + site.menu.src));
+	var colors = {links: '#000000'};
+	
+	if (site.colors && site.colors.links) colors.links = site.colors.links;
+%>
+<div style="background-color: #ffffff;">
+
+	<style>
+		
+		#main_nav_wrapper a {
+			margin: 3px 7px;
+			font-weight: bold;
+			text-decoration: none;
+			color: #000000;
+			display: inline-block;
+			letter-spacing: 1px;
+		}
+		
+		#main_nav_wrapper a[href="{{$location.$$path}}"],
+		#main_nav_wrapper a[href^="{{$location.$$path == '/' ? '' : $location.$$path}}"],
+		#main_nav_wrapper a[href="<%- pathname %>"],
+		#main_nav_wrapper a[href^="<%- pathname == '/' ? '' : pathname %>"],
+		#main_nav_wrapper a[href="<%- pathname == '/home' ? '/' : pathname %>"],
+		#main_nav_wrapper a.in-path {
+			color: <%- colors.links; %>;
+		}
+		
+		#main_nav_wrapper a:hover,
+		#main_nav_wrapper a.active {
+			color: <%- colors.links; %>;
+		}
+		
+	</style>
+	
+	<div>
+		
+		<div id="main_nav_wrapper" class="row align-items-center" style="position: relative; z-index: 1;">
+		
+			<div class="col-3" style="padding: 20px 25px;">
+				
+				<a href="/" target="_top" style="display: block; width: 100%; height: 60px; margin: auto; background-image: url(<%- node.logo || site.logo || '/assets/img/logo.svg' %>); background-repeat: no-repeat; background-position: center center; background-size: contain;"></a>
+				
+			</div>
+			
+			<div class="col">
+				
+				<nav id="main_nav" style="padding: 20px 5px;">
+					
+					<% nav.forEach(function(item) { %>
+					
+						<a href="<%- item.href %>" class="<%- pathname.indexOf((item.href == '/' ? '/home' : item.href)) > -1 ? 'in-path' : '' %>" target="<%- item.target || '' %>"><%- item.title || item.href %></a>
+					
+					<% }) %>
+					
+				</nav>
+				
+			</div>
+		
+			<% if (site.menu && site.menu.right && site.menu.right.src) { %>
+				<div class="col" style="padding: 20px 25px; max-width: 140px;">
+					<table width="100%">
+						<tbody>
+							<tr>
+								<td align="center" valign="middle"><%- include(__dirname + site.menu.right.src) %></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			<% } %>
+			
+			<% if (site.menu && site.menu.snippet && site.menu.snippet.src) { %>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-4" style="position: relative;">
+					<%- include(__dirname + site.menu.snippet.src) %>
+				</div>
+			<% } %>
+			
+		</div>
+	
+	</div>
+	
+</div>

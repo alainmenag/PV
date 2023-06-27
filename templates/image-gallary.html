@@ -1,0 +1,21 @@
+<%
+
+	var images = section.data || [];
+
+%>
+<div class="row">
+
+	<% images.forEach(function(img) { %>
+
+	<div class="col <%- img.class %>" data-img="<%- img.src %>" style="overflow: hidden; min-width: 220px; min-height: 220px; background-size: cover; background-position: center center; background-image: url(<%- img.src %>);" ng-preview="<%- img.src %>"></div>
+	
+<!--
+	<div class="col" data-img="<%- img.src %>" style="overflow: hidden; min-width: 220px;">
+		<div style="width: 100%; min-height: 220px; background-size: cover; background-position: top center; background-image: url(<%- img.src %>);" ng-preview="<%- img.src %>"></div>
+	</div>
+-->
+	
+	
+	<% }) %>
+
+</div>

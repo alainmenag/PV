@@ -1,0 +1,25 @@
+<div class="gpu" style="z-index: 5000; position: fixed; background-color: #fff; width: 100%; display: flex; height: 100%; min-height: 100vh; top: 0; left: 0; padding: 15px; cursor: zoom-out;">
+		
+	<div style="position: absolute; margin: -3px; right: 10px; top: 8px;" stop-propagation>
+		
+		<div>
+			<button class="btn btn-dark btn-round" ng-click="preview.destory();" title="Close" style="margin-left: 0; margin-right: 0;">
+				<i class="ion-close"></i>
+			</button>
+		</div>
+		
+		<div ng-if="attrs.previewDelete">
+			<button class="btn btn-danger btn-round" ng-click="attrs.previewDelete($scope, {});" title="Delete" style="margin-left: 0; margin-right: 0;">Del.</button>
+		</div>
+		
+		<div ng-if="attrs.previewSelect">
+			<button class="btn btn-success btn-round" ng-click="attrs.previewSelect($scope, {});" title="Select" style="margin-left: 0; margin-right: 0;">
+				<i class="ion-checkmark"></i>
+			</button>
+		</div>
+		
+	</div>
+	
+	<img ng-src="{{attrs.ngPreview}}" style="max-width: 100%; margin: auto; max-height: 100%;" />
+	
+</div>

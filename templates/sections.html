@@ -1,0 +1,86 @@
+<% if (node.sections) {var i = 0; for (var prop in node.sections) {i++; section = node.sections[prop]; if (section.active === false) continue; %>
+	
+	<div id="<%- section.id || ('section_' + i) %>" style="background: <%- section.background || 'transparent' %>; padding: <%- section.padding || '0px' %>;" data-template="<%- section.template %>" data-collapse="<%- section.collapse %>" ng-if="<%- section.if || true %>">
+		
+		<% if (section.background && section.background.image) { %>
+		<style>
+			#<%- section.id || ('section_' + i) %> {
+				background-image: url("<%- section.background.image %>");
+				background-size: <%- section.background.size || 'cover' %>;
+				background-position: <%- section.background.position || 'center center' %>;
+			}
+		</style>
+		<% } %>
+		
+		<div class="container" style="overflow: auto; padding-left: 30px; padding-right: 30px; position: relative;">
+			
+			<% if (section.title) { %>
+				<h1 style="font-weight: 300; padding-top: 50px; padding-bottom: 10px; margin: 0; z-index: 1;">
+					
+					<a <%- section.link ? '' : '_' %>href="<%- section.link %>" target="_top" style="text-decoration: none; color: #000000;"><%- section.title %></a>
+					
+				</h1>
+			<% } %>
+			
+			<% if (section.description) { %>
+				<div style="z-index: 1;"><%- section.description %></div>
+			<% } %>
+	
+		</div>
+		
+		<% if (section.collapse) { %>
+		<style>
+			
+			[data-collapse="true"] .container-main {
+				position: relative;
+			}
+			
+			[data-collapse="true"] .expander:not(:checked) + .container-main {
+				height: 200px;
+				overflow: hidden;
+			}
+			
+			[data-collapse="true"] .expander:checked + .container-main .expander-btn {
+				background-color: #f44336 !important;
+			}
+			
+/*
+			[data-collapse="true"] .expander::checked .container-main {
+				
+			}
+*/
+			
+		</style>
+		
+		<input class="expander" id="<%- section.id || ('section_' + i) %>_expander" type="checkbox" style="display: none;" />
+		<% } %>
+			
+		<div class="container-main">
+			
+			<div>
+				<% try { %>
+					<%- include(__dirname + section.template, {modules: modules, section: section}); %>
+				<% } catch(err) { %>
+					<div class="container">
+						<div style="padding: 50px 10px;"><%- err.toString(); %></div>
+					</div>
+				<% }; %>
+			</div>
+			
+			<% if (section.collapse) { %>
+			<div style="position: absolute; bottom: 0; width: 100%; text-align: right; pointer-events: none; border-bottom: 5px solid #000000;">
+				<label class="btn expander-btn" style="background-color: #000000; color: #ffffff; border-top-left-radius: 15px; pointer-events: all;" for="<%- section.id || ('section_' + i) %>_expander" ng-click="scroll.to('#<%- section.id || ('section_' + i) %>');">View</label>
+			</div>
+			<% } %>
+			
+		</div>
+		
+		<% if (section.more) { %>
+		<div class="container" style="overflow: auto; text-align: center; padding-bottom: 55px;">
+			<a href="<%- section.more %>" target="_top" style="text-decoration: none; color: #000000;">View more.</a>
+		</div>
+		<% } %>
+	
+	</div>
+	
+<% }} %>
