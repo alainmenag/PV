@@ -1,0 +1,52 @@
+<%
+
+	tabs = node.sections;
+	tabbed = {};
+
+%>
+<div>
+	
+	<style>
+		
+		.section[data-tab] {
+			display: none;
+		}
+		
+		.section[data-tab].active,
+		html[data-hash=""] :nth-child(1 of .section-tab)
+		{
+			display: inherit;
+		}
+		
+		html[data-hash=""] :nth-child(1 of .tab-col) a,
+		.tab-col a.active
+		{
+			background-color: #ffffff !important;
+			border-bottom: 3px solid #b5b5b5;
+		}
+		
+	</style>
+	
+	<div class="container">
+		<div class="row">
+			
+			<% for (var prop in tabs)
+			{
+				tab = tabs[prop];
+				
+				if (!tab.tab || tabbed[tab.tab]) continue;
+				
+				tabbed[tab.tab] = true;
+				
+			%>
+			<div ng-if="<%- tab.if || true %>" class="col tab-col">
+				
+				<a href="<%- tab.tab %>" class="btn btn-basic btn-block tab-button text-center" ng-class="{'active': query.hash == '<%- tab.tab %>'}" style="margin-top: 15px; margin-bottom: -3px;"><%- tab.title || tab.tab %></a>
+				
+			</div>
+			<% } %>
+			
+		</div>
+	</div>
+
+</div>

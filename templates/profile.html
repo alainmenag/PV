@@ -14,7 +14,7 @@
 
 %>
 
-<div style="background-color: #ffffff;" ng-init="cache.profile = {};">
+<div ng-init="cache.profile = {};">
 	
 	<div style="height: 250px; background-color: #f2f2f2;">
 		<div style="height: 100%; width: 100%; background-size: 100% auto; background-position: center center; background-image: url('<%- node.data.profile?.banner %>');" ng-preview="<%- node.data.profile?.banner %>"></div>
@@ -99,9 +99,10 @@
 						>— {{"<%- node.data.profile.description %>" || '...'}}</span>
 					</div>
 					
+<!--
 					<div style="margin-top: 15px;">
 						
-						<% if (!readOnly) { %>
+						<% if (false && !readOnly) { %>
 							<div dropdown>
 								
 								<button class="btn btn-basic btn-round">
@@ -176,6 +177,7 @@
 						<% } %>
 						
 					</div>
+-->
 
 				</div>
 				

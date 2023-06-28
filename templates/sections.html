@@ -1,6 +1,15 @@
 <% if (node.sections) {var i = 0; for (var prop in node.sections) {i++; section = node.sections[prop]; if (section.active === false) continue; %>
 	
-	<div id="<%- section.id || ('section_' + i) %>" style="background: <%- section.background || 'transparent' %>; padding: <%- section.padding || '0px' %>;" data-template="<%- section.template %>" data-collapse="<%- section.collapse %>" ng-if="<%- section.if || true %>">
+	<div
+		id="<%- section.id || ('section_' + i) %>"
+		class="section <%- section.tab ? 'section-tab' : '' %>"
+		style="background: <%- section.background || 'transparent' %>; padding: <%- section.padding || '0px' %>;"
+		data-template="<%- section.template %>"
+		data-collapse="<%- section.collapse %>"
+		ng-if="<%- section.if || true %>"
+		ng-class="{'active': query.hash == '<%- section.tab %>'}"
+		<% if (section.tab) { %>data-tab="<%- section.tab %>"<% } %>
+	>
 		
 		<% if (section.background && section.background.image) { %>
 		<style>

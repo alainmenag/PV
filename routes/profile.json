@@ -6,23 +6,33 @@
 	"_image": {"src": "/nodes/home/spacex-uj3hvdfQujI-unsplash.jpg"},
 	"sections": [
 		
+		
+		
+		
 		{
 			"template": "/templates/breadcrumbs.html"
 		},
 		
 		{
-			"id": "profile",
 			"template": "/templates/profile.html"
+		},
+		
+		{
+			"template": "/templates/tabs.html"
 		}
+		
+		
+		
+		
+		
 		
 		
 	
 		, {
 			"template": "/templates/form.html",
-			"collapse": true,
+			"tab": "#greetings",
 			"if": "!node.data.profile.readOnly && ['users', 'departments'].indexOf(node.data.profile.category) > -1",
 			"title": "Greetings",
-			"background": "#f2f2f2",
 			"action": "/api/data?collection=profiles&category=users",
 			"method": "POST",
 			"reload": true,
@@ -106,6 +116,36 @@
 			}
 		}
 		
+		
+	
+		, {
+			"template": "/templates/form.html",
+			"tab": "#profile",
+			"if": "node.data.profile && !node.data.profile.readOnly",
+			"title": "Profile",
+			"action": "/api/data?collection=profiles&category=users",
+			"method": "POST",
+			"reload": true,
+			"confirm": true,
+			"data": {
+				
+				"_id": {
+					"id": "_id",
+					"value": "{{node.data.profile._id}}",
+					"type": "hidden"
+				}
+				
+				, "greetings.greeting.file": {
+					"title": "Greeting (MP3)",
+					"id": "greetings.greeting.file",
+					"value": "{{node.data.profile.greetings.greeting.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "audio/*"
+				}
+				
+			}
+		}
 		
 		
 		
