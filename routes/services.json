@@ -1,0 +1,25 @@
+{
+	"title": "Services",
+	"description": "Your services.",
+	"keywords": ["website", "pages", "presence"],
+	"_template": {"src": "/nodes/home.html"},
+	"_image": {"src": "/nodes/home/spacex-uj3hvdfQujI-unsplash.jpg"},
+	"sections": [
+		
+		{
+			"id": "services",
+			"title": "Services",
+			"template": "/templates/catalog.html",
+			"toggle": {
+				"model": "session.profile.services"
+			},
+			"data": []
+		}
+
+	],
+	"resources": [{
+		"src": "services.node",
+		"fn": "list",
+		"key": "list"
+	}]
+}

@@ -62,6 +62,8 @@
 							data-format="<%- section.columns[prop].format ? encodeURIComponent(section.columns[prop].format) : '' %>"
 							data-searchable="<%- section.columns[prop].searchable %>"
 							data-sortable="<%- section.columns[prop].sortable %>"
+							data-align="<%- section.columns[prop].align %>"
+							class="dt-<%- section.columns[prop].align %>"
 						><%- section.columns[prop].title %></th>
 					<% } %>
 				</tr>

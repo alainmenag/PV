@@ -3,9 +3,9 @@
 		
 		<div style="padding: 15px;">
 			
-			<div ng-if="state.list.length > 3" style="display: inline-block; vertical-align: middle; margin-right: 5px;">...</div>
+			<div ng-if="state.list.length > 2" style="display: inline-block; vertical-align: middle; margin-right: 5px;">...</div>
 			
-			<div ng-repeat="item in state.list" ng-show="$index > (state.list.length - 4)" style="display: inline-block; vertical-align: middle; margin-right: 15px; border-left: 3px solid #ccc; padding-left: 10px;">
+			<div ng-repeat="item in state.list" ng-show="$index > (state.list.length - 3)" style="display: inline-block; vertical-align: middle; margin-right: 15px; border-left: 3px solid #ccc; padding-left: 10px;">
 				
 				<a ng-if="!$last" title="{{item.title}}" ng-click="state.list.splice(state.list.indexOf(item));" href="{{item.url}}">
 					<span>{{item.title}}</span>
@@ -19,7 +19,7 @@
 				<b ng-if="$last">{{item.title}}</b>
 -->
 				
-				<b ng-if="$last" ng-click="state.clear();">{{item.title}}</b>
+				<b ng-if="$last" ng-click="state.reset();">{{item.title}}</b>
 				
 			</div>
 			

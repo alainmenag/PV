@@ -5,22 +5,8 @@
 	"_template": {"src": "/nodes/home.html"},
 	"_image": {"src": "/nodes/home/spacex-uj3hvdfQujI-unsplash.jpg"},
 	"sections": [
-		
+
 		{
-			"template": "/templates/breadcrumbs.html"
-		},
-		
-		{
-			"id": "services",
-			"title": "Services",
-			"template": "/templates/catalog.html",
-			"toggle": {
-				"model": "session.profile.services"
-			},
-			"data": []
-		}
-		
-		, {
 			"if": "session.profile._id",
 			"template": "/templates/catalog.html",
 			"title": "Account",
@@ -41,12 +27,6 @@
 			]
 		}
 		
-		
-		
-		
-		
-		
-
 		, {
 			"id": "access",
 			"template": "/templates/access.html",
@@ -54,9 +34,5 @@
 		}
 
 	],
-	"resources": [{
-		"src": "services.node",
-		"fn": "list",
-		"key": "list"
-	}]
+	"resources": []
 }

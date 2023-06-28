@@ -9,15 +9,36 @@
 		},
 		
 		{
-			"id": "departments",
-			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
+			"id": "list",
 			"title": "Departments",
-			"template": "/templates/catalog.html",
-			"page": "/@{{item._id}}",
-			"toggle": {
-				"model": "session.profile.departments"
-			},
-			"data": []
+			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
+			"template": "/templates/datatable.html",
+			"src": "/api/data?collection=profiles&category=departments",
+			"columns": [
+				{
+					"title": "",
+					"data": "id",
+					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a>",
+					"searchable": true
+				},
+				{
+					"title": "Name",
+					"data": "title",
+					"searchable": true
+				},
+				{
+					"title": "Members",
+					"data": "members",
+					"format": "{{members.length}}",
+					"searchable": false,
+					"sortable": false
+				},
+				{
+					"title": "PIN",
+					"data": "pin",
+					"sortable": false
+				}
+			]
 		}
 
 		
@@ -100,10 +121,6 @@
 		
 		
 	],
-	"resources": [{
-		"src": "oryk.node",
-		"fn": "queues.list",
-		"key": "list"
-	}]
+	"resources": []
 	
 }

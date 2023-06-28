@@ -17,7 +17,7 @@
 				{
 					"title": "",
 					"data": "id",
-					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a><div style=\"margin-top: 5px; font-size: 12px;\"><a href=\"/api/access/login/{{_id}}\" target=\"_top\">(LOGIN)</a></div>",
+					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a>",
 					"searchable": true
 				},
 				{
@@ -34,6 +34,15 @@
 					"title": "State",
 					"data": "state",
 					"searchable": true
+				},
+				
+				{
+					"title": "",
+					"data": "id",
+					"format": "<a class=\"btn btn-easy btn-round text-center\" href=\"/api/access/login/{{_id}}\" target=\"_top\" style=\"margin: 0; padding: 0px; line-height: 55px; font-size: 12px; font-weight: bold;\">Login</a>",
+					"searchable": false,
+					"sortable": false,
+					"align": "center"
 				}
 			]
 		}

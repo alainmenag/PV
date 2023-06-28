@@ -6,9 +6,11 @@
 			
 			<div class="col" style="padding: 45px 15px;">
 			
-				<a ng-if="!session.passport.user" href="/access/login?redirect={{encodeURIComponent($location.$$url)}}" target="_top" class="btn btn-block btn-info btn-pill text-center">Go login.</a>
+<!-- 				<a ng-if="!session.passport.user" href="/access/login?redirect={{encodeURIComponent($location.$$url)}}" target="_top" class="btn btn-block btn-info btn-pill text-center">Go login.</a> -->
+			
+				<a ng-if="!session.passport.user" href="/access/login" target="_top" class="btn btn-block btn-info btn-pill text-center">Go login.</a>
 				
-				<a ng-if="session.passport.user" href="/api/access/logout" target="_top" class="btn btn-block btn-danger btn-pill text-center">Go logout.</a>
+				<a ng-if="session.passport.user" href="/api/access/logout" ng-click="state.clear();" target="_top" class="btn btn-block btn-danger btn-pill text-center">Go logout.</a>
 				
 			</div>
 			

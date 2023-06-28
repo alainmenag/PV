@@ -81,7 +81,7 @@ module.exports = function(modules, config)
 	modules.exp.post('/api/access/login', function(req, res, next)
 	{
 		var strategy = req.query.strategy || req.body.strategy;
-		var successRedirect = '/account?';
+		var successRedirect = '/@?';
 		var failureRedirect = '/access/login?';
 		
 		var search = [];
@@ -105,8 +105,10 @@ module.exports = function(modules, config)
 				{
 					req.flash('error', r.err);
 					
-					res.redirect(failureRedirect);
+					res.redirect(302, failureRedirect);
 				})();
+				
+				if (r._id) successRedirect = ('/@' + r._id);
 
 				modules.passport.authenticate(
 				    'local', {
@@ -145,8 +147,11 @@ module.exports = function(modules, config)
 
 	modules.exp.get('/api/access/logout', function(req, res)
 	{
-		req.session.destroy(() => {
-			res.redirect('/account');
+		var _id = req?.session?.uid;
+		
+		req.session.destroy(() =>
+		{
+			res.redirect(302, _id ? ('/@' + _id) : '/');
 		});
 	});
 	
@@ -169,8 +174,9 @@ module.exports = function(modules, config)
 		var pass = req.session?.passport;
 		var user = pass ? pass.user : null; // current user
 		
-		var done = function(location) {
-			res.redirect(location || req.headers.referer || '/account');
+		var done = function(location)
+		{
+			res.redirect(302, location || req.headers.referer || ('/@' + _id));
 		};
 		
 		if (!_id || !user) return done(); // must have a targte & be logged in
@@ -192,64 +198,31 @@ module.exports = function(modules, config)
 			done('/services/team');
 		})();
 		
+		try {
+			_id = (new modules.mongodb.ObjectId(_id));
+		} catch(err) {};
+		
 		// check db for access allowed
 		modules.mongo.profiles.findOne({
-			_id: (new modules.mongodb.ObjectId(_id)),
+			_id: _id,
 			owners: user.uid // if current logged in user has ownership over the given user
 		}, function(err, profile)
 		{
 			if (profile)
 			{
 				req.session.passport.user.owner = user.uid;
-				req.session.passport.user.uid = _id;	
+				req.session.passport.user.uid = profile._id.toString();	
 				
-				req.flash('info', 'You\'re now logged in as: ' + (profile.title || _id)); done('/account');
-			} else {
-				req.flash('warning', 'Login failed.'); done('/services/team');
+				//req.flash('info', 'You\'re now logged in as: ' + (profile.title || _id));
+				
+				done('/@' + profile._id);
+				
+			} else
+			{
+				req.flash('warning', 'Access failed.'); done('/services/team');
 			}
 		});
 	});
-	
-
-/*
-	modules.router.mount({
-		node: 'access.node',
-		id: '34k5j3kl4jsdi345345fsaccessassume',
-		method: 'get',
-		path: '/api/access/login/:_id',
-		callback: function(req, res, next)
-		{
-			var _id = req.params._id; // target user
-			var pass = req.session?.passport;
-			var user = pass ? pass.user : null; // current user
-			var done = function() {
-				res.redirect(req.headers.referer || '/account');
-			};
-			
-			if (!_id || !user) return done();
-			
-			// revert to owner
-			if (_id == user.owner) return (function()
-			{
-				req.session.passport.user.uid = user.owner;
-				req.session.passport.user.owner = null;
-				
-				done();
-			})();
-			
-			if (user.uid == _id)
-			{
-				req.flash('error', 'You cannot login as yourself.');
-			} else {
-				req.session.passport.user.owner = user.uid;
-				req.session.passport.user.uid = _id;
-			}
-
-			done();
-		}
-	});
-*/
-
 
 // ==========================================================================
 // NODE - ACCESS - EXPORTS

@@ -768,7 +768,7 @@ async function render(req, callback = function() {})
 	
 	if (payload.pathname.indexOf('/@') === 0)
 	{
-		payload.params._id = payload.pathname.split('/@').pop().split('/')[0];
+		payload.params._id = payload.pathname.split('/@').pop().split('/')[0] || req.session.uid;
 		payload.pathname = '/profile';
 	}
 	

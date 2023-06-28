@@ -639,7 +639,8 @@ app.directive('dt', function($rootScope, $timeout, $compile) {
 						data: th.dataset.key,
 						render: render,
 						searchable: th.dataset.searchable === 'true',
-						sortable: th.dataset.sortable === 'false' ? false : true
+						sortable: th.dataset.sortable === 'false' ? false : true,
+						className: 'dt-' + th.dataset.align
 					});
 				});
 				
