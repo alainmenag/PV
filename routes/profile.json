@@ -14,6 +14,102 @@
 			"id": "profile",
 			"template": "/templates/profile.html"
 		}
+		
+		
+	
+		, {
+			"template": "/templates/form.html",
+			"collapse": true,
+			"if": "!node.data.profile.readOnly && ['users', 'departments'].indexOf(node.data.profile.category) > -1",
+			"title": "Greetings",
+			"background": "#f2f2f2",
+			"action": "/api/data?collection=profiles&category=users",
+			"method": "POST",
+			"reload": true,
+			"confirm": true,
+			"data": {
+				
+				"_id": {
+					"id": "_id",
+					"value": "{{node.data.profile._id}}",
+					"type": "hidden"
+				}
+				
+				, "greetings.greeting.file": {
+					"title": "Greeting (MP3)",
+					"id": "greetings.greeting.file",
+					"value": "{{node.data.profile.greetings.greeting.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "audio/*"
+				}
+				
+				, "greetings.greeting.text": {
+					"title": "Greeting (Text)",
+					"id": "greetings.greeting.text",
+					"value": "{{node.data.profile.greetings.greeting.text}}",
+					"model": false,
+					"type": "text"
+				}
+				
+				, "greetings.voicemail.file": {
+					"title": "Voicemail (MP3)",
+					"id": "greetings.voicemail.file",
+					"value": "{{node.data.profile.greetings.voicemail.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "audio/*"
+				}
+				
+				, "greetings.voicemail.text": {
+					"title": "Voicemail (Text)",
+					"id": "greetings.voicemail.text",
+					"value": "{{node.data.profile.greetings.voicemail.text}}",
+					"model": false,
+					"type": "text"
+				}
+				
+				, "greetings.hold.file": {
+					"title": "Hold (MP3)",
+					"id": "greetings.hold.file",
+					"value": "{{node.data.profile.greetings.hold.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "audio/*"
+				}
+				
+				, "greetings.hold.text": {
+					"title": "Hold (Text)",
+					"id": "greetings.hold.text",
+					"value": "{{node.data.profile.greetings.hold.text}}",
+					"model": false,
+					"type": "text"
+				}
+				
+				, "greetings.ringback.file": {
+					"title": "Ringback (MP3)",
+					"id": "greetings.ringback.file",
+					"value": "{{node.data.profile.greetings.ringback.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "audio/*"
+				}
+				
+				, "greetings.ringback.text": {
+					"title": "Ringback (Text)",
+					"id": "greetings.ringback.text",
+					"value": "{{node.data.profile.greetings.ringback.text}}",
+					"model": false,
+					"type": "text"
+				}
+				
+			}
+		}
+		
+		
+		
+		
+		
 
 	],
 	"resources": [

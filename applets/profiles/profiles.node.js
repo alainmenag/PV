@@ -36,18 +36,25 @@ module.exports = function(modules, config)
 			modules.mongo.profiles.findOne(q, function(err, profile)
 			{
 				if (!profile) return resolve();
+
+				var owners = profile.owners || [];
 				
-/*
-				var owners = profile.owners || []; owners.push(payload.session.uid);
+				owners.push(profile._id.toString());
 				
-				if (owners.indexOf(profile._id.toString()) > -1)
-				{} else {
+				profile.readOnly = true;
+				
+				if (payload.session.uid && owners.indexOf(payload.session.uid) > -1)
+				{
+					profile.readOnly = false;
+				}
+				
+				if (profile.readOnly)
+				{
 					delete profile.password;
 					delete profile.secure;
 					delete profile.access_token;
 					delete profile.aliases;
 				}
-*/
 				
 				resolve(profile);
 			});

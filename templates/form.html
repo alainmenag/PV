@@ -106,7 +106,7 @@
 												placeholder="<%- item.placeholder || '...' %>"
 												autocomplete="<%- item.autocomplete || 'yes' %>"
 												<%- item.model ? ('ng-model="' + model + '"') : '' %>
-											></textarea>
+											><%- query[item.id] || item.value %></textarea>
 										
 										<% } else if (item.type == 'place' || item.type == 'coordinates') { %>
 										
@@ -125,6 +125,38 @@
 												<%- item.required === true ? 'required' : '' %>
 											/>
 											
+										<% } else if (item.type == 'file') { %>
+										
+											<style>
+												[type="file"][default=""] + div {
+													display: none;
+												}
+											</style>
+										
+											<input
+												input-fill
+												class="smooth-corners"
+												type="file"
+												id="<%- item.id %>"
+												name="<%- item.id %>"
+												style="width: 100%; margin: 5px 0;"
+												accept="<%- item.accept %>"
+												default="<%- item.value %>"
+												<%- item.model ? ('ng-model="' + model + '"') : '' %>
+												<%- item.required === true ? 'required' : '' %>
+											/>
+											
+											<div>
+												
+												<% if (item?.accept.indexOf('audio/') > -1) { %>
+													<audio controls style="vertical-align: middle;">
+														<source src="<%- item.value %>">
+													</audio>
+												<% } %>
+												
+												<button class="btn btn-link" style="vertical-align: middle;" name="<%- item.id %>" value="">Remove</button>
+											</div>
+												
 										<% } else { %>
 										
 										<input

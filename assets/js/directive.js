@@ -503,10 +503,19 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 			        var run = function()
 			        {
 				        var data = {};
+				        var items = $('[name]:not(button)', elem);
 				        
-				        _.each($('[name]', elem), function(inpt)
+				        try {
+					        //if (e.originalEvent.submitter.name) data += (data.length ? '&' : '') + e.originalEvent.submitter.name + '=' + e.originalEvent.submitter.value
+					        if (e.originalEvent.submitter.name) items.push({
+						        type: 'hidden',
+						        name: e.originalEvent.submitter.name,
+						        value: e.originalEvent.submitter.value
+					        });
+				        } catch(err) {};
+				        
+				        _.each(items, function(inpt)
 				        {
-					        var mdl = $(inpt).attr('ng-model');
 					        var vlu = inpt.value;
 					        
 					        if (inpt.type == 'number') vlu = parseInt(vlu);
@@ -516,24 +525,10 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 					        	&& (new RegExp('^[0-9]$')).test(inpt.value)
 					        ) vlu = parseInt(vlu);
 					        
-					        //(new RegExp('^[0-9]$')).test(inpt.value)
-					        //if (!vlu && scope[inpt.name]) vlu = scope[inpt.name];
-					        
 					        if (inpt.type == 'file' && inpt.files[0]) vlu = inpt.src;
+					        if (inpt.type == 'file' && !vlu) vlu = $(inpt).attr('default');
 					        
-
 					        vlu = vlu || null;
-					        
-/*
-					        if (inpt.type == 'file' && inpt.files[0]) vlu = {
-						        src: inpt.src,
-						        filename: inpt.files[0].name,
-						        size: inpt.files[0].size,
-						        type: vlu.type,
-						        lastModified: inpt.files[0].lastModified,
-						        ts: Date.now()
-					        };
-*/
 					        					        
 					        data[inpt.name] = vlu;
 				        });
