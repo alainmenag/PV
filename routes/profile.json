@@ -6,13 +6,6 @@
 	"_image": {"src": "/nodes/home/spacex-uj3hvdfQujI-unsplash.jpg"},
 	"sections": [
 		
-		
-		
-		
-		{
-			"template": "/templates/breadcrumbs.html"
-		},
-		
 		{
 			"template": "/templates/profile.html"
 		},
@@ -22,7 +15,7 @@
 		}
 		
 		, {
-			"tab": "#bulletins",
+			"tab": "#",
 			"template": "/templates/bulletins.html",
 			"if": "node.data.profile._id"
 		}
@@ -31,7 +24,7 @@
 	
 		, {
 			"template": "/templates/form.html",
-			"tab": "#bulletins",
+			"tab": "#",
 			"if": "!node.data.profile.readOnly && ['users', 'departments'].indexOf(node.data.profile.category) > -1",
 			"action": "/api/data?collection=profiles&category=bulletins",
 			"method": "POST",
@@ -41,7 +34,7 @@
 				"description": {
 					"width": "12",
 					"height": "100",
-					"title": "Post a message:",
+					"title": "Post a bulletin:",
 					"id": "description",
 					"model": false,
 					"type": "textarea",
@@ -162,9 +155,35 @@
 					"type": "hidden"
 				}
 				
+				
+
+				
+				, "image": {
+					"title": "Profile Image",
+					"id": "image",
+					"value": "{{node.data.profile.image}}",
+					"model": false,
+					"type": "file",
+					"accept": "image/*",
+					"onchange": "event.target.form.submit(event);"
+				}
+				
+				
+
+				
+				, "cover": {
+					"title": "Cover Photo",
+					"id": "cover",
+					"value": "{{node.data.profile.cover}}",
+					"model": false,
+					"type": "file",
+					"accept": "image/*",
+					"onchange": "event.target.form.submit(event);"
+				}
+				
 				, "deactivated": {
 					"if": "!node.data.profile.deactivated",
-					"title": "Deactivate",
+					"title": "Deactivate Profile",
 					"id": "deactivated",
 					"value": 1,
 					"model": false,
@@ -173,7 +192,7 @@
 				
 				, "activate": {
 					"if": "node.data.profile.deactivated",
-					"title": "Activate",
+					"title": "Activate Profile",
 					"id": "deactivated",
 					"value": 0,
 					"model": false,
@@ -183,12 +202,13 @@
 				, "deleted": {
 					"if": "node.data.profile.deactivated",
 					"class": "btn-danger",
-					"title": "Delete",
+					"title": "Delete Profile",
 					"id": "deleted",
 					"value": 1,
 					"model": false,
 					"type": "button"
 				}
+				
 				
 			}
 		}

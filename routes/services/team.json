@@ -4,10 +4,6 @@
 	"sections": [
 		
 		{
-			"template": "/templates/breadcrumbs.html"
-		},
-		
-		{
 			"id": "list",
 			"title": "Teammates",
 			"if": "session.profile.services['6486efa055bedc996a215d36'].added",

@@ -29,13 +29,30 @@
 							cache['_<%- section.id %>']['<%- item.id || i %>'] = JSON.parse('<%- JSON.stringify(item) %>');
 						</script>
 						
-						<label>
-						
-							<i class="<%- item.icon %>"></i>
+						<div>
 							
-							<% if (item.type != 'button') { %>
-								<% if (item.required) { %><span class="text-danger">*</span><% } %>
-								<span><%- item.title %></span>
+							<label for="<%- item.id %>">
+							
+								<i class="<%- item.icon %>"></i>
+								
+								<% if (item.type != 'button') { %>
+								
+									<% if (item.required) { %><span class="text-danger">*</span><% } %>
+									
+									<span><%- item.title %></span>
+									
+								<% } %>
+								
+							</label>
+							
+							<% if (item.type == 'file') { %>
+							
+								<style>.hider[default=""] + button {display: none;}</style>
+								
+								<span class="hider" default="<%- item.value %>"></span>
+							
+								<button class="btn btn-link text-danger" style="vertical-align: middle; font-size: 12px;" name="<%- item.id %>" value="">(CLEAR)</button>
+								
 							<% } %>
 							
 							<table width="100%">
@@ -135,11 +152,7 @@
 											
 										<% } else if (item.type == 'file') { %>
 										
-											<style>
-												[type="file"][default=""] + div {
-													display: none;
-												}
-											</style>
+											<style>[type="file"][default=""] + div {display: none;}</style>
 										
 											<input
 												input-fill
@@ -150,6 +163,7 @@
 												style="width: 100%; margin: 5px 0;"
 												accept="<%- item.accept %>"
 												default="<%- item.value %>"
+												onchange="<%- item.onchange %>"
 												<%- item.model ? ('ng-model="' + model + '"') : '' %>
 												<%- item.required === true ? 'required' : '' %>
 											/>
@@ -157,12 +171,11 @@
 											<div>
 												
 												<% if (item?.accept.indexOf('audio/') > -1) { %>
-													<audio controls style="vertical-align: middle;">
+													<audio controls style="vertical-align: middle; width: 100%;">
 														<source src="<%- item.value %>">
 													</audio>
 												<% } %>
 												
-												<button class="btn btn-link" style="vertical-align: middle;" name="<%- item.id %>" value="">Remove</button>
 											</div>
 												
 										<% } else { %>
@@ -210,7 +223,7 @@
 								</tr>
 							</table>
 							
-						</label>
+						</div>
 						
 						<div><%- item.description %></div>
 						

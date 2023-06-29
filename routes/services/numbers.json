@@ -5,10 +5,6 @@
 	"sections": [
 		
 		{
-			"template": "/templates/breadcrumbs.html"
-		},
-		
-		{
 			"id": "list",
 			"title": "Numbers",
 			"if": "session.profile.services['648e4dca55bedc996a231032'].added",
