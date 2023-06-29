@@ -21,9 +21,35 @@
 			"template": "/templates/tabs.html"
 		}
 		
+		, {
+			"tab": "#bulletins",
+			"template": "/templates/bulletins.html",
+			"if": "node.data.profile._id"
+		}
 		
 		
-		
+	
+		, {
+			"template": "/templates/form.html",
+			"tab": "#bulletins",
+			"if": "!node.data.profile.readOnly && ['users', 'departments'].indexOf(node.data.profile.category) > -1",
+			"action": "/api/data?collection=profiles&category=bulletins",
+			"method": "POST",
+			"reload": true,
+			"data": {
+				
+				"description": {
+					"width": "12",
+					"height": "100",
+					"title": "Post a message:",
+					"id": "description",
+					"model": false,
+					"type": "textarea",
+					"required": true
+				}
+				
+			}
+		}
 		
 		
 		
@@ -127,6 +153,7 @@
 			"method": "POST",
 			"reload": true,
 			"confirm": true,
+			"submittable": false,
 			"data": {
 				
 				"_id": {
@@ -135,13 +162,32 @@
 					"type": "hidden"
 				}
 				
-				, "greetings.greeting.file": {
-					"title": "Greeting (MP3)",
-					"id": "greetings.greeting.file",
-					"value": "{{node.data.profile.greetings.greeting.file}}",
+				, "deactivated": {
+					"if": "!node.data.profile.deactivated",
+					"title": "Deactivate",
+					"id": "deactivated",
+					"value": 1,
 					"model": false,
-					"type": "file",
-					"accept": "audio/*"
+					"type": "button"
+				}
+				
+				, "activate": {
+					"if": "node.data.profile.deactivated",
+					"title": "Activate",
+					"id": "deactivated",
+					"value": 0,
+					"model": false,
+					"type": "button"
+				}
+				
+				, "deleted": {
+					"if": "node.data.profile.deactivated",
+					"class": "btn-danger",
+					"title": "Delete",
+					"id": "deleted",
+					"value": 1,
+					"model": false,
+					"type": "button"
 				}
 				
 			}
@@ -159,9 +205,15 @@
 			"key": "profile"
 		},
 		{
-			"src": "oryk.node",
-			"fn": "queues.list",
-			"key": "departments"
+			"src": "data.node",
+			"fn": "list",
+			"key": "bulletins",
+			"limit": 5,
+			"sort": {"created": -1},
+			"category": "bulletins",
+			"collection": "profiles"
 		}
 	]
 }
+
+

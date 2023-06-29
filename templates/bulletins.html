@@ -1,0 +1,29 @@
+<div style="padding: 25px 0;">
+	
+	<div class="container">
+		<div style="padding: 0 15px;">
+			
+			<% if (!node.data.bulletins || node.data.bulletins.length == 0) { %>
+				<p>No bulletins pulled.</p>
+			<% } %>
+			
+			<% if (node.data.bulletins) for (var prop in node.data.bulletins)
+			{
+				bulletin = node.data.bulletins[prop];
+			%>
+				<div style="padding: 25px; background-color: #ffffff; border-radius: 5px; margin-top: 15px;">
+					
+					<div style="font-size: 12px;"><%= bulletin.created || '...' %></div>
+					
+					<div style="margin-top: 10px;">
+						<p style="white-space: pre-wrap; padding: 0; margin: 0;"><%= bulletin.description || '...' %></p>
+					</div>
+					
+				</div>
+			
+			<% } %>
+			
+		</div>
+	</div>
+	
+</div>

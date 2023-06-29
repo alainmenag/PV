@@ -23,7 +23,7 @@
 				
 				%>
 				
-					<div class="col-sm-12 col-md-6 <%- item.class %> no-scroll" style="min-width: 200px; padding: 5px;">
+					<div ng-if="<%- item.if || true %>" class="col-sm-12 col-md-<%- item.width || 6 %> no-scroll" style="min-width: 200px; padding: 5px;">
 						
 						<script>
 							cache['_<%- section.id %>']['<%- item.id || i %>'] = JSON.parse('<%- JSON.stringify(item) %>');
@@ -33,9 +33,10 @@
 						
 							<i class="<%- item.icon %>"></i>
 							
-							<% if (item.required) { %><span class="text-danger">*</span><% } %>
-							
-							<span><%- item.title %></span>
+							<% if (item.type != 'button') { %>
+								<% if (item.required) { %><span class="text-danger">*</span><% } %>
+								<span><%- item.title %></span>
+							<% } %>
 							
 							<table width="100%">
 								<tr>
@@ -100,13 +101,20 @@
 										<% } else if (item.type == 'textarea') { %>
 										
 											<textarea
-												style="width: 100%; margin: 5px 0; min-height: 200px;"
+												style="width: 100%; margin: 5px 0; min-height: <%- item.height || '200' %>px;"
 												class="smooth-corners"
 												name="<%- item.id %>"
 												placeholder="<%- item.placeholder || '...' %>"
 												autocomplete="<%- item.autocomplete || 'yes' %>"
+												<%- item.required === true ? 'required' : '' %>
 												<%- item.model ? ('ng-model="' + model + '"') : '' %>
 											><%- query[item.id] || item.value %></textarea>
+										
+										<% } else if (item.type == 'button') { %>
+										
+											<button class="btn btn-basic smooth-corners btn-block <%- item.class %>" style="margin: 5px 0;" name="<%- item.id %>" value="<%- item.value %>">
+												<span><%- item.title %></span>
+											</button>
 										
 										<% } else if (item.type == 'place' || item.type == 'coordinates') { %>
 										
@@ -218,7 +226,7 @@
 			
 			</div>
 			
-			<% if (section.action) { %>
+			<% if (section.action && section.submittable !== false) { %>
 				<div style="margin-top: 15px;">
 					<button type="submit" class="btn {{$form.$dirty ? 'btn-danger' : 'btn-info'}} smooth-corners" style="width: 100%; max-width: 120px;">{{$form.$saving ? '...' : ($form.$dirty ? 'Save' : 'Submit')}}</button>
 				</div>

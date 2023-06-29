@@ -830,7 +830,7 @@ var main = function (
 	{
 		var key = 'history_' + window.gid;
 		var list = $rootScope.state.list;
-		var n = {title: document.title, url: $location.$$url, ts: Date.now()}; // new location
+		var n = {title: document.title, url: $location.$$url.split('#')[0], ts: Date.now()}; // new location
 		var l = list[list.length - 1] || {}; // last location
 		var p = list[list.length - 2] || {}; // prev location
 		

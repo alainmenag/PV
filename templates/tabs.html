@@ -27,7 +27,7 @@
 		
 	</style>
 	
-	<div class="container">
+	<div class="container" style="padding: 0;">
 		<div class="row">
 			
 			<% for (var prop in tabs)
@@ -41,7 +41,7 @@
 			%>
 			<div ng-if="<%- tab.if || true %>" class="col tab-col">
 				
-				<a href="<%- tab.tab %>" class="btn btn-basic btn-block tab-button text-center" ng-class="{'active': query.hash == '<%- tab.tab %>'}" style="margin-top: 15px; margin-bottom: -3px;"><%- tab.title || tab.tab %></a>
+				<a href="<%- tab.tab %>" class="btn btn-basic btn-block tab-button text-center" ng-class="{'active': query.hash == '<%- tab.tab %>'}" style="margin-top: 5px; margin-bottom: -3px;"><%- tab.title || tab.tab %></a>
 				
 			</div>
 			<% } %>

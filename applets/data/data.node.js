@@ -44,6 +44,28 @@ module.exports = function(modules, config) {
 		});
 	};
 	
+	exports.list = async function(payload, options)
+	{
+		var _id = await exports._id(options.collection, payload.params._id);
+			
+		return new Promise(resolve =>
+		{
+			var collection = modules.mongo[options.collection];
+			
+			if (!collection) return resolve();
+			
+			var query = {category: options.category, owners: _id || payload.params._id};
+			
+			collection.find(query, null, {
+				limit: options.length || options.limit || 0,
+				sort: options.sort
+			}, function(err, docs)
+			{
+				resolve(docs);
+			});
+		});
+	};
+	
 	exports.find = async function(options, callback = function() {})
 	{
 		var collection = modules.mongo[options.collection];
@@ -184,8 +206,10 @@ module.exports = function(modules, config) {
 			if (!collection) return res.end();
 			
 			req.body._id = new modules.mongodb.ObjectId();
+			req.body.id = req.body.id || req.body._id.toString();
 			req.body.owners = [uid];
 			req.body.category = req.query.category;
+			req.body.created = Date.now();
 
 			return modules.mongo.profiles.findAndModify({
 				query: {_id: req.body._id},
@@ -196,7 +220,7 @@ module.exports = function(modules, config) {
 			{
 				if (!doc && !err) err = 'Update failed.';
 				
-				res.send({data: doc});
+				res.send({data: doc, err: err?.toString()});
 			});
 
 			res.end();
@@ -265,6 +289,8 @@ module.exports = function(modules, config) {
 			
 			query['$or'].push({owners: uid}); // if the editor owns the doc
 			query['$or'].push({_id: (new modules.mongodb.ObjectId(uid))}); // if the editor owns the doc
+			
+			req.body.updated = Date.now();
 			
 			//console.log(req.body); return res.end();
 			
