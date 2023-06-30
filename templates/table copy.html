@@ -1,0 +1,35 @@
+<div class="container">
+	<div style="padding: 45px 15px;">
+		
+		<style>
+		
+		</style>
+		
+		<div dstyle="display: none;" ng-init="columns = <%= JSON.stringify(section.columns) %>"></div>
+		
+		<table class="display" style="width: 100%;" src="<%- section.src %>">
+			
+			<thead>
+				<tr>
+					<% 
+						var i = 0; for (var prop in section.columns) {
+						i++; 
+					%>
+						<th
+							align="<%- section.columns[prop].align || 'left' %>"
+						><%- section.columns[prop].title %></th>
+					<% } %>
+				</tr>
+			</thead>
+			<tbody>
+				
+				<tr ng-repeat="row in node.data.list">
+					<td ng-repeat="col in columns">{{col.data}}</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+	</div>
+</div>

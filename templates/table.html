@@ -1,0 +1,55 @@
+<div class="container">
+	<div style="padding: 45px 15px;">
+		
+		<style>
+			
+			.table tr th,
+			.table tr td {
+				padding: 10px 15px;
+			}
+			
+			.table tr:nth-child(even) {background: #f2f2f2}
+		
+		</style>
+		
+		<table class="table display" style="width: 100%;" src="<%- section.src %>">
+			
+			<thead>
+				<tr>
+					<% 
+						var i = 0; for (var prop in section.columns) {
+						i++; 
+						var col = section.columns[prop];
+					%>
+						<th
+							align="<%- col.align || 'left' %>"
+						><%- col.title %></th>
+					<% } %>
+				</tr>
+			</thead>
+			<tbody>
+
+				<tr ng-repeat="row in node.data.list">
+					<% 
+						for (var p in section.columns)
+						{
+						var col = section.columns[p];
+					%>
+						<td
+							align="<%- col.align || 'left' %>"
+						>
+							<% if (col.format) { %>
+								<%- col.format %>
+							<% } else { %>
+								{{row['<%- col.data %>']}}
+							<% } %>
+						</td>
+					<% } %>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+	</div>
+</div>

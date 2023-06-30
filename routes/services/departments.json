@@ -8,14 +8,22 @@
 			"id": "list",
 			"title": "Departments",
 			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
-			"template": "/templates/datatable.html",
+			"template": "/templates/table.html",
 			"src": "/api/data?collection=profiles&category=departments",
 			"columns": [
 				{
 					"title": "",
 					"data": "id",
-					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a>",
+					"format": "<a href=\"/@{{row._id}}\"><span class=\"handle\">{{row.id}}</span></a>",
 					"searchable": true
+				}
+				, {
+					"title": "Join",
+					"align": "center",
+					"data": "_id",
+					"format": "<form system-form method=\"POST\" action=\"/api/services\" key=\"session.profile\"><input type=\"checkbox\" name=\"action\" ng-checked=\"session.profile.departments[row._id].added\" value=\"{{session.profile.departments[row._id].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"{{row.category}}\" /><input type=\"hidden\" name=\"uid\" value=\"{{session.uid}}\" /></form>",
+					"searchable": false,
+					"sortable": false
 				},
 				{
 					"title": "Name",
@@ -25,7 +33,7 @@
 				{
 					"title": "Members",
 					"data": "members",
-					"format": "{{members.length}}",
+					"format": "{{row.members.length}}",
 					"searchable": false,
 					"sortable": false
 				},
@@ -117,6 +125,16 @@
 		
 		
 	],
-	"resources": []
+	"resources": [
+		
+		{
+			"src": "data.node",
+			"fn": "list",
+			"key": "list",
+			"category": "departments",
+			"collection": "profiles"
+		}
+		
+	]
 	
 }

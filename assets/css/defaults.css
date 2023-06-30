@@ -310,6 +310,10 @@ input, textarea, select {
 	border: none;
 	background-color: #ebebeb;
 	padding: 15px;
+}
+
+input[type="text"],
+input[type="number"] {
 	min-height: 55px;
 }
 
@@ -403,11 +407,16 @@ tags-input .tags .tag-item.selected {
 	right: 0 !important;
 	bottom: 0 !important;
 	z-index: 100 !important;
+	filter: none !important;
 	background-repeat: no-repeat !important;
 	background-color: #000000 !important;
 	background-color: rgba(0,0,0,.7) !important;
 	backdrop-filter: blur(5px) !important;
 	-webkit-backdrop-filter: blur(5px) !important;
+}
+
+[ng-preview][data-open="1"] * {
+	filter: none !important;
 }
 
 
@@ -429,6 +438,16 @@ tags-input .tags .tag-item.selected {
     vertical-align: middle;
 }
 
-
+.avatar {
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	height: 45px;
+	width: 45px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #f2f2f2;
+	border-radius: 100%;
+}
 
 

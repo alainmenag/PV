@@ -94,7 +94,7 @@ module.exports = function(modules, config)
 				{
 					done(err || !doc ? {err: (err || 'Failed to create.')} : doc);
 				
-					if (doc) modules.pubSub.emit('provision', {uid: doc._id});
+					if (doc) modules.pubSub.emit('profiles', doc);
 				});
 			});
 		});
@@ -137,7 +137,7 @@ module.exports = function(modules, config)
 				
 				done(err ? {err : err} : doc);
 				
-				if (doc) modules.pubSub.emit('provision', {uid: doc._id});
+				if (doc) modules.pubSub.emit('profiles', doc);
 			});
 		});
 	};

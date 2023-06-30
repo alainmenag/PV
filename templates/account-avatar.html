@@ -1,33 +1,17 @@
 <div style="padding: 15px 25px; text-align: center;">
-	<div style="display: inline-block; vertical-align: middle;">
-		<table>
+	<div style="height: 100%; width: auto; display: block;">
+		<table height="100%">
 			<tbody>
 				<tr>
 					
-					<% if (session?.passport?.user?.owner) { %>
-					<td align="center" style="padding: 0 3px;">
-						<a href="/api/access/login/<%- session?.passport?.user?.owner || '*' %>" target="_top" class="btn btn-dark btn-round" style="margin: 0; color: #fff; line-height: 55px; padding: 0; font-size: 12px;">Exit</a>
-					</td>
-					<% } %>
-					
 					<% if (session?.uid) { %>
-					<td align="center" style="padding: 0 3px;">
-						<a href="/@<%- session?.profile?.id %>" class="btn btn-basic btn-round" style="margin: 0;">
-							<table width="100%" height="100%">
-								<tbody>
-									<tr>
-										<td align="center" valign="middle">
-											<i class="fa fa-user" style="display: block; font-size: 20px;"></i>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</a>
+					<td align="center" style="padding: 0 3px;" valign="middle">
+						<a href="/@<%- session?.profile?.id %>" class="btn btn-basic btn-round" style="margin: 0; display: block; background-size: cover; background-position: center center; padding: 0; background-image: url('<%- session?.profile?.image || ("/cdn/avatars/" + session?.profile?.id) %>');"></a>
 					</td>
 					<% } %>
 					
-					<td align="center" style="padding: 0 3px;">
-						<a href="/services" class="btn btn-basic btn-round" style="margin: 0;">
+					<td align="center" style="padding: 0 3px;" valign="middle">
+						<a href="/services" class="btn btn-basic btn-round" style="margin: 0; display: block;">
 							<table width="100%" height="100%">
 								<tbody>
 									<tr>
@@ -41,13 +25,13 @@
 					</td>
 					
 					<% if (session?.uid) { %>
-					<td align="center" style="padding: 0 3px;">
-						<a href="/api/access/logout" ng-click="state.clear();" target="_top" class="btn btn-basic btn-round" style="margin: 0;">
+					<td align="center" style="padding: 0 3px;" valign="middle">
+						<a href="/api/access/logout" ng-click="state.clear();" target="_top" class="btn btn-basic btn-round" style="margin: 0; display: block;" onclick="c = confirm('Are you sure?'); c ? null : event.preventDefault();">
 							<table width="100%" height="100%">
 								<tbody>
 									<tr>
 										<td align="center" valign="middle">
-											<i class="fa fa-sign-out" style="display: block; font-size: 20px;"></i>
+											<i class="fa fa-lock" style="display: block; font-size: 20px;"></i>
 										</td>
 									</tr>
 								</tbody>
@@ -57,13 +41,29 @@
 					<% } %>
 					
 					<% if (!session?.uid) { %>
-					<td align="center" style="padding: 0 3px;">
-						<a href="/access/login" class="btn btn-basic btn-round" style="margin: 0;" target="_top">
+					<td align="center" style="padding: 0 3px;" valign="middle">
+						<a href="/access/login" class="btn btn-basic btn-round" style="margin: 0; display: block;" target="_top">
 							<table width="100%" height="100%">
 								<tbody>
 									<tr>
 										<td align="center" valign="middle">
 											<i class="fa fa-unlock-alt" style="display: block; font-size: 20px;"></i>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</a>
+					</td>
+					<% } %>
+					
+					<% if (session?.passport?.user?.owner) { %>
+					<td align="center" style="padding: 0 3px;" valign="middle">
+						<a href="/api/access/login/<%- session?.passport?.user?.owner || '*' %>" target="_top" class="btn btn-dark btn-round" style="margin: 0; color: #ffffff; display: block;">
+							<table width="100%" height="100%">
+								<tbody>
+									<tr>
+										<td align="center" valign="middle">
+											<i class="fa fa-sign-out" style="display: block; font-size: 20px;"></i>
 										</td>
 									</tr>
 								</tbody>

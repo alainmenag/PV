@@ -16,16 +16,20 @@
 
 <div ng-init="cache.profile = {};">
 	
-	<div style="height: 250px; background-color: #f2f2f2;">
-		<div style="height: 100%; width: 100%; background-size: 100% auto; background-position: center center; background-image: url('<%- node.data.profile?.cover %>');" ng-preview="<%- node.data.profile?.cover %>"></div>
+	<div style="height: 250px; background-color: #f2f2f2; overflow: hidden;">
+		<div style="height: 100%; width: 100%;" ng-preview="<%- node.data.profile?.cover %>">
+			<div style="width: calc(100% + 100px); height: calc(100% + 100px); background-size: 100% auto; background-position: center center; background-image: url('<%- node.data.profile?.cover %>'); filter: blur(15px); margin: -50px;">
+				<div style="height: 100%; width: 100%;"></div>
+			</div>
+		</div>
 	</div>
 	
 	<div style="margin-top: -150px; pointer-events: none;">
-		<div class="container" style="background-color: #ffffff; border-top-left-radius: 15px; padding: 0; pointer-events: all;">
+		<div class="container" style="background-color: #ffffff; border-top-left-radius: 15px; padding: 0; pointer-events: all; position: relative; z-index: 1;">
 		
 			<div class="row">
 				
-				<div class="col" style="padding: 45px;">
+				<div class="col" style="padding: 35px;">
 					
 					<div>
 						<span
@@ -36,7 +40,8 @@
 						><%- node.data.profile.title || node.data.profile._id %></span>
 					</div>
 					
-					<div>
+					<div style="margin: 5px 0;">
+						<div class="avatar" style="background-image: url('/cdn/avatars/<%- node.data.profile.id %>');"></div>
 						<span
 							editable-text="cache.profile.id"
 							ng-disabled="<%- readOnly %>"
@@ -103,7 +108,7 @@
 				
 				<div class="col text-center">
 					<div style="height: 240px; width: 100%; background-color: #cccccc; min-width: 75px;">
-						<div style="height: 100%; width: 100%; background-size: contain; background-repeat: no-repeat; background-position: center center; background-image: url('<%- node.data.profile?.image %>');" ng-preview="<%- node.data.profile?.image %>"></div>	
+						<div style="height: 100%; width: 100%; background-size: contain; background-repeat: no-repeat; background-position: center center; background-image: url('<%- node.data.profile?.image || ("/cdn/avatars/" + node.data.profile?.id) %>');" ng-preview="<%- node.data.profile?.image %>"></div>	
 					</div>
 				</div>
 					

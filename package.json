@@ -26,6 +26,7 @@
     "connect-redis": "5.0.0",
     "cookie": "0.4.1",
     "cookie-parser": "1.4.4",
+    "giticon": "^1.0.8",
     "cors": "^2.8.5",
     "crypto-js": "3.1.9-1",
     "ejs": "2.6.1",

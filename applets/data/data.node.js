@@ -46,15 +46,23 @@ module.exports = function(modules, config) {
 	
 	exports.list = async function(payload, options)
 	{
-		var _id = await exports._id(options.collection, payload.params._id);
+		var _id = payload.params._id ? (await exports._id(options.collection, payload.params._id)) : null;
+		
+		if (!_id) _id = payload.session.uid;
+		if (!_id) _id = payload.params._id;
 			
 		return new Promise(resolve =>
 		{
+			if (!_id) return resolve();
+			
 			var collection = modules.mongo[options.collection];
 			
 			if (!collection) return resolve();
 			
-			var query = {category: options.category, owners: _id || payload.params._id};
+			var query = {category: options.category, $or: [
+				{owners: _id},
+				{members: _id}
+			]};
 			
 			collection.find(query, null, {
 				limit: options.length || options.limit || 0,

@@ -29,6 +29,7 @@ const modules = {
 	request: require('request'),
 	flash: require('connect-flash'),
 	got: require('got'),
+	giticon: require('giticon'),
     express: require('express'),
     mustache: require('mustache'),
 	mongodb: require('mongodb'),
@@ -704,6 +705,7 @@ modules['profiles.node'] = require(__dirname + '/applets/profiles/profiles.node.
 modules['storage.node'] = require(__dirname + '/applets/storage/storage.node.js')(modules, config);
 modules['socket.node'] = require(__dirname + '/applets/socket/socket.node.js')(modules, config);
 modules['services.node'] = require(__dirname + '/applets/services/services.node.js')(modules, config);
+modules['avatars.node'] = require(__dirname + '/applets/avatars/avatars.node.js')(modules, config);
 
 modules['square.node'] = require(__dirname + '/applets/square/square.node.js')(modules, config);
 modules['oryk.node'] = require(__dirname + '/applets/oryk/oryk.node.js')(modules, config);

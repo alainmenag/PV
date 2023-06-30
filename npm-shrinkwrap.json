@@ -37,6 +37,7 @@
         "fetch": "1.1.0",
         "firebase-admin": "8.8.0",
         "git-parse": "3.0.1",
+        "giticon": "^1.0.8",
         "got": "^9.6.0",
         "graceful-fs": "^4.2.6",
         "gulp": "^4.0.2",
@@ -7339,6 +7340,14 @@
         "node": ">=14"
       }
     },
+    "node_modules/giticon": {
+      "version": "1.0.8",
+      "resolved": "https://registry.npmjs.org/giticon/-/giticon-1.0.8.tgz",
+      "integrity": "sha512-RD06Ord8WVIm2m9sT/DHaYXtouoJR2xfCh02wfnDVhzXnk4oGRetgdQ3n5J5I+wl4NdybMdLF5mUhec6ARvDYw==",
+      "dependencies": {
+        "react-lib-adler32": "^1.0.1"
+      }
+    },
     "node_modules/glob": {
       "version": "7.2.3",
       "resolved": "https://registry.npmjs.org/glob/-/glob-7.2.3.tgz",
@@ -13601,6 +13610,11 @@
       "engines": {
         "node": ">= 0.8"
       }
+    },
+    "node_modules/react-lib-adler32": {
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/react-lib-adler32/-/react-lib-adler32-1.0.3.tgz",
+      "integrity": "sha512-AqFqdt4cP0RPffHNjVHZ7tyIgnoSzNxgFhG8XKMXCtA1dZ72gTPO4iYFwWDKHqvE8sHS14rhltQTdbXU5G4BFA=="
     },
     "node_modules/read-pkg": {
       "version": "3.0.0",

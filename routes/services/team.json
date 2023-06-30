@@ -13,7 +13,7 @@
 				{
 					"title": "",
 					"data": "id",
-					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a>",
+					"format": "<a href=\"/@{{_id}}\"><div class=\"avatar\" style=\"margin-right: 5px; background-image: url('/cdn/avatars/{{id}}');\"></div><span class=\"handle\" style=\"margin: 5px 0;\">{{id}}</span></a>",
 					"searchable": true
 				},
 				{
@@ -35,7 +35,7 @@
 				{
 					"title": "",
 					"data": "id",
-					"format": "<a class=\"btn btn-easy btn-round text-center\" href=\"/api/access/login/{{_id}}\" target=\"_top\" style=\"margin: 0; padding: 0px; line-height: 55px; font-size: 12px; font-weight: bold;\">Login</a>",
+					"format": "<a class=\"btn btn-easy btn-round text-center\" href=\"/api/access/login/{{_id}}\" target=\"_top\" style=\"margin: 0; padding: 0px; line-height: 55px; font-size: 22px; font-weight: bold;\"><i class=\"fa fa-sign-in\"></i></a>",
 					"searchable": false,
 					"sortable": false,
 					"align": "center"

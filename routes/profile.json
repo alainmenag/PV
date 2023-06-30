@@ -45,6 +45,84 @@
 		}
 		
 		
+	
+		, {
+			"template": "/templates/form.html",
+			"tab": "#profile",
+			"if": "node.data.profile && !node.data.profile.readOnly",
+			"title": "Profile",
+			"action": "/api/data?collection=profiles&category=users",
+			"method": "POST",
+			"reload": true,
+			"confirm": true,
+			"submittable": false,
+			"data": {
+				
+				"_id": {
+					"id": "_id",
+					"value": "{{node.data.profile._id}}",
+					"type": "hidden"
+				}
+				
+				
+
+				
+				, "image": {
+					"title": "Profile Image",
+					"id": "image",
+					"value": "{{node.data.profile.image}}",
+					"model": false,
+					"type": "file",
+					"accept": "image/*",
+					"onchange": "event.target.form.submit(event);"
+				}
+				
+				
+
+				
+				, "cover": {
+					"title": "Cover Photo",
+					"id": "cover",
+					"value": "{{node.data.profile.cover}}",
+					"model": false,
+					"type": "file",
+					"accept": "image/*",
+					"onchange": "event.target.form.submit(event);"
+				}
+				
+				, "deactivated": {
+					"if": "!node.data.profile.deactivated",
+					"title": "Deactivate Profile",
+					"id": "deactivated",
+					"value": 1,
+					"model": false,
+					"type": "button"
+				}
+				
+				, "activate": {
+					"if": "node.data.profile.deactivated",
+					"title": "Activate Profile",
+					"id": "deactivated",
+					"value": 0,
+					"model": false,
+					"type": "button"
+				}
+				
+				, "deleted": {
+					"if": "node.data.profile.deactivated",
+					"class": "btn-danger",
+					"title": "Delete Profile",
+					"id": "deleted",
+					"value": 1,
+					"model": false,
+					"type": "button"
+				}
+				
+				
+			}
+		}
+		
+		
 		
 	
 		, {
@@ -134,87 +212,6 @@
 				
 			}
 		}
-		
-		
-	
-		, {
-			"template": "/templates/form.html",
-			"tab": "#profile",
-			"if": "node.data.profile && !node.data.profile.readOnly",
-			"title": "Profile",
-			"action": "/api/data?collection=profiles&category=users",
-			"method": "POST",
-			"reload": true,
-			"confirm": true,
-			"submittable": false,
-			"data": {
-				
-				"_id": {
-					"id": "_id",
-					"value": "{{node.data.profile._id}}",
-					"type": "hidden"
-				}
-				
-				
-
-				
-				, "image": {
-					"title": "Profile Image",
-					"id": "image",
-					"value": "{{node.data.profile.image}}",
-					"model": false,
-					"type": "file",
-					"accept": "image/*",
-					"onchange": "event.target.form.submit(event);"
-				}
-				
-				
-
-				
-				, "cover": {
-					"title": "Cover Photo",
-					"id": "cover",
-					"value": "{{node.data.profile.cover}}",
-					"model": false,
-					"type": "file",
-					"accept": "image/*",
-					"onchange": "event.target.form.submit(event);"
-				}
-				
-				, "deactivated": {
-					"if": "!node.data.profile.deactivated",
-					"title": "Deactivate Profile",
-					"id": "deactivated",
-					"value": 1,
-					"model": false,
-					"type": "button"
-				}
-				
-				, "activate": {
-					"if": "node.data.profile.deactivated",
-					"title": "Activate Profile",
-					"id": "deactivated",
-					"value": 0,
-					"model": false,
-					"type": "button"
-				}
-				
-				, "deleted": {
-					"if": "node.data.profile.deactivated",
-					"class": "btn-danger",
-					"title": "Delete Profile",
-					"id": "deleted",
-					"value": 1,
-					"model": false,
-					"type": "button"
-				}
-				
-				
-			}
-		}
-		
-		
-		
 		
 
 	],
