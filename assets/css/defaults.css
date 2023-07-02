@@ -321,6 +321,21 @@ input:focus, textarea:focus, select:focus {
 	background-color: #ffffff;
 }
 
+.editable-controls input:focus,
+.editable-controls textarea:focus,
+.editable-controls select:focus {
+	border: 3px solid #ccc;
+}
+
+select {
+    -webkit-appearance: none;
+    padding-left: 45px !important;
+    background-image: url(/assets/vendor/Font-Awesome-SVG-PNG/black/svg/angle-down.svg);
+    background-position: 7px center;
+    background-repeat: no-repeat;
+    background-size: 30px auto;
+}
+
 .smooth-corners {
 	border-radius: 5px !important;
 }

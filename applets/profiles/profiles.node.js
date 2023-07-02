@@ -18,6 +18,7 @@ module.exports = function(modules, config)
 			
 			var q = {$or: [
 				{id: payload.params._id},
+				{id: {$regex: (new RegExp(payload.params._id, 'i'))}},
 				{_id: _id}
 			]};
 			

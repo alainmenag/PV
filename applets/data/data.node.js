@@ -37,7 +37,8 @@ module.exports = function(modules, config) {
 			
 			if (!collection) return done();
 	
-			collection.findOne({id: id}, function(err, doc)
+			//collection.findOne({id: id}, function(err, doc)
+			collection.findOne({id: (new RegExp(id, 'i'))}, function(err, doc)
 			{
 				done(doc);
 			});
@@ -48,9 +49,9 @@ module.exports = function(modules, config) {
 	{
 		var _id = payload.params._id ? (await exports._id(options.collection, payload.params._id)) : null;
 		
-		if (!_id) _id = payload.session.uid;
 		if (!_id) _id = payload.params._id;
-			
+		if (!_id) _id = payload.session.uid;
+		
 		return new Promise(resolve =>
 		{
 			if (!_id) return resolve();

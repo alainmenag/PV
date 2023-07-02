@@ -124,6 +124,61 @@
 		
 		
 		
+		
+		, {
+			"tab": "#profile",
+			"if": "!node.data.profile.readOnly && ['users'].indexOf(node.data.profile.category) > -1",
+			"template": "/templates/form.html",
+			"title": "Security",
+			"action": "/api/profiles",
+			"background": "#f2f2f2",
+			"method": "POST",
+			"reset": true,
+			"confirm": true,
+			"data": {
+				
+				"uid": {
+					"id": "uid",
+					"value": "{{node.data.profile._id}}",
+					"type": "hidden"
+				},
+				
+				"password": {
+					"id": "password",
+					"title": "Password",
+					"type": "text",
+					"required": true,
+					"minlength": 10,
+					"help": "* Will also change your access token."
+				}
+				
+			}
+		}
+		
+		
+
+
+		, {
+			"tab": "#profile",
+			"if": "!node.data.profile.readOnly && ['users'].indexOf(node.data.profile.category) > -1",
+			"title": "API",
+			"template": "/templates/list.html",
+			"data": [
+				{
+					"title": "<b>External Username: </b>{{node.data.profile._id}}@oryk.com"
+				},
+				{
+					"title": "<b>Access Token/External Password: </b>{{node.data.profile.password || '*****'}}"
+				}
+			]
+		}	
+		
+		
+		
+		
+		
+		
+		
 	
 		, {
 			"template": "/templates/form.html",
@@ -202,13 +257,198 @@
 					"accept": "audio/*"
 				}
 				
-				, "greetings.ringback.text": {
-					"title": "Ringback (Text)",
-					"id": "greetings.ringback.text",
-					"value": "{{node.data.profile.greetings.ringback.text}}",
+				, "greetings.moh.file": {
+					"title": "Music on hold (MOH) (MP3)",
+					"id": "greetings.moh.file",
+					"value": "{{node.data.profile.greetings.moh.file}}",
 					"model": false,
-					"type": "text"
+					"type": "file",
+					"accept": "audio/*"
 				}
+				
+			}
+		}	
+		
+		
+		
+		
+		
+		
+		
+	
+		, {
+			"template": "/templates/form.html",
+			"tab": "#queue",
+			"if": "!node.data.profile.readOnly && ['departments'].indexOf(node.data.profile.category) > -1",
+			"title": "Queue",
+			"action": "/api/data?collection=profiles&category=departments",
+			"method": "POST",
+			"key": "node.data.profile",
+			"reload": true,
+			"confirm": false,
+			"data": {
+				
+				"_id": {
+					"id": "_id",
+					"value": "{{node.data.profile._id}}",
+					"type": "hidden"
+				}
+				
+				, "strategy": {
+					"title": "Strategy",
+					"id": "strategy",
+					"value": "{{node.data.profile.strategy || 'ring-all'}}",
+					"model": false,
+					"type": "select",
+					"options": [
+						{
+							"title": "(DEFAULT) Contact all agents simultaneously.",
+							"value": "ring-all"
+						},
+						{
+							"title": "Contact the agent who has been idle the longest taking into account their tier level.",
+							"value": "longest-idle-agent"
+						},
+						{
+							"title": "Contact the agent in position but remember last tried agent.",
+							"value": "round-robin"
+						},
+						{
+							"title": "Contact the agent in order position starting from 1 for every member.",
+							"value": "top-down"
+						},
+						{
+							"title": "Contact agent w/ the least handling time.",
+							"value": "agent-with-least-talk-time"
+						},
+						{
+							"title": "Contact the least busiest agent.",
+							"value": "agent-with-fewest-calls"
+						},
+						{
+							"title": "Contact agents sequentially by tier & order.",
+							"value": "sequentially-by-agent-order"
+						},
+						{
+							"title": "Contact agents in random order.",
+							"value": "random"
+						},
+						{
+							"title": "Contact agents from top down, but keeping trying the previous members.",
+							"value": "ring-progressively"
+						}
+					]
+				}
+				
+				, "time-base-score": {
+					"title": "Time Base Score",
+					"id": "time-base-score",
+					"value": "{{node.data.profile['time-base-score'] || 'system'}}",
+					"model": false,
+					"type": "select",
+					"options": [
+						{
+							"title": "(DEFAULT) Add the number of seconds since entering system.",
+							"value": "system"
+						},
+						{
+							"title": "Nobody's score gets increased upon entering the queue.",
+							"value": "queue"
+						}
+					]
+				}
+				
+				, "max-wait-time": {
+					"title": "Max Wait Time",
+					"id": "max-wait-time",
+					"value": "{{node.data.profile['max-wait-time'] || 0}}",
+					"model": false,
+					"type": "number",
+					"placeholder": "0",
+					"min": 0
+				}
+				
+				, "max-wait-time-with-no-agent": {
+					"title": "Max Wait Time w/ No Agent",
+					"id": "max-wait-time-with-no-agent",
+					"value": "{{node.data.profile['max-wait-time-with-no-agent'] || 1}}",
+					"model": false,
+					"type": "number",
+					"placeholder": "1",
+					"min": 0
+				}
+				
+				, "max-wait-time-with-no-agent-time-reached": {
+					"title": "Max Wait Time w/ No Agent Time Reached",
+					"id": "max-wait-time-with-no-agent-time-reached",
+					"value": "{{node.data.profile['max-wait-time-with-no-agent-time-reached'] || 1}}",
+					"model": false,
+					"type": "number",
+					"placeholder": "1",
+					"min": 0
+				}
+				
+				, "tier-rules-apply": {
+					"title": "Tier Rules Apply",
+					"id": "tier-rules-apply",
+					"value": "{{node.data.profile['tier-rules-apply'] || 0}}",
+					"model": false,
+					"type": "boolean"
+				}
+				
+				, "tier-rule-wait-second": {
+					"title": "Tier Rule Wait Second",
+					"id": "tier-rule-wait-second",
+					"value": "{{node.data.profile['tier-rule-wait-second'] || 300}}",
+					"model": false,
+					"type": "number",
+					"placeholder": "300",
+					"min": 0
+				}
+				
+				, "tier-rule-wait-multiply-level": {
+					"title": "Tier Rule Wait Multiply Level",
+					"id": "tier-rule-wait-multiply-level",
+					"value": "{{node.data.profile['tier-rule-wait-multiply-level'] || 1}}",
+					"model": false,
+					"type": "boolean"
+				}
+				
+				, "tier-rule-no-agent-no-wait": {
+					"title": "Tier Rule No Agent No Wait",
+					"id": "tier-rule-no-agent-no-wait",
+					"value": "{{node.data.profile['tier-rule-no-agent-no-wait'] || 0}}",
+					"model": false,
+					"type": "boolean"
+				}
+				
+				, "discard-abandoned-after": {
+					"title": "Discard Abandoned After",
+					"id": "discard-abandoned-after",
+					"value": "{{node.data.profile['discard-abandoned-after'] || 60}}",
+					"model": false,
+					"type": "number",
+					"placeholder": "60",
+					"min": 0
+				}
+				
+				, "abandoned-resume-allowed": {
+					"title": "Abandoned Resume Allowed",
+					"id": "abandoned-resume-allowed",
+					"value": "{{node.data.profile['abandoned-resume-allowed'] || 1}}",
+					"model": false,
+					"type": "boolean"
+				}
+				
+				, "skip-agents-with-external-calls": {
+					"title": "Skip Agents w/ External Sessions",
+					"id": "skip-agents-with-external-calls",
+					"value": "{{node.data.profile['skip-agents-with-external-calls'] || 0}}",
+					"model": false,
+					"type": "boolean"
+				}
+				
+				
 				
 			}
 		}

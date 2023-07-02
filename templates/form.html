@@ -26,7 +26,8 @@
 					<div ng-if="<%- item.if || true %>" class="col-sm-12 col-md-<%- item.width || 6 %> no-scroll" style="min-width: 200px; padding: 5px;">
 						
 						<script>
-							cache['_<%- section.id %>']['<%- item.id || i %>'] = JSON.parse('<%- JSON.stringify(item) %>');
+							//cache['_<%- section.id %>']['<%- item.id || i %>'] = JSON.parse('<%- JSON.stringify(item) %>');
+							cache['_<%- section.id %>']['<%- item.id || i %>'] = <%- JSON.stringify(item) %>;
 						</script>
 						
 						<div>
@@ -63,25 +64,16 @@
 										<% if (item.type == 'boolean') { %>
 											
 											<div style="margin: 5px 0;">
-
-												<label ng-if="<%- model %> == undefined">
-													<span style="vertical-align: middle;">No</span>
-													<input
-														name="<%- item.id %>"
-														type="radio"
-														style="vertical-align: middle;"
-														data-ng-value=""
-														<%- item.model ? ('ng-model="' + model + '"') : '' %>
-													/>
-												</label>
 												
-												<label ng-if="<%- model %> != undefined">
+												<label ng-if="<%- model %> != 1">
 													<span style="vertical-align: middle;">No</span>
 													<input
 														name="<%- item.id %>"
 														type="radio"
 														style="vertical-align: middle;"
+														value="0"
 														data-ng-value="0"
+														ng-checked="<%- item.value %> == 0"
 														<%- item.model ? ('ng-model="' + model + '"') : '' %>
 													/>
 												</label>
@@ -92,7 +84,9 @@
 														name="<%- item.id %>"
 														type="radio"
 														style="vertical-align: middle;"
+														value="1"
 														data-ng-value="1"
+														ng-checked="<%- item.value %> == 1"
 														<%- item.model ? ('ng-model="' + model + '"') : '' %>
 													/>
 												</label>
@@ -106,13 +100,18 @@
 												name="<%- item.id %>"
 												placeholder="<%- item.placeholder || '...' %>"
 												style="width: 100%; margin: 5px 0;"
-												_value="<%- query[item.id] || item.value %>"
 												<%- item.required === true ? 'required' : '' %>
 												<% if (item.multiple) { %>multiple<% } %>
 												<%- item.model ? ('ng-model="' + model + '"') : '' %>
 											>
 												<option value=""><%- item.placeholder || '...' %></option>
+												
+												<% for (var o in item.options) { %>
+													<option ng-selected="'<%- item.value %>' == '<%- item.options[o].value || item.options[o] %>'" value="<%- item.options[o].value || item.options[o] %>"><%- item.options[o].title || item.options[o].value || item.options[o] %></option>
+												<% } %>
+												<!--
 												<option ng-repeat="option in <%- _model %>.options">{{option}}</option>
+												-->
 											</select>
 										
 										<% } else if (item.type == 'textarea') { %>

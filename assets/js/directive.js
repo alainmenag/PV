@@ -492,7 +492,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 						
 				        if (r.data && (r.data.err || r.data.memo)) alert(r.data.err || r.data.memo);
 				        
-				        if (r.data && r.data.payload) if ($(elem).attr('key')) $timeout(function() {
+				        if (r.data && (r.data.payload || r.data.data)) if ($(elem).attr('key')) $timeout(function()
+				        {
 					        setJsonValue($(elem).attr('key'), (r.data.payload|| r.data.data), window);
 				        });
 				        
@@ -517,6 +518,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 				        _.each(items, function(inpt)
 				        {
 					        var vlu = inpt.value;
+					        
+					        if (inpt.type == 'radio' && !inpt.checked) return;
 					        
 					        if (inpt.type == 'number') vlu = parseInt(vlu);
 					        
