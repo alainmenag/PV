@@ -36,9 +36,20 @@ module.exports = function(modules, config) {
 			};
 			
 			if (!collection) return done();
-	
-			//collection.findOne({id: id}, function(err, doc)
-			collection.findOne({id: (new RegExp(id, 'i'))}, function(err, doc)
+			
+			var _id = id; try {
+				_id = new modules.mongodb.ObjectId(id);
+			} catch(err) {};
+			
+			var q = {$or: [{id: id}]};
+			
+			try {
+				q['$or'].unshift({id: {$regex: (new RegExp('^' + id + '$', 'i'))}});
+			} catch(err) {};
+			
+			if (typeof _id == 'object') q['$or'].unshift({_id: _id});
+			
+			collection.findOne(q, {_id: 1}, function(err, doc)
 			{
 				done(doc);
 			});
@@ -94,18 +105,6 @@ module.exports = function(modules, config) {
 		if (options.search && options.search.value)
 		{
 			var $or = [];
-			
-/*
-			try {
-				$or.push({
-					_id: new modules.mongodb.ObjectId(options.search.value)
-				})
-			} catch(err) {};
-*/
-			
-			
-			////{'title': new RegExp(options.search.value, "i")}
-			
 			
 			for (
 				var i = 0; i < options.columns.length; i++
@@ -269,7 +268,13 @@ module.exports = function(modules, config) {
 					
 						var response = await modules.s3.send(command);
 						
-						req.body[k] = config.s3.url + key + '?' + ['ts=' + Date.now()].join('&');
+						console.log(response);
+						
+						req.body[k] = config.s3.url + key + '?' + [
+							'ts=' + Date.now(),
+							'version=' + response.VersionId,
+							'etag=' + response.ETag
+						].join('&');
 						
 					} catch(err) {};
 					

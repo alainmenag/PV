@@ -8,23 +8,36 @@
 			"id": "list",
 			"title": "Numbers",
 			"if": "session.profile.services['648e4dca55bedc996a231032'].added",
-			"template": "/templates/datatable.html",
+			"template": "/templates/table.html",
 			"src": "/api/data?collection=profiles&category=numbers",
 			"columns": [
 				{
-					"title": "",
+					"title": "Profile",
 					"data": "id",
-					"format": "<a href=\"/@{{_id}}\"><span class=\"handle\">{{id}}</span></a>",
+					"format": "<a href=\"/@{{row._id}}\"><span class=\"handle\">{{row.id}}</span></a>",
 					"searchable": true
-				},
-				{
-					"title": "Target ID",
+				}
+				, {
+					"title": "Inbound",
+					"align": "center",
 					"data": "target",
-					"format": "<a href=\"/@{{target}}\"><span class=\"handle\">{{target}}</span></a>",
-					"searchable": true
+					"_format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
+					
+					
+					
+					
+					"format": "<form system-form method=\"POST\" action=\"/api/services\" reload=\"true\"><input type=\"checkbox\" name=\"action\" ng-checked=\"row.users[session.uid].added\" value=\"{{row.users[session.uid].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /><input type=\"hidden\" name=\"category\" value=\"users\" /><input type=\"hidden\" name=\"uid\" value=\"{{row._id}}\" /></form>",
+					
+					
+					
+					
+					"_format": "<form system-form method=\"POST\" action=\"/api/services\" key=\"session.profile\"><input type=\"checkbox\" name=\"action\" ng-checked=\"session.profile.numbers[row._id].added\" value=\"{{session.profile.numbers[row._id].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"{{row.category}}\" /><input type=\"hidden\" name=\"uid\" value=\"{{session.uid}}\" /></form>",
+					"searchable": false,
+					"sortable": false
 				}
 			]
 		}
+
 
 		
 		
@@ -48,16 +61,6 @@
 					"autocomplete": true,
 					"model": false,
 					"help": "E. 164 (no spaces): +18886106116"
-				}
-				
-				, "target": {
-					"required": false,
-					"id": "target",
-					"title": "Target ID",
-					"type": "text",
-					"autocomplete": true,
-					"model": false,
-					"help": "@ID/handle (do not include @)"
 				}
 				
 			}
@@ -91,6 +94,16 @@
 		
 		
 	],
-	"resources": []
+	"resources": [
+		
+		{
+			"src": "data.node",
+			"fn": "list",
+			"key": "list",
+			"category": "numbers",
+			"collection": "profiles"
+		}
+		
+	]
 	
 }

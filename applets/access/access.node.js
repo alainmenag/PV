@@ -52,7 +52,7 @@ module.exports = function(modules, config)
 				message: 'Invalid credentials.'
 			});
 			
-			var q = {category: 'users'};
+			var q = {category: 'users', deleted: null};
 			
 			q['aliases.' + modules.btoa(username) + '.access_token'] = password;
 
@@ -151,7 +151,9 @@ module.exports = function(modules, config)
 		
 		req.session.destroy(() =>
 		{
-			res.redirect(302, _id ? ('/@' + _id) : '/');
+			//res.redirect(302, '/');
+			res.redirect(302, '/access/login');
+			//res.redirect(302, _id ? ('/@' + _id) : '/');
 		});
 	});
 	

@@ -7,6 +7,22 @@ module.exports = function(modules, config)
 {
 	var exports = {};
 	
+	exports.grab = function(options) {
+		return new Promise(resolve =>
+		{
+			var q = {}; try {
+				q._id = new modules.mongodb.ObjectId(options._id.toString());
+			} catch(err) {};
+			
+			if (!q._id) return resolve();
+		
+			modules.mongo.profiles.findOne(q, function(err, profile)
+			{
+				resolve(profile);
+			});
+		});
+	};
+	
 	exports.get = function(payload, options) {
 		return new Promise(resolve =>
 		{
@@ -16,11 +32,13 @@ module.exports = function(modules, config)
 			
 			if (!_id) return resolve();
 			
-			var q = {$or: [
-				{id: payload.params._id},
-				{id: {$regex: (new RegExp(payload.params._id, 'i'))}},
-				{_id: _id}
-			]};
+			var q = {$or: [{id: payload.params._id}]};
+			
+			try {
+				q['$or'].unshift({id: {$regex: (new RegExp('^' + payload.params._id + '$', 'i'))}});
+			} catch(err) {};
+			
+			if (typeof _id == 'object') q['$or'].unshift({_id: _id});
 			
 			/*
 			var owners = [];

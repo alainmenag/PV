@@ -44,20 +44,26 @@ module.exports = function(modules, config) {
 	{
 		if (!options._id) return;
 		
-		var _id = new modules.mongodb.ObjectId(options._id.toString());
-
-		modules.mongo.profiles.findOne({
-			_id: _id,
-			category: 'users',
-			deleted: null
+		// setup a queue for a department
+		if (options.category == 'departments')
+		{
+			exports.sip.provision(options);
+			
+			exports.queues.setup(options);
+			exports.queues.provision(options);
+		}
+		
+		// when a user's profile is modified
+		if (options.category == 'users') modules.mongo.profiles.findOne({
+			_id: options._id
 		}, function(err, profile)
 		{
 			if (!profile) return;
 			
 			var services = profile.services || {};
 			
-			var extensions = services['6486efa055bedc996a215d36'] && services['6486efa055bedc996a215d36'].added;
-			var queues = services['64891ebf55bedc996a21d632'] && services['64891ebf55bedc996a21d632'].added;
+			var extensions = services['6486efa055bedc996a215d36'] && services['6486efa055bedc996a215d36'].added; // user uses extensions
+			var queues = services['64891ebf55bedc996a21d632'] && services['64891ebf55bedc996a21d632'].added; // user uses queues & departments
 			
 			if (profile.deactivated) [extensions = null, queues = null]; // remove all traces
 			
@@ -74,13 +80,8 @@ module.exports = function(modules, config) {
 			} else {
 				exports.queues.deprovision(profile);
 			}
-
-			
-			//exports.xmpp.provision(profile);
 		});
 	};
-
-
 
 // ==========================================================================
 // NODE - ORYK - EXPORTS - SIP - PROVISION
@@ -107,7 +108,7 @@ module.exports = function(modules, config) {
 		var password = modules.md5([
 			profile._id,
 			exports.domain,
-			profile.password
+			profile.password || Date.now().toString()
 		].join(':'));
 
 		// ensure user
@@ -163,6 +164,34 @@ module.exports = function(modules, config) {
 // NODE - ORYK - EXPORTS - XMPP - PROVISION
 // ==========================================================================
 	
+	exports.queues.setup = async function(options)
+	{
+		modules.mongo.profiles.findOne({
+			_id: options._id,
+			category: 'departments'
+		}, function(err, profile)
+		{
+			if (profile) modules.request({
+				//url: 'https://bin.wimzel.com/80b081f8-7523-432f-818d-5d669505f7bc-1665364940015',
+				url: 'http://sip.oryk.com/api/jsapi/?oryk.js',
+				body: JSON.stringify(profile),
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}, function(error, response, body) {});
+			
+			
+			//http://sip.oryk.com/api/lua/?oryk.lua
+			//http://sip.oryk.com/api/jsapi/?oryk.js
+			
+			//{"_id":"648afad955bedc996a22540b","id":"tudays.catering","category":"departments","title":"Tudays (Catering)","active":true,"created":1686829785699,"owners":["6488a58a5ac61a2ae3a2c14d"],"pin":233424,"updated":1688303094110,"members":["64889edb5ac61a2ae3a2c14a","6488c5afe6a8bb2ee6cdc145"],"description":"Place an order for any event.","queue":{"abandoned-resume-allowed":1,"discard-abandoned-after":60,"max-wait-time":null,"max-wait-time-with-no-agent":1,"max-wait-time-with-no-agent-time-reached":1,"skip-agents-with-external-calls":null,"strategy":"ring-all","tier-rule-no-agent-no-wait":null,"tier-rule-wait-multiply-level":1,"tier-rule-wait-second":300,"tier-rules-apply":null,"time-base-score":"system"},"greetings":{"greeting":{"file":null,"text":"Thank you for calling Tudays catering line. Let me try to connect you."},"hold":{"file":null,"text":null},"moh":{"file":"https://main.us-east-1.linodeobjects.com/648afad955bedc996a22540b_greetings.moh.file?ts=1688303043678"},"ringback":{"file":null},"voicemail":{"file":null,"text":null}}}
+			
+			
+		
+		});
+	};
+	
 	exports.queues.provision = async function(profile)
 	{
 		var sipaddr = profile._id + '@' + exports.domain;
@@ -175,11 +204,15 @@ module.exports = function(modules, config) {
 		{
 			var o = profile.departments[name];
 			
-			if (o.added) try {
+			if (o.added) try
+			{
+				exports.queues.setup({_id: (new modules.mongodb.ObjectId(name))});
+				
 				await exports.sip.db.query("INSERT INTO tiers (queue, agent, state, \"level\", \"position\") VALUES('" + (name + '@' + exports.domain) + "', '" + sipaddr + "', 'Ready', 1, 1);");
 			} catch(err) {};
 			
-			if (o.removed) try {
+			if (o.removed) try
+			{
 				await exports.sip.db.query("DELETE FROM tiers WHERE queue='" + (name + '@' + exports.domain) + "' AND agent='" + sipaddr + "';");
 			} catch(err) {};
 		}
@@ -276,12 +309,15 @@ module.exports = function(modules, config) {
 					res.send(doc);
 				});
 			})();
+			
+			var _id = new modules.mongodb.ObjectId();
 		
 			return modules.mongo.profiles.findAndModify({
 				query: {
 					_id: new modules.mongodb.ObjectId()
 				},
 				update: {$set: {
+					"id": _id.toString(),
 				    "owners" : [req.session.uid],
 				    "category" : "departments",
 				    "title" : req.body.name,
@@ -295,9 +331,9 @@ module.exports = function(modules, config) {
 			}, function (err, doc, lastErrorObject)
 			{
 				res.send(doc);
+				
+				if (doc) exports.queues.setup(doc);	
 			});
-			
-			console.log('create new..');
 			
 			res.send({});
 		});

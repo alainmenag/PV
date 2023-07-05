@@ -528,10 +528,15 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 					        	&& (new RegExp('^[0-9]$')).test(inpt.value)
 					        ) vlu = parseInt(vlu);
 					        
+					        //if (inpt.type == 'radio') console.log(inpt, vlu);
+					        
 					        if (inpt.type == 'file' && inpt.files[0]) vlu = inpt.src;
 					        if (inpt.type == 'file' && !vlu) vlu = $(inpt).attr('default');
 					        
-					        vlu = vlu || null;
+					        //vlu = vlu === 0 ? vlu : (vlu || null);
+					        if (vlu === '') vlu = null;
+					        if (inpt.type == 'radio' && vlu === 'true') vlu = true;
+					        if (inpt.type == 'radio' && vlu === 'false') vlu = false;
 					        					        
 					        data[inpt.name] = vlu;
 				        });

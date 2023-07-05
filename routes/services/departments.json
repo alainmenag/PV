@@ -12,7 +12,7 @@
 			"src": "/api/data?collection=profiles&category=departments",
 			"columns": [
 				{
-					"title": "",
+					"title": "Profile",
 					"data": "id",
 					"format": "<a href=\"/@{{row._id}}\"><span class=\"handle\">{{row.id}}</span></a>",
 					"searchable": true

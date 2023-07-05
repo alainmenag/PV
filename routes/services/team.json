@@ -11,7 +11,7 @@
 			"src": "/api/data?collection=profiles&category=users",
 			"columns": [
 				{
-					"title": "",
+					"title": "Profile",
 					"data": "id",
 					"format": "<a href=\"/@{{_id}}\"><div class=\"avatar\" style=\"margin-right: 5px; background-image: url('/cdn/avatars/{{id}}');\"></div><span class=\"handle\" style=\"margin: 5px 0;\">{{id}}</span></a>",
 					"searchable": true

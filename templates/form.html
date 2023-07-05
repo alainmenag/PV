@@ -71,8 +71,8 @@
 														name="<%- item.id %>"
 														type="radio"
 														style="vertical-align: middle;"
-														value="0"
-														data-ng-value="0"
+														value="false"
+														data-ng-value="false"
 														ng-checked="<%- item.value %> == 0"
 														<%- item.model ? ('ng-model="' + model + '"') : '' %>
 													/>
@@ -84,8 +84,8 @@
 														name="<%- item.id %>"
 														type="radio"
 														style="vertical-align: middle;"
-														value="1"
-														data-ng-value="1"
+														value="true"
+														data-ng-value="true"
 														ng-checked="<%- item.value %> == 1"
 														<%- item.model ? ('ng-model="' + model + '"') : '' %>
 													/>

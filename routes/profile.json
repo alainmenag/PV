@@ -55,7 +55,7 @@
 			"method": "POST",
 			"reload": true,
 			"confirm": true,
-			"submittable": false,
+			"_submittable": false,
 			"data": {
 				
 				"_id": {
@@ -64,6 +64,47 @@
 					"type": "hidden"
 				}
 				
+				
+				
+
+				
+				, "title": {
+					"title": "Name",
+					"id": "title",
+					"value": "{{node.data.profile.title}}",
+					"model": false,
+					"type": "text"
+				}
+				
+				
+				
+
+				
+				, "handle": {
+					"title": "Handle",
+					"id": "id",
+					"value": "{{node.data.profile.id}}",
+					"model": false,
+					"type": "text"
+				}
+				
+				, "assistant": {
+					"title": "Assistant",
+					"id": "assistant",
+					"help": "Grant limited access & forward your communications to another profile.",
+					"value": "{{node.data.profile.assistant}}",
+					"model": false,
+					"type": "text"
+				}
+				
+				, "inbox": {
+					"title": "Inbox",
+					"id": "inbox",
+					"help": "Provide an inbox ID or publicly shared email to receive messages.",
+					"value": "{{node.data.profile.inbox}}",
+					"model": false,
+					"type": "text"
+				}
 				
 
 				
@@ -74,7 +115,7 @@
 					"model": false,
 					"type": "file",
 					"accept": "image/*",
-					"onchange": "event.target.form.submit(event);"
+					"_onchange": "event.target.form.submit(event);"
 				}
 				
 				
@@ -87,7 +128,7 @@
 					"model": false,
 					"type": "file",
 					"accept": "image/*",
-					"onchange": "event.target.form.submit(event);"
+					"_onchange": "event.target.form.submit(event);"
 				}
 				
 				, "deactivated": {
@@ -96,7 +137,8 @@
 					"id": "deactivated",
 					"value": 1,
 					"model": false,
-					"type": "button"
+					"type": "button",
+					"width": "12"
 				}
 				
 				, "activate": {
@@ -105,7 +147,8 @@
 					"id": "deactivated",
 					"value": 0,
 					"model": false,
-					"type": "button"
+					"type": "button",
+					"width": "12"
 				}
 				
 				, "deleted": {
@@ -115,7 +158,8 @@
 					"id": "deleted",
 					"value": 1,
 					"model": false,
-					"type": "button"
+					"type": "button",
+					"width": "12"
 				}
 				
 				
@@ -165,10 +209,13 @@
 			"template": "/templates/list.html",
 			"data": [
 				{
-					"title": "<b>External Username: </b>{{node.data.profile._id}}@oryk.com"
+					"title": "<b>Username: </b>{{node.data.profile._id}}"
 				},
 				{
-					"title": "<b>Access Token/External Password: </b>{{node.data.profile.password || '*****'}}"
+					"title": "<b>Domain: </b>oryk.com"
+				},
+				{
+					"title": "<b>Access Token/Password: </b>{{node.data.profile.password || '*****'}}"
 				}
 			]
 		}	
@@ -183,18 +230,26 @@
 		, {
 			"template": "/templates/form.html",
 			"tab": "#greetings",
-			"if": "!node.data.profile.readOnly && ['users', 'departments'].indexOf(node.data.profile.category) > -1",
+			"if": "!node.data.profile.readOnly && ['users', 'departments', 'inboxes'].indexOf(node.data.profile.category) > -1",
 			"title": "Greetings",
 			"action": "/api/data?collection=profiles&category=users",
 			"method": "POST",
 			"reload": true,
-			"confirm": true,
+			"_confirm": true,
 			"data": {
 				
 				"_id": {
 					"id": "_id",
 					"value": "{{node.data.profile._id}}",
 					"type": "hidden"
+				}
+				
+				, "greetings.greeting.text": {
+					"title": "Greeting (Text)",
+					"id": "greetings.greeting.text",
+					"value": "{{node.data.profile.greetings.greeting.text}}",
+					"model": false,
+					"type": "text"
 				}
 				
 				, "greetings.greeting.file": {
@@ -206,46 +261,38 @@
 					"accept": "audio/*"
 				}
 				
-				, "greetings.greeting.text": {
-					"title": "Greeting (Text)",
-					"id": "greetings.greeting.text",
-					"value": "{{node.data.profile.greetings.greeting.text}}",
+				, "greetings.goodbye.text": {
+					"title": "Goodbye (Text)",
+					"id": "greetings.goodbye.text",
+					"value": "{{node.data.profile.greetings.goodbye.text}}",
 					"model": false,
 					"type": "text"
 				}
 				
-				, "greetings.voicemail.file": {
-					"title": "Voicemail (MP3)",
-					"id": "greetings.voicemail.file",
-					"value": "{{node.data.profile.greetings.voicemail.file}}",
-					"model": false,
-					"type": "file",
-					"accept": "audio/*"
-				}
-				
-				, "greetings.voicemail.text": {
-					"title": "Voicemail (Text)",
-					"id": "greetings.voicemail.text",
-					"value": "{{node.data.profile.greetings.voicemail.text}}",
-					"model": false,
-					"type": "text"
-				}
-				
-				, "greetings.hold.file": {
-					"title": "Hold (MP3)",
-					"id": "greetings.hold.file",
-					"value": "{{node.data.profile.greetings.hold.file}}",
+				, "greetings.goodbye.file": {
+					"title": "Goodbye (MP3)",
+					"id": "greetings.goodbye.file",
+					"value": "{{node.data.profile.greetings.goodbye.file}}",
 					"model": false,
 					"type": "file",
 					"accept": "audio/*"
 				}
 				
 				, "greetings.hold.text": {
-					"title": "Hold (Text)",
+					"title": "Hold Message (Text)",
 					"id": "greetings.hold.text",
 					"value": "{{node.data.profile.greetings.hold.text}}",
 					"model": false,
 					"type": "text"
+				}
+				
+				, "greetings.hold.file": {
+					"title": "Hold Message (MP3)",
+					"id": "greetings.hold.file",
+					"value": "{{node.data.profile.greetings.hold.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "audio/*"
 				}
 				
 				, "greetings.ringback.file": {
@@ -294,10 +341,21 @@
 					"type": "hidden"
 				}
 				
-				, "strategy": {
+				, "pin": {
+					"title": "PIN",
+					"id": "pin",
+					"value": "{{node.data.profile.pin}}",
+					"model": false,
+					"type": "number",
+					"placeholder": "123456",
+					"min": 100000,
+					"required": true
+				}
+				
+				, "queue.strategy": {
 					"title": "Strategy",
-					"id": "strategy",
-					"value": "{{node.data.profile.strategy || 'ring-all'}}",
+					"id": "queue.strategy",
+					"value": "{{node.data.profile.queue.strategy || 'ring-all'}}",
 					"model": false,
 					"type": "select",
 					"options": [
@@ -340,10 +398,10 @@
 					]
 				}
 				
-				, "time-base-score": {
+				, "queue.time-base-score": {
 					"title": "Time Base Score",
-					"id": "time-base-score",
-					"value": "{{node.data.profile['time-base-score'] || 'system'}}",
+					"id": "queue.time-base-score",
+					"value": "{{node.data.profile.queue['time-base-score'] || 'system'}}",
 					"model": false,
 					"type": "select",
 					"options": [
@@ -358,92 +416,100 @@
 					]
 				}
 				
-				, "max-wait-time": {
+				, "queue.max-wait-time": {
 					"title": "Max Wait Time",
-					"id": "max-wait-time",
-					"value": "{{node.data.profile['max-wait-time'] || 0}}",
+					"id": "queue.max-wait-time",
+					"value": "{{node.data.profile.queue['max-wait-time'] || 0}}",
 					"model": false,
 					"type": "number",
 					"placeholder": "0",
 					"min": 0
 				}
 				
-				, "max-wait-time-with-no-agent": {
+				, "queue.max-wait-time-with-no-agent": {
 					"title": "Max Wait Time w/ No Agent",
-					"id": "max-wait-time-with-no-agent",
-					"value": "{{node.data.profile['max-wait-time-with-no-agent'] || 1}}",
+					"id": "queue.max-wait-time-with-no-agent",
+					"value": "{{node.data.profile.queue['max-wait-time-with-no-agent'] || 1}}",
 					"model": false,
 					"type": "number",
 					"placeholder": "1",
 					"min": 0
 				}
 				
-				, "max-wait-time-with-no-agent-time-reached": {
+				, "queue.max-wait-time-with-no-agent-time-reached": {
 					"title": "Max Wait Time w/ No Agent Time Reached",
-					"id": "max-wait-time-with-no-agent-time-reached",
-					"value": "{{node.data.profile['max-wait-time-with-no-agent-time-reached'] || 1}}",
+					"id": "queue.max-wait-time-with-no-agent-time-reached",
+					"value": "{{node.data.profile.queue['max-wait-time-with-no-agent-time-reached'] || 1}}",
 					"model": false,
 					"type": "number",
 					"placeholder": "1",
 					"min": 0
 				}
 				
-				, "tier-rules-apply": {
+				, "queue.tier-rules-apply": {
 					"title": "Tier Rules Apply",
-					"id": "tier-rules-apply",
-					"value": "{{node.data.profile['tier-rules-apply'] || 0}}",
+					"id": "queue.tier-rules-apply",
+					"value": "{{node.data.profile.queue['tier-rules-apply'] || false}}",
 					"model": false,
 					"type": "boolean"
 				}
 				
-				, "tier-rule-wait-second": {
+				, "queue.tier-rule-wait-second": {
 					"title": "Tier Rule Wait Second",
-					"id": "tier-rule-wait-second",
-					"value": "{{node.data.profile['tier-rule-wait-second'] || 300}}",
+					"id": "queue.tier-rule-wait-second",
+					"value": "{{node.data.profile.queue['tier-rule-wait-second'] || 300}}",
 					"model": false,
 					"type": "number",
 					"placeholder": "300",
 					"min": 0
 				}
 				
-				, "tier-rule-wait-multiply-level": {
+				, "queue.tier-rule-wait-multiply-level": {
 					"title": "Tier Rule Wait Multiply Level",
-					"id": "tier-rule-wait-multiply-level",
-					"value": "{{node.data.profile['tier-rule-wait-multiply-level'] || 1}}",
+					"id": "queue.tier-rule-wait-multiply-level",
+					"value": "{{node.data.profile.queue['tier-rule-wait-multiply-level'] || false}}",
 					"model": false,
 					"type": "boolean"
 				}
 				
-				, "tier-rule-no-agent-no-wait": {
+				, "queue.tier-rule-no-agent-no-wait": {
 					"title": "Tier Rule No Agent No Wait",
-					"id": "tier-rule-no-agent-no-wait",
-					"value": "{{node.data.profile['tier-rule-no-agent-no-wait'] || 0}}",
+					"id": "queue.tier-rule-no-agent-no-wait",
+					"value": "{{node.data.profile.queue['tier-rule-no-agent-no-wait'] || false}}",
 					"model": false,
 					"type": "boolean"
 				}
 				
-				, "discard-abandoned-after": {
+				, "queue.discard-abandoned-after": {
 					"title": "Discard Abandoned After",
-					"id": "discard-abandoned-after",
-					"value": "{{node.data.profile['discard-abandoned-after'] || 60}}",
+					"id": "queue.discard-abandoned-after",
+					"value": "{{node.data.profile.queue['discard-abandoned-after'] || 60}}",
 					"model": false,
 					"type": "number",
 					"placeholder": "60",
 					"min": 0
 				}
 				
-				, "abandoned-resume-allowed": {
+				, "queue.abandoned-resume-allowed": {
 					"title": "Abandoned Resume Allowed",
-					"id": "abandoned-resume-allowed",
-					"value": "{{node.data.profile['abandoned-resume-allowed'] || 1}}",
+					"id": "queue.abandoned-resume-allowed",
+					"value": "{{node.data.profile.queue['abandoned-resume-allowed'] || false}}",
 					"model": false,
 					"type": "boolean"
 				}
 				
-				, "skip-agents-with-external-calls": {
+				, "queue.skip-agents-with-external-calls": {
 					"title": "Skip Agents w/ External Sessions",
-					"id": "skip-agents-with-external-calls",
-					"value": "{{node.data.profile['skip-agents-with-external-calls'] || 0}}",
+					"id": "queue.skip-agents-with-external-calls",
+					"value": "{{node.data.profile.queue['skip-agents-with-external-calls'] || false}}",
+					"model": false,
+					"type": "boolean"
+				}
+				
+				, "queue.announce-position": {
+					"title": "Announce Position",
+					"id": "queue.announce-position",
+					"value": "{{node.data.profile.queue['announce-position'] || false}}",
 					"model": false,
 					"type": "boolean"
 				}

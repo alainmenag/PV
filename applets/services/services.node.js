@@ -49,7 +49,7 @@ module.exports = function(modules, config) {
 // NODE - SERVICES - HTTP - TOGGLE
 // ==========================================================================
 
-	modules.exp.post('/api/services', function(req, res)
+	exports.set = async function(req, res, next)
 	{
 		var ts = Date.now();
 		var data = {};
@@ -58,18 +58,19 @@ module.exports = function(modules, config) {
 			return res.send(r);
 		};
 		
-		if (!req.body._id) return done({});
+		if (!req.body._id) return done({}); // service in profile being modified
 		if (!req.body.action) return done({});
-		if (!req.body.uid) return done({});
-		if (!req.body.category) return done({});
-		
+		if (!req.body.uid) return done({}); // profile being modified
+		if (!req.body.category) return done({}); // type of service in profile that's being modified
+			
 		var _id = req.body._id;
 		var category = req.body.category;
 		
-		//console.log('/applets/services/services.node.js:', req.body); return done({});
-
-		var current = req.session && req.session.profile && req.session.profile[category];
+		var current = await modules['profiles.node'].grab({_id: _id});
 		
+		//console.log('/applets/services/services.node.js:', req.body); return done({});
+		//var current = req.session && req.session.profile && req.session.profile[category];
+
 		var q = {category: category, $or: [
 			{_id: new modules.mongodb.ObjectId(_id)} // always get given document
 		]};
@@ -148,12 +149,15 @@ module.exports = function(modules, config) {
 
 			modules['profiles.node'].modify(req.body.uid, data, function(r)
 			{
-				if (r._id) req.session.profile = r;
+				//if (r._id) req.session.profile = r;
 				
 				done({payload: r});
 			});
 		});
-	});
+
+	};
+
+	modules.exp.post('/api/services', exports.set);
 
 // ==========================================================================
 // NODE - SERVICES - EXPORTS
