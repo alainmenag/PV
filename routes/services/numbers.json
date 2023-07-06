@@ -21,7 +21,7 @@
 					"title": "Inbound",
 					"align": "center",
 					"data": "target",
-					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
+					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-disabled=\"row.target && row.target != session.uid\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
 					
 					
 					
