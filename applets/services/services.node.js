@@ -69,7 +69,6 @@ module.exports = function(modules, config) {
 		var current = await modules['profiles.node'].grab({_id: _id});
 		
 		//console.log('/applets/services/services.node.js:', req.body); return done({});
-		//var current = req.session && req.session.profile && req.session.profile[category];
 
 		var q = {category: category, $or: [
 			{_id: new modules.mongodb.ObjectId(_id)} // always get given document
@@ -137,15 +136,17 @@ module.exports = function(modules, config) {
 				data[category + '.' + _id + '.removed'] = null;
 			}
 			
+/*
 			// mark given service dependents as added
-			if (req.body.action == 'add' && match.services)
+			if (req.body.action == 'add' && match.dependents)
 			{
-				for (let i = 0; i < match.services.length; i++)
+				for (let i = 0; i < match.dependents.length; i++)
 				{
-					data[category + '.' + match.services[i] + '.added'] = ts;
-					data[category + '.' + match.services[i] + '.removed'] = null;
+					data[category + '.' + match.dependents[i] + '.added'] = ts;
+					data[category + '.' + match.dependents[i] + '.removed'] = null;
 				}
 			}
+*/
 
 			modules['profiles.node'].modify(req.body.uid, data, function(r)
 			{

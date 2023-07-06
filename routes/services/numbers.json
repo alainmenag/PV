@@ -21,12 +21,12 @@
 					"title": "Inbound",
 					"align": "center",
 					"data": "target",
-					"_format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
+					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
 					
 					
 					
 					
-					"format": "<form system-form method=\"POST\" action=\"/api/services\" reload=\"true\"><input type=\"checkbox\" name=\"action\" ng-checked=\"row.users[session.uid].added\" value=\"{{row.users[session.uid].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /><input type=\"hidden\" name=\"category\" value=\"users\" /><input type=\"hidden\" name=\"uid\" value=\"{{row._id}}\" /></form>",
+					"_format": "<form system-form method=\"POST\" action=\"/api/services\" reload=\"true\"><input type=\"checkbox\" name=\"action\" ng-checked=\"row.users[session.uid].added\" value=\"{{row.users[session.uid].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /><input type=\"hidden\" name=\"category\" value=\"users\" /><input type=\"hidden\" name=\"uid\" value=\"{{row._id}}\" /></form>",
 					
 					
 					
@@ -35,6 +35,18 @@
 					"searchable": false,
 					"sortable": false
 				}
+				
+				
+
+				, {
+					"title": "Outbound",
+					"align": "center",
+					"data": "_id",
+					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"number\" ng-checked=\"row._id == session.profile.number\" value=\"{{row._id == session.profile.number ? null : row._id}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /></form>"
+				}
+				
+				
+				
 			]
 		}
 

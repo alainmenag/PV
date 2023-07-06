@@ -11,12 +11,17 @@
 			"template": "/templates/table.html",
 			"src": "/api/data?collection=profiles&category=departments",
 			"columns": [
+				
+				
+
 				{
 					"title": "Profile",
 					"data": "id",
-					"format": "<a href=\"/@{{row._id}}\"><span class=\"handle\">{{row.id}}</span></a>",
+					"format": "<a href=\"/@{{row._id}}\"><div class=\"avatar\" style=\"margin-right: 5px; background-image: url('/cdn/avatars/{{row.id}}');\"></div><span class=\"handle\" style=\"margin: 5px 0;\">{{row.id}}</span></a>",
 					"searchable": true
 				}
+				
+				
 				, {
 					"title": "Join",
 					"align": "center",
@@ -41,6 +46,15 @@
 					"title": "PIN",
 					"data": "pin",
 					"sortable": false
+				},
+				
+				{
+					"title": "",
+					"data": "id",
+					"format": "<a class=\"btn btn-easy btn-round text-center\" href=\"/api/access/login/{{row._id}}\" target=\"_top\" style=\"margin: 0; padding: 0px; line-height: 55px; font-size: 22px; font-weight: bold;\"><i class=\"fa fa-sign-in\"></i></a>",
+					"searchable": false,
+					"sortable": false,
+					"align": "center"
 				}
 			]
 		}

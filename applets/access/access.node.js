@@ -197,7 +197,8 @@ module.exports = function(modules, config)
 			req.session.passport.user.uid = user.owner;
 			req.session.passport.user.owner = null;
 			
-			done('/services/team');
+			done('/@' + _id);
+			//done('/services');
 		})();
 		
 		try {
@@ -218,6 +219,7 @@ module.exports = function(modules, config)
 				//req.flash('info', 'You\'re now logged in as: ' + (profile.title || _id));
 				
 				done('/@' + profile._id);
+				//done('/services');
 				
 			} else
 			{

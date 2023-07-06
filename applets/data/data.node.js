@@ -315,6 +315,8 @@ module.exports = function(modules, config) {
 				new: true
 			}, function (err, doc, lastErrorObject)
 			{
+				if (doc && doc._id == req.session.uid) req.session.profile = doc; // update session profile
+				
 				if (doc) modules.pubSub.emit(req.query.collection, doc);
 				
 				res.send({data: doc});
