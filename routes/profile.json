@@ -506,14 +506,6 @@
 					"type": "boolean"
 				}
 				
-				, "queue.announce-position": {
-					"title": "Announce Position",
-					"id": "queue.announce-position",
-					"value": "{{node.data.profile.queue['announce-position'] || false}}",
-					"model": false,
-					"type": "boolean"
-				}
-				
 				
 				
 			}
