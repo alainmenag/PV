@@ -58,29 +58,6 @@
 		
 
 
-		, {
-			"title": "Enable",
-			"if": "session.uid && !session.profile.services['64a4b1b7f3275a7638b57c90'].added",
-			"template": "/templates/list.html",
-			"data": [
-				{
-					"title": "<a href=\"/account\">Enable</a> to get started."
-				}
-			]
-		}
-		
-
-
-		, {
-			"title": "Access",
-			"if": "!session.uid",
-			"template": "/templates/list.html",
-			"data": [
-				{
-					"title": "<a href=\"/access/login?redirect=%2Faccount\" target=\"_top\">Login</a> to get started."
-				}
-			]
-		}
 		
 		
 		
