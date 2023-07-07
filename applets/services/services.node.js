@@ -11,16 +11,21 @@ module.exports = function(modules, config) {
 // NODE - SERVICES - LIST
 // ==========================================================================
 	
-	exports.list = async function(options, data)
+	exports.list = async function(options = {}, data = {})
 	{
 		return new Promise(resolve =>
 		{
+			var query = data.query || {};
 			
-			modules.mongo.profiles.find({category: 'services'}, function(err, docs)
+			query.category = 'services';
+			
+			if (query._id) try {
+				query._id = new modules.mongodb.ObjectId(query._id);
+			} catch(err) {};
+			
+			modules.mongo.profiles.find(query, function(err, docs)
 			{
-			
 				resolve(docs);
-			
 			});
 			
 			
@@ -125,8 +130,11 @@ module.exports = function(modules, config) {
 			// mark given service as removed
 			if (req.body.action == 'remove')
 			{
-				data[category + '.' + _id + '.added'] = null;
-				data[category + '.' + _id + '.removed'] = ts;
+				data['$unset'] = data['$unset'] || {};
+				data['$unset'][category + '.' + _id] = "";
+				//data['$unset'] = '';
+				//data[category + '.' + _id + '.added'] = null;
+				//data[category + '.' + _id + '.removed'] = ts;
 			}
 			
 			// mark given service as added
@@ -150,7 +158,7 @@ module.exports = function(modules, config) {
 
 			modules['profiles.node'].modify(req.body.uid, data, function(r)
 			{
-				//if (r._id) req.session.profile = r;
+				if (r && (r._id == req.session.uid)) req.session.profile = r;
 				
 				done({payload: r});
 			});

@@ -1,27 +1,27 @@
 {
 	"title": "Services / Departments",
 	"description": "Start lining up.",
-
+	"services": ["64891ebf55bedc996a21d632"],
 	"sections": [
-		
 		{
+			"access": ["guest", "user"],
+			"services": ["!64891ebf55bedc996a21d632"],
+			"template": "/templates/product.html"
+		},
+		{
+			"access": ["user"],
+			"services": ["64891ebf55bedc996a21d632"],
 			"id": "list",
 			"title": "Departments",
-			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
 			"template": "/templates/table.html",
 			"src": "/api/data?collection=profiles&category=departments",
 			"columns": [
-				
-				
-
 				{
 					"title": "Profile",
 					"data": "id",
 					"format": "<a href=\"/@{{row._id}}\"><div class=\"avatar\" style=\"margin-right: 5px; background-image: url('/cdn/avatars/{{row.id}}');\"></div><span class=\"handle\" style=\"margin: 5px 0;\">{{row.id}}</span></a>",
 					"searchable": true
 				}
-				
-				
 				, {
 					"title": "Join",
 					"align": "center",
@@ -58,12 +58,10 @@
 				}
 			]
 		}
-
-		
-		
 		, {
+			"access": ["user"],
+			"services": ["64891ebf55bedc996a21d632"],
 			"id": "departments",
-			"if": "session.profile.services['64891ebf55bedc996a21d632'].added",
 			"template": "/templates/form.html",
 			"title": "Add Department",
 			"background": "#f2f2f2",
@@ -73,19 +71,16 @@
 			"reset": true,
 			"_key": "session.profile",
 			"data": {
-				
 				"uid": {
 					"id": "uid",
 					"value": "{{session.profile._id}}",
 					"type": "hidden"
 				},
-				
 				"access_token": {
 					"id": "access_token",
 					"value": "{{session.profile.password}}",
 					"type": "hidden"
 				},
-				
 				"title": {
 					"required": false,
 					"id": "name",
@@ -94,7 +89,6 @@
 					"autocomplete": false,
 					"model": false
 				},
-				
 				"pin": {
 					"required": true,
 					"id": "pin",
@@ -105,16 +99,16 @@
 					"autocomplete": false,
 					"model": false
 				}
-				
 			}
 		}
-	
-		
-		
-		
 	],
 	"resources": [
-		
+		{
+			"src": "services.node",
+			"fn": "list",
+			"key": "products",
+			"query": {"_id": "64891ebf55bedc996a21d632"}
+		},
 		{
 			"src": "data.node",
 			"fn": "list",
@@ -122,7 +116,5 @@
 			"category": "departments",
 			"collection": "profiles"
 		}
-		
 	]
-	
 }

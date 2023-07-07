@@ -1,4 +1,40 @@
-<% if (node.sections) {var i = 0; for (var prop in node.sections) {i++; section = node.sections[prop]; if (section.active === false) continue; %>
+<% if (node.sections) {var i = 0; for (var prop in node.sections) { i++;
+	
+	section = node.sections[prop];
+
+	if (section.active === false) continue;
+
+	var access = section.access || [];
+	var services = section.services || [];
+	var accessable = [];
+	
+	// check if the user has a matching role to gain access
+	if (access.length) // match required roles to session roles
+	{
+		var has = roles;
+		var re = new RegExp('^(' + access.join('|') + ')$');
+	
+		if (!has.join(',').match(re)) accessable.push(false);
+	}
+	
+	// check if required services are enabled for user
+	if (services.length)
+	{
+		var has = Object.keys(session?.profile?.services || {});
+		var re = new RegExp(services.join('|'), 'i');
+		var allowed = services.join('|').indexOf('!') > -1; // dis/allow access right away
+		
+		// if sections calls to be disallowed if user has the service
+		if (('!' + has.join(',!')).match(re)) allowed = false;
+		
+		// if section requires the service and the user has the service
+		if (has.join(',').match(re)) allowed = true;
+		
+		if (!allowed) accessable.push(allowed);
+	}
+	
+	if (accessable.indexOf(false) > -1) continue;	
+%>
 	
 	<div
 		id="<%- section.id || ('section_' + i) %>"

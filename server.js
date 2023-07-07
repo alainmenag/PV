@@ -756,6 +756,7 @@ async function render(req, callback = function() {})
 		body: req.body,
 		params: req.params,
 		session: req.session,
+		roles: [req.session.uid ? 'user' : 'guest'],
 		cookies: req.cookies,
 		pathname: req._parsedUrl.pathname == '/' ? '/home' : req._parsedUrl.pathname,
 		site: req.site || {},

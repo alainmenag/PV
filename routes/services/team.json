@@ -1,12 +1,18 @@
 {
 	"title": "Services / Team",
 	"description": "Teammates.",
+	"services": ["6486efa055bedc996a215d36"],
 	"sections": [
-		
 		{
+			"access": ["guest", "user"],
+			"services": ["!6486efa055bedc996a215d36"],
+			"template": "/templates/product.html"
+		},
+		{
+			"access": ["user"],
+			"services": ["6486efa055bedc996a215d36"],
 			"id": "list",
 			"title": "Teammates",
-			"if": "session.profile.services['6486efa055bedc996a215d36'].added",
 			"template": "/templates/datatable.html",
 			"src": "/api/data?collection=profiles&category=users",
 			"columns": [
@@ -31,7 +37,6 @@
 					"data": "state",
 					"searchable": true
 				},
-				
 				{
 					"title": "",
 					"data": "id",
@@ -42,10 +47,10 @@
 				}
 			]
 		}
-		
 		, {
+			"access": ["user"],
+			"services": ["6486efa055bedc996a215d36"],
 			"id": "add",
-			"if": "session.profile.services['6486efa055bedc996a215d36'].added",
 			"template": "/templates/form.html",
 			"title": "Add Teammate",
 			"background": "#f2f2f2",
@@ -54,7 +59,6 @@
 			"reload": true,
 			"reset": true,
 			"data": {
-				
 				"title": {
 					"required": true,
 					"id": "title",
@@ -63,11 +67,15 @@
 					"autocomplete": true,
 					"model": false
 				}
-				
 			}
 		}
-		
-	
-
+	],
+	"resources": [
+		{
+			"src": "services.node",
+			"fn": "list",
+			"key": "products",
+			"query": {"_id": "6486efa055bedc996a215d36"}
+		}
 	]
 }

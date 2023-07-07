@@ -144,10 +144,16 @@ module.exports = function(modules, config)
 			{
 				profile.incognito = parseInt(profile.incognito) || 0;
 			}
+			
+			var update = {};
+			
+			if (profile['$unset']) [update['$unset'] = profile['$unset'], delete profile['$unset']];
+			
+			update['$set'] = profile;
 
 			modules.mongo.profiles.findAndModify({
 				query: query,
-				update: {$set: profile},
+				update: update,
 				//upsert: true,
 				new: true
 			}, function (err, doc, lastErrorObject)

@@ -70,6 +70,7 @@
 			window.site = JSON.parse(atob('<%- modules.btoa(JSON.stringify(site)); %>'));
 			window.node = JSON.parse(atob('<%- modules.btoa(JSON.stringify(node)); %>'));
 			window.session = JSON.parse(atob('<%- modules.btoa(JSON.stringify(session)); %>'));
+			window.roles = <%- JSON.stringify(roles); %>;
 			window.uid = <% if (session.uid) { %>'<%- session.uid %>'<% } else { %>null<% } %>; // user id
 			window.gid = window.uid || (window.sessionStorage.gid) || Date.now().toString(); // guest id
 			window.tid = window.sessionStorage.tid || Date.now().toString(); // tab id

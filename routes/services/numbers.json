@@ -1,13 +1,18 @@
 {
 	"title": "Services / Numbers",
 	"description": "Manage numbers.",
-
+	"services": ["648e4dca55bedc996a231032"],
 	"sections": [
-		
 		{
+			"access": ["guest", "user"],
+			"services": ["!648e4dca55bedc996a231032"],
+			"template": "/templates/product.html"
+		},
+		{
+			"access": ["user"],
+			"services": ["648e4dca55bedc996a231032"],
 			"id": "list",
 			"title": "Numbers",
-			"if": "session.profile.services['648e4dca55bedc996a231032'].added",
 			"template": "/templates/table.html",
 			"src": "/api/data?collection=profiles&category=numbers",
 			"columns": [
@@ -22,40 +27,23 @@
 					"align": "center",
 					"data": "target",
 					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-disabled=\"row.target && row.target != session.uid\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
-					
-					
-					
-					
 					"_format": "<form system-form method=\"POST\" action=\"/api/services\" reload=\"true\"><input type=\"checkbox\" name=\"action\" ng-checked=\"row.users[session.uid].added\" value=\"{{row.users[session.uid].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /><input type=\"hidden\" name=\"category\" value=\"users\" /><input type=\"hidden\" name=\"uid\" value=\"{{row._id}}\" /></form>",
-					
-					
-					
-					
 					"_format": "<form system-form method=\"POST\" action=\"/api/services\" key=\"session.profile\"><input type=\"checkbox\" name=\"action\" ng-checked=\"session.profile.numbers[row._id].added\" value=\"{{session.profile.numbers[row._id].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"{{row.category}}\" /><input type=\"hidden\" name=\"uid\" value=\"{{session.uid}}\" /></form>",
 					"searchable": false,
 					"sortable": false
 				}
-				
-				
-
 				, {
 					"title": "Outbound",
 					"align": "center",
 					"data": "_id",
 					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"number\" ng-checked=\"row._id == session.profile.number\" value=\"{{row._id == session.profile.number ? null : row._id}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /></form>"
 				}
-				
-				
-				
 			]
 		}
-
-
-		
-		
 		, {
+			"access": ["user"],
+			"services": ["648e4dca55bedc996a231032"],
 			"id": "add",
-			"if": "session.profile.services['648e4dca55bedc996a231032'].added",
 			"template": "/templates/form.html",
 			"title": "Add Number",
 			"background": "#f2f2f2",
@@ -64,7 +52,6 @@
 			"reload": true,
 			"reset": true,
 			"data": {
-				
 				"id": {
 					"required": true,
 					"id": "id",
@@ -74,16 +61,16 @@
 					"model": false,
 					"help": "E. 164 (no spaces): +18886106116"
 				}
-				
 			}
 		}
-		
-	
-		
-		
 	],
 	"resources": [
-		
+		{
+			"src": "services.node",
+			"fn": "list",
+			"key": "products",
+			"query": {"_id": "648e4dca55bedc996a231032"}
+		},
 		{
 			"src": "data.node",
 			"fn": "list",
@@ -91,7 +78,6 @@
 			"category": "numbers",
 			"collection": "profiles"
 		}
-		
 	]
 	
 }

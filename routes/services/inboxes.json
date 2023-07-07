@@ -1,13 +1,18 @@
 {
 	"title": "Services / Inboxes",
 	"description": "Receive things offline.",
-
+	"services": ["64a4b1b7f3275a7638b57c90"],
 	"sections": [
-		
 		{
+			"access": ["guest", "user"],
+			"services": ["!64a4b1b7f3275a7638b57c90"],
+			"template": "/templates/product.html"
+		},
+		{
+			"access": ["user"],
+			"services": ["64a4b1b7f3275a7638b57c90"],
 			"id": "list",
 			"title": "Inboxes",
-			"if": "session.profile.services['64a4b1b7f3275a7638b57c90'].added",
 			"template": "/templates/table.html",
 			"src": "/api/data?collection=profiles&category=inboxes",
 			"columns": [
@@ -17,7 +22,6 @@
 					"format": "<a href=\"/@{{row._id}}\"><span class=\"handle\">{{row.id}}</span></a>",
 					"searchable": true
 				}
-				
 				,{
 					"title": "Name",
 					"data": "title",
@@ -26,15 +30,10 @@
 				}
 			]
 		}
-
-		
-
-
-		
-		
 		, {
+			"access": ["user"],
+			"services": ["64a4b1b7f3275a7638b57c90"],
 			"id": "add",
-			"if": "session.profile.services['64a4b1b7f3275a7638b57c90'].added",
 			"template": "/templates/form.html",
 			"title": "Add Inbox",
 			"background": "#f2f2f2",
@@ -43,7 +42,6 @@
 			"reload": true,
 			"reset": true,
 			"data": {
-				
 				"title": {
 					"required": false,
 					"id": "title",
@@ -52,19 +50,16 @@
 					"autocomplete": true,
 					"model": false
 				}
-				
 			}
-		}
-		
-
-
-		
-		
-		
-		
+		}	
 	],
 	"resources": [
-		
+		{
+			"src": "services.node",
+			"fn": "list",
+			"key": "products",
+			"query": {"_id": "64a4b1b7f3275a7638b57c90"}
+		},
 		{
 			"src": "data.node",
 			"fn": "list",
@@ -72,7 +67,5 @@
 			"category": "inboxes",
 			"collection": "profiles"
 		}
-		
 	]
-	
 }
