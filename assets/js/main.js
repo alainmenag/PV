@@ -46,8 +46,11 @@ var main = function (
 	$rootScope.parseInt = window.parseInt;
 	$rootScope.parseFloat = window.parseFloat;
 	$rootScope.encodeURIComponent = window.encodeURIComponent;
+	$rootScope.decodeURIComponent = window.decodeURIComponent;
 	$rootScope.platform = window.platform;
 	$rootScope.isNaN = window.isNaN;
+	$rootScope.atob = window.atob;
+	$rootScope.btoa = window.btoa;
 	
 	$rootScope.location.loading = false;
 	

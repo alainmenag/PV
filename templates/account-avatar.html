@@ -6,7 +6,7 @@
 					
 					<% if (session?.uid) { %>
 					<td align="center" style="padding: 0 3px;" valign="middle">
-						<a href="/@" class="btn btn-basic btn-round" style="margin: 0; display: block; background-size: cover; background-position: center center; padding: 0; background-image: url('<%- session?.profile?.image || ("/cdn/avatars/" + session?.profile?.id) %>');"></a>
+						<a href="/@<%- session.uid%>" class="btn btn-basic btn-round" style="margin: 0; display: block; background-size: cover; background-position: center center; padding: 0; background-image: url('<%- session?.profile?.image || ("/cdn/avatars/" + session?.profile?.id) %>');"></a>
 					</td>
 					<% } %>
 					

@@ -257,7 +257,8 @@ module.exports = function(modules, config) {
 					try // upload to s3
 					{
 						const command = new modules.s3.PutObjectCommand({
-							Bucket: "main",
+							//Bucket: "main",
+							Bucket: config.s3.bucket || 'main',
 							Key: key, 
 							Body: Buffer.from(d[1], 'base64'),
 							ContentEncoding: 'base64',
@@ -267,8 +268,6 @@ module.exports = function(modules, config) {
 						});
 					
 						var response = await modules.s3.send(command);
-						
-						console.log(response);
 						
 						req.body[k] = config.s3.url + key + '?' + [
 							'ts=' + Date.now(),

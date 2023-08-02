@@ -29,10 +29,14 @@
 					"searchable": true
 				}
 				, {
-					"title": "Assistant",
-					"data": "title",
-					"format": "<a href=\"/@{{row.assistant}}\"><span>{{row.assistant || '...'}}</span></a>",
-					"searchable": true
+					"title": "Inbound",
+					"align": "center",
+					"data": "target",
+					"format": "<form system-form method=\"POST\" action=\"/api/data?collection=profiles\" reload=\"true\"><input type=\"checkbox\" name=\"target\" ng-disabled=\"row.target && row.target != session.uid\" ng-checked=\"row.target && row.target == session.uid\" value=\"{{row.target == session.uid ? null : session.uid}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"numbers\" /></form>",
+					"_format": "<form system-form method=\"POST\" action=\"/api/services\" reload=\"true\"><input type=\"checkbox\" name=\"action\" ng-checked=\"row.users[session.uid].added\" value=\"{{row.users[session.uid].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{session.uid}}\" /><input type=\"hidden\" name=\"category\" value=\"users\" /><input type=\"hidden\" name=\"uid\" value=\"{{row._id}}\" /></form>",
+					"_format": "<form system-form method=\"POST\" action=\"/api/services\" key=\"session.profile\"><input type=\"checkbox\" name=\"action\" ng-checked=\"session.profile.numbers[row._id].added\" value=\"{{session.profile.numbers[row._id].added ? 'remove' : 'add'}}\" onchange=\"event.target.form.submit(event);\" /><input type=\"hidden\" name=\"_id\" value=\"{{row._id}}\" /><input type=\"hidden\" name=\"category\" value=\"{{row.category}}\" /><input type=\"hidden\" name=\"uid\" value=\"{{session.uid}}\" /></form>",
+					"searchable": false,
+					"sortable": false
 				}
 				, {
 					"title": "Outbound",

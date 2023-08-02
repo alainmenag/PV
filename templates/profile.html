@@ -96,12 +96,14 @@
 					</div>
 									
 					<div style="margin-top: 15px;">
-						<span
-							editable-text="cache.profile.description"
+
+						<label
+							editable-textarea="cache.profile.description"
 							ng-disabled="<%- readOnly %>"
-							style="word-break: break-word; color: #000; font-style: inherit;"
+							style="word-break: break-word; color: #000; font-style: inherit; font-weight: normal;"
+							title="<%- encodeURIComponent(node.data.profile.description) %>"
 							onaftersave="$http.post('/api/data?collection=profiles&category=<%- node.data.profile.category %>', {_id: '<%- node.data.profile._id %>', description: cache.profile.description || ''}).then(templates.load, notify); cache.profile = {};"
-						>— {{"<%- node.data.profile.description %>" || '...'}}</span>
+						>— {{decodeURIComponent("<%- encodeURIComponent(node.data.profile.description) %>" || '...') | trim: 280}}</label>
 					</div>
 
 				</div>

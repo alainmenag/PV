@@ -2,6 +2,23 @@
 // TURN - DIRECTIVES - LINKS
 //==========================================================================
 
+app.directive('title', function($timeout) {
+    return {
+        restrict:'A',
+        link: function(scope, elem, attrs)
+        { 
+	        $timeout(function()
+	        {
+		        if (attrs.title) elem[0].title = decodeURIComponent(attrs.title);
+	        }); 
+        }        
+    };
+});
+
+//==========================================================================
+// TURN - DIRECTIVES - LINKS
+//==========================================================================
+
 app.directive('href', function($timeout) {
     return {
         restrict:'A',
@@ -484,8 +501,6 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 			        var after = function(r)
 			        {
 			        	$form.$saving = false;
-			        	
-			        	console.log('done', r);
 
 						try {$form.$setPristine();} catch(err) {};
 						try {$form.$setUntouched();} catch(err) {};
@@ -537,6 +552,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 					        if (vlu === '') vlu = null;
 					        if (inpt.type == 'radio' && vlu === 'true') vlu = true;
 					        if (inpt.type == 'radio' && vlu === 'false') vlu = false;
+					        
+					        //if (inpt.attributes.encode) vlu = btoa(encodeURIComponent(vlu));
 					        					        
 					        data[inpt.name] = vlu;
 				        });

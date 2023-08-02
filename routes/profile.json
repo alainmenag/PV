@@ -25,7 +25,7 @@
 		, {
 			"template": "/templates/form.html",
 			"tab": "#",
-			"if": "!node.data.profile.readOnly && ['users', 'departments'].indexOf(node.data.profile.category) > -1",
+			"if": "!node.data.profile.readOnly && ['users', 'departments', 'bots'].indexOf(node.data.profile.category) > -1",
 			"action": "/api/data?collection=profiles&category=bulletins",
 			"method": "POST",
 			"reload": true,
@@ -106,8 +106,6 @@
 					"type": "text"
 				}
 				
-
-				
 				, "image": {
 					"title": "Profile Image",
 					"id": "image",
@@ -129,6 +127,15 @@
 					"type": "file",
 					"accept": "image/*",
 					"_onchange": "event.target.form.submit(event);"
+				}
+				
+				, "website": {
+					"title": "Website",
+					"id": "website",
+					"value": "{{node.data.profile.website}}",
+					"model": false,
+					"type": "url",
+					"width": "12"
 				}
 				
 				, "deactivated": {
@@ -230,7 +237,7 @@
 		, {
 			"template": "/templates/form.html",
 			"tab": "#greetings",
-			"if": "!node.data.profile.readOnly && ['users', 'departments', 'inboxes'].indexOf(node.data.profile.category) > -1",
+			"if": "!node.data.profile.readOnly && ['users', 'departments', 'inboxes', 'bots'].indexOf(node.data.profile.category) > -1",
 			"title": "Greetings",
 			"action": "/api/data?collection=profiles&category=users",
 			"method": "POST",
@@ -278,23 +285,6 @@
 					"accept": "audio/*"
 				}
 				
-				, "greetings.hold.text": {
-					"title": "Hold Message (Text)",
-					"id": "greetings.hold.text",
-					"value": "{{node.data.profile.greetings.hold.text}}",
-					"model": false,
-					"type": "text"
-				}
-				
-				, "greetings.hold.file": {
-					"title": "Hold Message (MP3)",
-					"id": "greetings.hold.file",
-					"value": "{{node.data.profile.greetings.hold.file}}",
-					"model": false,
-					"type": "file",
-					"accept": "audio/*"
-				}
-				
 				, "greetings.ringback.file": {
 					"title": "Ringback (MP3)",
 					"id": "greetings.ringback.file",
@@ -311,6 +301,15 @@
 					"model": false,
 					"type": "file",
 					"accept": "audio/*"
+				}
+				
+				, "context.txt.file": {
+					"title": "Context File",
+					"id": "context.txt.file",
+					"value": "{{node.data.profile.context.txt.file}}",
+					"model": false,
+					"type": "file",
+					"accept": "text/*"
 				}
 				
 			}

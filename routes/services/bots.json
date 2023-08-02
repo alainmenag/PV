@@ -1,0 +1,80 @@
+{
+	"title": "Services / Bots",
+	"description": "Gateway into A.I.",
+	"services": ["64ab5775f3275a7638b9f6b3"],
+	"sections": [
+		{
+			"access": ["guest", "user"],
+			"services": ["!64ab5775f3275a7638b9f6b3"],
+			"template": "/templates/product.html"
+		},
+		{
+			"access": ["user"],
+			"services": ["64ab5775f3275a7638b9f6b3"],
+			"id": "list",
+			"title": "Bots",
+			"template": "/templates/table.html",
+			"src": "/api/data?collection=profiles&category=bots",
+			"columns": [
+				{
+					"title": "Profile",
+					"data": "id",
+					"format": "<a href=\"/@{{row._id}}\"><div class=\"avatar\" style=\"margin-right: 5px; background-image: url('/cdn/avatars/{{row.id}}');\"></div><span class=\"handle\" style=\"margin: 5px 0;\">{{row.id}}</span></a>",
+					"searchable": true
+				}
+				,{
+					"title": "Name",
+					"data": "title",
+					"format": "{{row.title || row._id}}",
+					"searchable": true
+				},
+				
+				{
+					"title": "",
+					"data": "id",
+					"format": "<a class=\"btn btn-easy btn-round text-center\" href=\"/api/access/login/{{row._id}}\" target=\"_top\" style=\"margin: 0; padding: 0px; line-height: 55px; font-size: 22px; font-weight: bold;\"><i class=\"fa fa-sign-in\"></i></a>",
+					"searchable": false,
+					"sortable": false,
+					"align": "center"
+				}
+			]
+		}
+		, {
+			"access": ["user"],
+			"services": ["64ab5775f3275a7638b9f6b3"],
+			"id": "add",
+			"template": "/templates/form.html",
+			"title": "Add Bot",
+			"background": "#f2f2f2",
+			"action": "/api/data?collection=profiles&category=bots",
+			"method": "POST",
+			"reload": true,
+			"reset": true,
+			"data": {
+				"title": {
+					"required": false,
+					"id": "title",
+					"title": "Title",
+					"type": "text",
+					"autocomplete": true,
+					"model": false
+				}
+			}
+		}	
+	],
+	"resources": [
+		{
+			"src": "services.node",
+			"fn": "list",
+			"key": "products",
+			"query": {"_id": "64ab5775f3275a7638b9f6b3"}
+		},
+		{
+			"src": "data.node",
+			"fn": "list",
+			"key": "list",
+			"category": "bots",
+			"collection": "profiles"
+		}
+	]
+}

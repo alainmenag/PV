@@ -24,14 +24,14 @@ module.exports = function(modules, config) {
 		console.log('***** ORYK: sip: db:', err);
 	});
 	
-	exports.sip.xmpp = new modules.pg.Client({
+	exports.xmpp.db = new modules.pg.Client({
 		host: (config.postgres && config.postgres.host ? config.postgres.host : '0.0.0.0'),
 		user: config?.postgres?.user,
 		password: config?.postgres?.password,
 		database: 'prosody',
 	});
 	
-	exports.sip.xmpp.connect((err) =>
+	exports.xmpp.db.connect((err) =>
 	{
 		console.log('***** ORYK: xmpp: db:', err);
 	});
@@ -54,7 +54,7 @@ module.exports = function(modules, config) {
 		}
 		
 		// when a user's profile is modified
-		if (options.category == 'users') modules.mongo.profiles.findOne({
+		if (['users', 'bots'].indexOf(options.category) > -1) modules.mongo.profiles.findOne({
 			_id: options._id
 		}, function(err, profile)
 		{
@@ -93,6 +93,15 @@ module.exports = function(modules, config) {
 		{
 			
 		};
+		
+		modules.request({
+			url: 'http://sip.oryk.com/api/jsapi/?oryk.js',
+			body: JSON.stringify(profile),
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}, function(error, response, body) {});
 		
 		// ensure domain is synced
 		try {
@@ -171,6 +180,7 @@ module.exports = function(modules, config) {
 			category: 'departments'
 		}, function(err, profile)
 		{
+/*
 			if (profile) modules.request({
 				//url: 'https://bin.wimzel.com/80b081f8-7523-432f-818d-5d669505f7bc-1665364940015',
 				url: 'http://sip.oryk.com/api/jsapi/?oryk.js',
@@ -180,6 +190,7 @@ module.exports = function(modules, config) {
 					'Content-Type': 'application/json'
 				}
 			}, function(error, response, body) {});
+*/
 			
 			
 			//http://sip.oryk.com/api/lua/?oryk.lua
@@ -204,6 +215,8 @@ module.exports = function(modules, config) {
 		{
 			var o = profile.departments[name];
 			
+				await exports.sip.db.query("DELETE FROM tiers WHERE agent='" + sipaddr + "';");
+			
 			if (o.added) try
 			{
 				exports.queues.setup({_id: (new modules.mongodb.ObjectId(name))});
@@ -211,10 +224,13 @@ module.exports = function(modules, config) {
 				await exports.sip.db.query("INSERT INTO tiers (queue, agent, state, \"level\", \"position\") VALUES('" + (name + '@' + exports.domain) + "', '" + sipaddr + "', 'Ready', 1, 1);");
 			} catch(err) {};
 			
+/*
 			if (o.removed) try
 			{
 				await exports.sip.db.query("DELETE FROM tiers WHERE queue='" + (name + '@' + exports.domain) + "' AND agent='" + sipaddr + "';");
 			} catch(err) {};
+*/
+			
 		}
 	};
 	
@@ -237,6 +253,39 @@ module.exports = function(modules, config) {
 	
 	exports.xmpp.provision = async function(profile)
 	{
+		if (!profile || !profile._id || !profile.password) return;
+		
+		var uid = profile._id.toString();
+		var jid = uid + '@' + exports.domain;
+
+		// ensure user
+		try {
+			var res = await exports.xmpp.db.query("INSERT INTO prosody (\"host\", \"user\", \"store\", \"key\", \"type\", \"value\") VALUES('" + exports.domain + "', '" + uid + "', 'accounts', 'password', 'string', '" + profile.password + "');");
+		} catch(err) {};
+
+		// ensure password
+		try {
+			var res = await exports.xmpp.db.query("UPDATE prosody SET value='" + profile.password + "' WHERE host='" + exports.domain + "' AND \"user\"='" + uid + "'");
+		} catch(err) {};
+		
+		//var res = await exports.sip.db.query("UPDATE users SET \"password\"='" + password + "', \"extension\"=" + sipuser.extension + ", \"blocked\"=" + sipuser.blocked + " WHERE id=" + sipuser.id);
+		
+/*
+NOTICE:  relation "prosody" already exists, skipping
+NOTICE:  relation "prosody_index" already exists, skipping
+NOTICE:  relation "prosodyarchive" already exists, skipping
+NOTICE:  relation "prosodyarchive_index" already exists, skipping
+NOTICE:  relation "prosodyarchive_with_when" already exists, skipping
+NOTICE:  relation "prosodyarchive_when" already exists, skipping
+NOTICE:  relation "prosodyarchive_sort" already exists, skipping
+*/
+		
+/*
+prosodyctl deluser assistant@oryk.com
+
+
+prosodyctl adduser 6488a58a5ac61a2ae3a2c14d@oryk.com
+*/
 		
 	};
 	
@@ -244,6 +293,10 @@ module.exports = function(modules, config) {
 	{
 		
 	};
+	
+	
+	
+	
 	
 	
 	

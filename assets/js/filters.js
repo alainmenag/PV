@@ -1,3 +1,38 @@
+app.filter('btoa', function($rootScope) {
+	return function(text)
+	{
+		return btoa(text || '');
+	}
+});
+
+app.filter('atob', function($rootScope) {
+	return function(text)
+	{
+		return atob(text || '');
+	}
+});
+
+app.filter('decodeURIComponent', function($rootScope) {
+	return function(text)
+	{
+		return decodeURIComponent(text || '');
+	}
+});
+
+app.filter('decodeURI', function($rootScope) {
+	return function(text)
+	{
+		return decodeURI(text || '');
+	}
+});
+
+app.filter('trim', function($rootScope) {
+	return function(text, l)
+	{
+		return (text || '').substr(0, l) + ((text || '').length > l ? '...' : '');
+	}
+});
+
 app.filter('formatPrice', function($rootScope) {
 	return function(num, options)
 	{

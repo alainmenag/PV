@@ -61,7 +61,9 @@
 									
 									<td width="100%" style="position: relative;">
 										
-										<% if (item.type == 'boolean') { %>
+										<% if (item.type == 'html') { %>
+										
+										<% } else if (item.type == 'boolean') { %>
 											
 											<div style="margin: 5px 0;">
 												
@@ -113,6 +115,19 @@
 												<option ng-repeat="option in <%- _model %>.options">{{option}}</option>
 												-->
 											</select>
+										
+										<% } else if (item.type == 'website') { %>
+										
+											<textarea
+												style="width: 100%; margin: 5px 0; height: 50px;"
+												class="smooth-corners"
+												name="<%- item.id %>"
+												placeholder="<%- item.placeholder || '...' %>"
+												autocomplete="<%- item.autocomplete || 'yes' %>"
+												encode="uri"
+												<%- item.required === true ? 'required' : '' %>
+												<%- item.model ? ('ng-model="' + model + '"') : '' %>
+											><%- query[item.id] || item.value %></textarea>
 										
 										<% } else if (item.type == 'textarea') { %>
 										
