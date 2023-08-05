@@ -32,6 +32,7 @@
         "express": "4.17.1",
         "express-fileupload": "^1.4.0",
         "express-form-data": "2.0.8",
+        "express-rate-limit": "^6.8.1",
         "express-session": "1.17.0",
         "express-xml-bodyparser": "0.3.0",
         "fetch": "1.1.0",
@@ -6219,6 +6220,17 @@
         "graceful-fs": "^4.1.2",
         "jsonfile": "^4.0.0",
         "universalify": "^0.1.0"
+      }
+    },
+    "node_modules/express-rate-limit": {
+      "version": "6.8.1",
+      "resolved": "https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-6.8.1.tgz",
+      "integrity": "sha512-xJyudsE60CsDShK74Ni1MxsldYaIoivmG3ieK2tAckMsYCBewEuGalss6p/jHmFFnqM9xd5ojE0W2VlanxcOKg==",
+      "engines": {
+        "node": ">= 14.0.0"
+      },
+      "peerDependencies": {
+        "express": "^4 || ^5"
       }
     },
     "node_modules/express-session": {

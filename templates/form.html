@@ -254,6 +254,13 @@
 			</div>
 			
 			<% if (section.action && section.submittable !== false) { %>
+			<div ng-if="!$form.$saving">
+				<input type="hidden" name="g-recaptcha-response" />
+				<div style="margin: 10px 0;" recaptcha="<%- config.reCAPTCHA.key %>"></div>
+			</div>
+			<% } %>
+			
+			<% if (section.action && section.submittable !== false) { %>
 				<div style="margin-top: 15px;">
 					<button type="submit" class="btn {{$form.$dirty ? 'btn-danger' : 'btn-info'}} smooth-corners" style="width: 100%; max-width: 120px;">{{$form.$saving ? '...' : ($form.$dirty ? 'Save' : 'Submit')}}</button>
 				</div>

@@ -22,6 +22,7 @@ const modules = {
 	http: require('http'),
 	_: require('underscore'),
 	moment: require('moment'),
+	rateLimit: require('express-rate-limit'),
 	crypto: require('crypto'),
 	pg: require('pg'),
 	//watch: require('node-watch'),
@@ -501,6 +502,23 @@ modules.exp.get('*.js.map', function(req, res, next) // ignore 404 maps if not i
 	res.end();
 });
 
+modules.exp.use('/submit', function(req, res)
+{
+	var recaptcha = req.body && req.body['g-recaptcha-response']
+	
+	if (!recaptcha) return res.status(501).end();
+	
+	modules.request({
+		url: 'https://prod-95.westus.logic.azure.com:443/workflows/d964853827a64f3b8acb3f2de6e85a98/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=l8CxDnmUEX80cleOw2y-mUqWQ7JJz7qw6GKDsKcgptw',
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		json: req.body
+	}, function(err, r, body)
+	{
+		res.send(body);
+	});
+});
+
 modules.exp.use(function(req, res, next)
 {
 	if (req._parsedUrl.pathname.indexOf('.') > -1) return next();
@@ -756,6 +774,7 @@ async function render(req, callback = function() {})
 		body: req.body,
 		params: req.params,
 		session: req.session,
+		config: config,
 		roles: [req.session.uid ? 'user' : 'guest'],
 		cookies: req.cookies,
 		pathname: req._parsedUrl.pathname == '/' ? '/home' : req._parsedUrl.pathname,
@@ -1036,6 +1055,32 @@ try
 		{
 			if (!stdout) modules.reloadScript(path);
 		});
+	});
+}
+catch(err) {};
+try
+{
+	chokidar.watch(__dirname + '/config.json', {
+		ignoreInitial: true,
+		persistent: true,
+		awaitWriteFinish: {
+			stabilityThreshold: 50,
+			pollInterval: 500
+		},
+		ignorePermissionErrors: false,
+		atomic: true
+	}).on('all', (event, path) =>
+	{
+		try
+		{
+			var c = JSON.parse(modules.fs.readFileSync(path, {
+				encoding:'utf8',
+				flag:'r'
+			}));
+			
+			config = Object.assign(config, c);
+			
+		} catch(err) {}
 	});
 }
 catch(err) {};

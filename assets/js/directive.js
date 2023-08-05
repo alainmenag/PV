@@ -2,6 +2,27 @@
 // TURN - DIRECTIVES - LINKS
 //==========================================================================
 
+app.directive('recaptcha', function($timeout) {
+    return {
+        restrict:'A',
+        link: function(scope, elem, attrs)
+        {
+	        $timeout(function()
+	        {
+				grecaptcha.ready(function(){
+					grecaptcha.render(elem[0], {
+						sitekey: attrs.recaptcha
+					});
+				}); 
+	        });
+        }        
+    };
+});
+
+//==========================================================================
+// TURN - DIRECTIVES - LINKS
+//==========================================================================
+
 app.directive('title', function($timeout) {
     return {
         restrict:'A',
@@ -539,7 +560,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 					        if (inpt.type == 'number') vlu = parseInt(vlu);
 					        
 					        if (
-					        	inpt.type.indexOf('text') == -1
+						        inpt.type
+					        	&& inpt.type.indexOf('text') == -1
 					        	&& (new RegExp('^[0-9]$')).test(inpt.value)
 					        ) vlu = parseInt(vlu);
 					        
@@ -559,6 +581,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 				        });
 				        
 				        //return console.log(data);
+				        
+				        if (data['g-recaptcha-response'] === null) return alert('Please validate your request.');
 
 				        $form.$saving = true;
 				        
@@ -574,8 +598,6 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 							
 							console.log('progress: ', progressPercentage, '% ', evt.config.data);
 						});
-				        
-				        
 
 /*
 				        var data = $(elem).serialize();
