@@ -95,7 +95,9 @@ commitsPromise.then(function(commits) {
 
 process.on('uncaughtException', function(err) {
 	
-	console.log('***** uncaughtException:', err.toString());
+	try {err = err.toString()} catch(e) {};
+	
+	console.log('***** uncaughtException:', err);
         
 });
 

@@ -51,6 +51,8 @@ module.exports = function(modules, config)
 				{'owners': options.uid}
 			]});
 			*/
+			
+			if (!modules.mongo.profiles._getConnection()) return resolve();
 		
 			modules.mongo.profiles.findOne(q, function(err, profile)
 			{
