@@ -1,0 +1,50 @@
+<%
+
+	res.setHeader('content-type', 'application/rss+xml; charset=utf-8');
+	
+	image = node.favicon || site.favicon || node.logo || site.logo || '/assets/img/logo.svg';
+	
+	if (image.indexOf('http') == -1) image = req.website + image;
+
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<rss
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:art19="https://art19.com/xmlns/rss-extensions/1.0"
+	xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0/"
+	version="2.0">
+	<channel>
+	
+		<title><%- ((node.title || '') + ' @ ' + (site.title || '')).trim() %></title>
+		<description><%- (node.description || site.description) %></description>
+		<language>en</language>
+		<managingEditor><%- (node.aurthor || site.aurthor) %></managingEditor>
+		<copyright><%- (node.copyright || site.copyright) %></copyright>
+		
+		<atom:link href="<%- req.link %>" rel="self" type="application/rss+xml"/>
+		
+		<link><%- (req.link || '').replace(/\/rss/g, '') %></link>
+		
+		<image>
+			<url><%- image %></url>
+			<link><%- (req.link || '').replace(/\/rss/g, '') %></link>
+			<title><%- ((node.title || '') + ' @ ' + (site.title || '')).trim() %></title>
+		</image>
+		<% if (false) { %>
+		<item>
+		
+			<title>Listen Now - Think Twice: Michael Jackson</title>
+
+			<pubDate>Mon, 31 Jul 2023 08:00:00 -0000</pubDate>
+			
+			<media:content medium="image" url="<%- (req.link || '').replace(/\/rss/g, '') %>" />
+
+			<description>
+				<![CDATA[<p>More than a decade since Michael Jackson’s death, his legacy remains complicated and unresolved. Think Twice: Michael Jackson is an exploration of the King of Pop’s life and impact – and an investigation into why his global influence continues to endure, despite the disturbing allegations against him. In this ten-part series, journalists Leon Neyfakh and Jay Smooth bring you a new perspective on the Michael Jackson story, based on dozens of original interviews with people who watched it unfold from up close.</p><p>Listen wherever you listen to podcasts. You can binge all ten episodes of Think Twice: Michael Jackson, ad-free on the Amazon Music or Audible: <a href="http://Wondery.fm/Think_Twice" rel="noopener noreferrer" target="_blank">Wondery.fm/Think_Twice</a></p><p>See Privacy Policy at <a href="https://art19.com/privacy" rel="noopener noreferrer" target="_blank">https://art19.com/privacy</a> and California Privacy Notice at <a href="https://art19.com/privacy#do-not-sell-my-info" rel="noopener noreferrer" target="_blank">https://art19.com/privacy#do-not-sell-my-info</a>.</p>]]>
+			</description>
+			
+		</item>
+		<% } %>
+	</channel>
+</rss>

@@ -3,7 +3,7 @@ html, body {
 }
 
 html {
-	background-color: rgb(250,250,250);
+	background-color: var(--backgroundColor);
 }
 
 [data-lastpass-root] {

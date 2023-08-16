@@ -6,3 +6,13 @@ git reset --hard HEAD
 
 need to look for all and fix:
 </%->
+
+
+
+db.getCollection('profiles').aggregate([
+    { $match: {"category": "comment"} },
+    { $group: { _id: null, amount: { $sum: "$rating" } } }
+])
+
+
+

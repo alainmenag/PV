@@ -35,7 +35,7 @@ module.exports = function(modules, config) {
 				callback(_id); resolve(_id);
 			};
 			
-			if (!collection || !collection._getConnection()) return done();
+			if (!collection) return done();
 			
 			var _id = id; try {
 				_id = new modules.mongodb.ObjectId(id);
@@ -65,11 +65,11 @@ module.exports = function(modules, config) {
 		
 		return new Promise(resolve =>
 		{
-			if (!_id) return resolve();
+			//if (!_id) return resolve();
 			
 			var collection = modules.mongo[options.collection];
 			
-			if (!collection || !collection._getConnection()) return resolve();
+			if (!collection) return resolve();
 			
 			var query = {category: options.category, $or: [
 				{owners: _id},

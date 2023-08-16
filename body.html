@@ -1,3 +1,9 @@
+<style>
+	:root {
+		--backgroundColor: <%- site?.background?.color || 'rgb(250,250,250)' %>;
+	}
+</style>
+
 <% if (site.gtag) include(__dirname + '/templates/ga.html'); %>
 
 <div><%- include(__dirname + '/templates/memo.html'); %></div>

@@ -178,6 +178,54 @@ modules.mqtt.on('message', function(topic, message)
 });
 
 // ==========================================================================
+// TUDAYS - MODUELS - APOLLO
+// ==========================================================================
+
+const mongoose = require("mongoose");
+
+const { graphql, buildSchema } = require("graphql");
+//const { ApolloServer } = require("@apollo/server");
+const { ApolloServer } = require('apollo-server-express');
+const { startStandaloneServer } = require("@apollo/server/standalone");
+
+const { resolvers } = require(__dirname + "/resolvers/resolvers.js");
+const { typeDefs } = require(__dirname + "/models/typeDefs.js");
+
+let MONGO_URI = "mongodb://" + (config.mongodb && config.mongodb.host ? config.mongodb.host : '0.0.0.0') + "/production";
+
+//MONGO_URI = 'mongodb://0.0.0.0:27017/production';
+
+// Database connection
+mongoose
+	.connect(MONGO_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		//useCreateIndex: true,
+		//useFindAndModify: false,
+	})
+	.then(() => {
+		console.log('***** Mongoose: connect:', Date.now());
+	})
+	.catch(err => {
+		console.log('***** Mongoose: error:', err.message);
+	});
+
+const apollo = new ApolloServer({ typeDefs, resolvers });
+
+/*
+startStandaloneServer(apollo, {
+	listen: {
+		port: ((config.port || process.env.PORT || 5555) + 1)
+	},
+}).then(({ url }) =>
+{
+	console.log('***** GRAPHQL: listening:', url);
+	
+	apollo.url = url;
+});
+*/
+
+// ==========================================================================
 // TUDAYS - MODUELS - MONGO
 // ==========================================================================
 
@@ -188,7 +236,7 @@ modules.mongocli = new modules.mongodb.MongoClient([
 ].join('/'));
 */
 
-modules.mongo = new modules.mongojs([
+var mongo = new modules.mongojs([
 	'mongodb:/',
 	(config.mongodb && config.mongodb.host ? config.mongodb.host : '0.0.0.0'),
 	'production'
@@ -196,15 +244,21 @@ modules.mongo = new modules.mongojs([
 	'profiles'
 ]);
 
-modules.mongo.on('connect', function() {
+mongo.on('connect', function()
+{
 	console.log('***** Mongo: connect:', Date.now());
+	
+	modules.mongo = mongo;
 })
 
-modules.mongo.on('error', function(err) {	
-	console.log('***** Mongo: error:', err);	
+mongo.on('error', function(err)
+{	
+	console.log('***** Mongo: error:', err);
+	
+	delete modules.mongo;
 });
 
-modules.mongo.stats(function(err, r) {});
+mongo.stats(function(err, r) {});
 
 // ==========================================================================
 // TUDAYS - MODUELS - ADDONS
@@ -371,10 +425,22 @@ modules.router.mount = function(options) {
 // TUDAYS - HTTP
 // ==========================================================================
 
-modules.exp = modules.express();
+var app = modules.express();
+
+modules.exp = app;
 modules.httpServer = modules.http.createServer(modules.exp);
 
+async function startApollo()
+{
+	await apollo.start();
+	
+	apollo.applyMiddleware({ app, path: '/graphql' });
+}
 
+startApollo().catch(error =>
+{
+	console.log('***** APOLLO:', error);
+});
 
 modules.exp.set('views', __dirname + '/assets/');
 modules.exp.set('view engine', 'html');
@@ -451,6 +517,8 @@ modules.exp.use(function(req, res, next)
     res.locals.warnings = req.flash('warning');
     res.locals.error = req.flash('error');
 */
+	req.website = (req.headers['upgrade-insecure-requests'] ? 'https' : 'http') + '://' + req.headers.host;
+	req.link =  req.website + req._parsedUrl.href;
     
     next();
 });
@@ -577,8 +645,6 @@ modules.exp.get('/creator', function(req, res, next)
 
 	next();
 });
-
-
 
 modules.exp.get('/maps/api/place/photo', function(req, res)
 {
@@ -762,9 +828,11 @@ modules.exp.get('/preload.svg', function(req, res)
 
 
 
-async function render(req, callback = function() {})
+async function render(req, res, callback = function() {})
 {
 	var payload = {
+		res: res,
+		req: req,
 		modules: modules,
 		_hostname: modules.os.hostname(),
 		__dirname: __dirname,
@@ -874,15 +942,21 @@ async function render(req, callback = function() {})
 	
 	delete payload.node.secure;
 	
+	if (payload.node.render) payload.render = payload.node.render;
+	
 	if (payload.render == 'json')
 	{
 		payload.template = await modules.renderView(__dirname + '/body.html', payload);	
-	} else
+	} else if (payload.render == 'html')
 	{
 		payload.template = await modules.renderView(__dirname + '/index.html', payload);
+	} else { // set what template to render from a node
+		payload.template = await modules.renderView(__dirname + payload.render, payload);
 	}
 	
 	delete payload.modules;
+	
+	if (res.finished) return; //_headerSent // _contentLength // stop if already sent data
 	
 	callback(payload.render == 'json' ? {payload: payload} : payload.template);	
 };
@@ -895,9 +969,15 @@ async function main(req, res, next)
 		&& req._parsedUrl.pathname.indexOf('@') == -1
 	) return next();
 	
-	render(req, function(r)
+	if (
+		req._parsedUrl.pathname.indexOf('/graphql') > -1
+	) return next();
+	
+	render(req, res, function(r)
 	{
 		res.send(r);
+		
+		//application/rss+xml; charset=utf-8
 		
 		if (req?.session?.flash?.info?.length) req.session.flash['info'] = [];
 		if (req?.session?.flash?.warning?.length) req.session.flash['warning'] = [];
@@ -906,16 +986,7 @@ async function main(req, res, next)
 	});
 };
 
-
 modules.exp.use(main);
-
-
-
-
-
-
-
-
 
 modules.httpServer.listen(config.port || process.env.PORT || 5555, '0.0.0.0', function(e)
 {
