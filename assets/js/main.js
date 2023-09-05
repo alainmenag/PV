@@ -1,3 +1,5 @@
+
+
 var counts = {};
 
 var main = function (
@@ -18,9 +20,9 @@ var main = function (
 	$rootScope.uid = window.uid;
 	$rootScope.gid = window.gid;
 	$rootScope.tid = window.tid;
-	$rootScope.cache = window.cache || {};
 
-	window.$rootScope = $rootScope;
+	window.$rootScope = Object.assign($rootScope, window.$rootScope);
+	
 	window.$timeout = $timeout;
 	window.$location = $location;
 	window.$http = $http;
@@ -32,6 +34,7 @@ var main = function (
 	$rootScope.$location = $location;
 	$rootScope.Date = window.Date;
 	$rootScope.Math = window.Math;
+	$rootScope.Object = window.Object;
 	$rootScope._ = window._;
 	$rootScope.query = window.query || {};
 	$rootScope.location = window.location;
@@ -87,6 +90,14 @@ var main = function (
 	    });
 	    
 	    return '';
+    };
+    
+    $rootScope.navigate = function(p, query)
+    { 
+		$timeout(function()
+		{
+			$location.path(p).search(query || {}).hash(null);
+		});
     };
 
 // ==========================================================================
@@ -346,6 +357,22 @@ var main = function (
 		
 		var options = options.data || options || {};
 		var callback = callback || function() {};
+		
+		if (typeof options == 'string') options = {memo: options};
+		
+		options.title = options.title || options.memo;
+		
+		if (options.type == 'question') options.showCancelButton = true;
+		
+		Swal.fire(options).then((result) =>
+		{
+			$timeout(function() {
+				callback(result);
+			});
+		});
+		
+		
+/*
 		var map = {
 			200: 'success',
 			0: 'error'
@@ -402,7 +429,7 @@ var main = function (
 			
 			$timeout(function() {
 				
-				swal.resetDefaults();
+				//swal.resetDefaults();
 				
 			});
 			
@@ -431,6 +458,7 @@ var main = function (
 			after();
 			
 		};
+*/
 
 	};
 	
@@ -457,8 +485,20 @@ var main = function (
 		}
 	};
 
-
-
+	$rootScope.formatPrice = function(num, options)
+	{
+		options = options || {};
+		
+		var num = parseFloat(num || 0) / 100;
+		var n = num.toFixed(2);
+		
+		if (options.rounding) n = Math.ceil(num);
+		
+		//if (n >= 1) options.prefix = '$';
+		//if (n < 1) options.postfix = '¢';
+		
+		return (options.prefix || '') + n.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') + (options.postfix || '');
+	};
 
 // ==========================================================================
 // APPLET - OBJECT

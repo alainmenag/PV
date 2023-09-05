@@ -2,34 +2,261 @@
 
 	//var layout = node.template.layout;
 	var layout = section.layout || node.template.layout;
+	var mode = query.mode || 'view'; //fullscreen,print
 
 %>
 
-<div id="menu_board_wrapper" oncontextmenu="event.preventDefault(); window.location.reload(true);">
+<div id="menu_board" class="no-select" oncontextmenu="event.preventDefault(); window.location.reload(true);">
+	
+	<script>
+		
+		addEventListener("unload", (event) =>
+		{
+			$rootScope.ticketing.store();
+		});
+		
+		try {
+			node.data.payload.mappings = {};
+			
+			_.each(node.data.payload.items, function(item, sku) {
+				
+				if (item.item_data && item.item_data.modifier_list_info)
+				{
+					item.item_data.modifier_list_info = _.sortBy(item.item_data.modifier_list_info, function(l)
+					{
+						var MODIFIER_LIST = node.data.payload.items[l.modifier_list_id];
+						
+						return MODIFIER_LIST.modifier_list_data.ordinal;
+/*
+						var i = 0;
+						
+						console.log(l);
+					
+						var MODIFIER_LIST = data.mappings.MODIFIER_LIST[l.modifier_list_id];
+						var i = 0; try {
+							i = MODIFIER_LIST.modifier_list_data.ordinal;
+						} catch(err) {};
+*/
+						
+						return;
+						
+					});
+				}
+				
+					
+					/*
+				if (item.type == 'MODIFIER_LIST')
+				{
+					
+					console.log(item);
+					
+					
+				}
+					*/
+				
+				node.data.payload.mappings[item.type] = node.data.payload.mappings[item.type] || {};
+				
+				node.data.payload.mappings[item.type][sku] = item;
+			});
+		}
+		catch(err) {};
+		
+		
+/*
+			ITEM.item_data.modifier_list_info = _.sortBy(ITEM.item_data.modifier_list_info, function(l) {
+				
+				var MODIFIER_LIST = data.mappings.MODIFIER_LIST[l.modifier_list_id];
+				var i = 0; try {
+					i = MODIFIER_LIST.modifier_list_data.ordinal;
+				} catch(err) {};
+				
+				return i;
+			});
+*/
+		
+		
+		
+		$rootScope.cache.ticket = localStorage['ticket'] ? JSON.parse(localStorage['ticket']) : null;
+		
+		$rootScope.ticketing = {
+			store: function()
+			{
+				$rootScope.cache.ticket.qty = Object.keys($rootScope.cache.ticket.items).length;
+				
+				localStorage['ticket'] = JSON.stringify($rootScope.cache.ticket);
+			},
+			reset: function()
+			{
+				$rootScope.cache.ticket = {ts: Date.now(), items: {}, skus: {}, qty: 0};
+				
+				$rootScope.ticketing.store();
+			}
+		};
+		
+		$rootScope.ticketing.navigate = function(direction)
+		{
+			direction = direction || 'next';
+			
+			var nextLink = null;
+			
+			if (direction == 'next')
+			{
+				if ($('.active-step').next().length)
+				{
+					nextLink = $('.active-step').next().find('a');
+				}
+				
+				if (!nextLink && $('.active-entry').next().length)
+				{
+					nextLink = $('.active-entry').next().find('.entry-link');
+				}
+				
+				if (!nextLink && $('.item.entry').length)
+				{
+					nextLink = $('.item.entry').first().find('.entry-link');
+				}
+			}
+			
+			if (direction == 'prev')
+			{
+				if ($('.active-step').prev().length)
+				{
+					nextLink = $('.active-step').prev().find('a');
+				}
+				
+				if (!nextLink && $('.active-entry').prev().length)
+				{
+					nextLink = $('.active-entry').prev().find('.entry-link');
+				}
+				
+				if (!nextLink && $('.item.entry').length)
+				{
+					nextLink = $('.item.entry').last().find('.entry-link');
+				}
+			}
+			
+			if (nextLink.length && $(nextLink).attr('href') == $location.$$url) nextLink = null;
+
+			if (nextLink)
+			{
+				$(nextLink).trigger('click');
+			} else {
+				$rootScope.navigate('/menu');
+			}
+		};
+		
+		$rootScope.ticketing.append = function(sku, id)
+		{
+			if (!$rootScope.cache.ticket) $rootScope.ticketing.reset();
+				
+			var ts = Date.now();
+			var id = (id || ts).toString();
+			var ITEM = node.data.payload.items[sku];
+			var item = {id: id, sku: sku, qty: 1, ts: ts, modifiers: {}};
+			
+			_.each(ITEM.item_data.modifier_list_info, function(modifier) {
+				_.each(modifier.modifier_overrides, function(override) {
+					if (override.on_by_default)
+					{
+						if (!item.modifiers[modifier.modifier_list_id])
+						{
+							item.modifiers[modifier.modifier_list_id] = {};
+						}
+						
+						var selection_type = 'SINGLE'; try {
+							selection_type = $rootScope.node.data.payload.items[modifier.modifier_list_id].modifier_list_data.selection_type;
+						} catch(err) {};
+						
+						if (modifier.min_selected_modifiers == 1 && modifier.max_selected_modifiers == 1)
+						{
+							selection_type = 'SINGLE';
+						}
+						
+						item.modifiers[modifier.modifier_list_id][selection_type == 'SINGLE' ? modifier.modifier_list_id : override.modifier_id] = {
+							value: override.modifier_id	
+						};
+					}
+				});
+			});
+			
+			$rootScope.cache.ticket.items[id] = item;
+			
+			$rootScope.cache.ticket.skus[sku] = $rootScope.cache.ticket.skus[sku] || {qty: 0, items: {}};
+			
+			$rootScope.cache.ticket.skus[sku].items[id] = true;
+			
+			$rootScope.cache.ticket.skus[sku].qty = Object.keys($rootScope.cache.ticket.skus[sku].items).length;
+			
+			$rootScope.ticketing.store();
+
+/*
+			Swal.fire({
+				title: 'What next?',
+				confirmButtonText: 'Modify',
+				//showDenyButton: true,
+				//denyButtonText: 'Checkout',
+				showCancelButton: true,
+				cancelButtonText: 'Shop',
+			}).then((result) => {
+				
+				if (result.isDismissed) return $rootScope.navigate('/menu');
+				
+				if (result.isConfirmed) return $rootScope.navigate('/menu', {
+					sku: sku,
+					id: id
+				});
+			
+			});
+*/
+			
+		};
+		
+		$rootScope.ticketing.remove = function(sku, id)
+		{
+			if (!$rootScope.cache.ticket) $rootScope.ticketing.reset();
+			
+			var item = $rootScope.cache.ticket.items[id];
+			var proceed = function()
+			{
+				delete $rootScope.cache.ticket.items[id];
+				
+				delete $rootScope.cache.ticket.skus[sku].items[id];
+				
+				$rootScope.cache.ticket.skus[sku].qty = Object.keys($rootScope.cache.ticket.skus[sku].items).length;
+				
+				if (!$rootScope.cache.ticket.skus[sku].qty) delete $rootScope.cache.ticket.skus[sku];
+	
+				$rootScope.ticketing.store();
+			};
+			
+			if (!item || (!item.notes && !item.modifiers['undefined'])) return proceed();
+			
+			$rootScope.notify({
+				type: 'question',
+				memo: 'Are you sure?'
+			}, function(c)
+			{
+				if (!c.value) return;
+				
+				if ($rootScope.query.id == id) $rootScope.navigate('/menu');
+				
+				proceed();
+			});
+		};
+		
+	</script>
 
 	<style>
 		
-		#_menu_board_wrapper {
+		#menu_board {
 			min-height: 100vh;
 		}
 		
-		#menu_board_wrapper * {
-			font-family: sans-serif;
-		}
-		
-		#menu_board_wrapper a {
+		#menu_board a {
 			text-decoration: none;
 		}
 		
-		#menu_board_wrapper .opening-hours {
-			margin: 0;
-		}
-		
-		#menu_board_wrapper .opening-hours .hours {
-			font-weight: bold;
-		}
-		
-		#menu_board_wrapper h4 {
+		#menu_board h4 {
 			font-family: cursive;
 			font-weight: normal;
 			margin: 0;
@@ -37,25 +264,20 @@
 			font-size: 1.125rem;
 		}
 		
-		#menu_board_wrapper .item + .section-heading {
+		#menu_board .item + .section-heading {
 			margin-top: 5px;
 		}
 		
-		#menu_board_wrapper .col {
+		#menu_board .col {
 			display: inline-block;
 			vertical-align: top;
 		}
 		
-		#menu_board_wrapper .item {
+		#menu_board .item {
 			padding: 5px;
 		}
 		
-		#menu_board_wrapper [data-name="Cuban"] {
-			padding: 10px !important;
-			border: 2px solid #000000;
-		}
-		
-		#menu_board_wrapper .item-variations {
+		#menu_board .item-variations {
 			margin-top: 3px;
 		}
 		
@@ -63,19 +285,14 @@
 		    background-color: #f2f2f2;
 		}
 		
-		#_menu_board {
-		    min-height: 100vh;
-		}
-		
 		#menu_board .col.category {
-		    padding: 25px 0;
+		    padding: 25px;
 		}
 		
 		@media screen and (max-width: 760px) {
 			#menu_board .col.category {
 			    display: block;
 			    flex-basis: unset;
-			    margin-top: 10px;
 			}
 		}
 		
@@ -83,104 +300,280 @@
 		    background-color: #fff;
 		}
 
-		#menu_board_wrapper {
+		#menu_board {
 			background-color: #f2f2f2;
 		}
+		
 		#menu_board {
-			padding: 25px 15px;
+			padding: 25px 0;
 		}
 		
 	</style>
 	
-	<div id="menu_board" class="row no-gutters">
+	<% if (mode == 'fullscreen') { %>
+	<style>
+				
+		html, body {
+			margin: 0;
+			padding: 0;
+		}
 		
-		<% var p = 0; for (var prop in layout) {p++; items = layout[prop] %>
+		* {
+			font-size: 15px;
+			font-weight: bolder !important
+		}
+		
+		h3 * {
+			font-size: 17px !important;;
+		}
+		
+		#menu_board, #menu_board .col.category:nth-child(even) {
+			background-color: transparent !important;
+		}
+		
+		html, #menu_board {
+			background-color: #000000 !important;
+		}
+		
+		.area {
+			display: none;
+		}
+		
+		.area#src {
+			display: block;
+		}
+		
+		#menu_board,
+		#menu_board {
+			height: 100%;
+		}
+		
+		#menu_board {
+			padding: 0;
+			display: flex;
+			flex-direction: row;
+		}
+		
+		#menu_board .col.category {
+		    padding: 0 5px;
+		}
+		
+		#menu_board .col {
+			flex: 1;
+		}
+		
+		#menu_board .item {
+			padding: 2px;
+			background-color: #000000;
+		}
+		
+		.section-heading {
+			color: yellow;
+		}
+		
+		.item-heading * {
+			color: #ffffff;
+		}
+		
+		.item-description *,
+		.item-variations * {
+			color: cyan;
+		}
+		
+		@keyframes slideAnimation {
+			0% {
+				background-image: url('/cdn/blender.webp');
+			}
+			50% {
+				background-image: url('/cdn/tudays.svg');
+			}
+			100% {
+				background-image: url('/cdn/blender.webp');
+			}
+		}
+
+		
+		@media screen and (min-width: 760px) {
+			.category[data-category*="Smoothies"] {
+				background-image: url('/cdn/blender.webp');
+				background-repeat: no-repeat;
+				background-position: center bottom;
+				background-size: 200px;
+				animation: slideAnimation 15s infinite;
+			}
+		}
+
+		
+		
+		.category[data-category*="Brews"] {
+			zoom: 1.20;
+		}
+		
+		.category[data-category*="Smoothies"] {
+			zoom: 1.15;
+		}
+		
+		.category[data-category*="Sandwiches"] {
+			zoom: 1.25;
+		}
+		
+		#menu_board h4 {
+			font-family: sans-serif;
+			padding: 0;
+			padding-top: 3px;
+		}
+		
+	</style>
+	<% } %>
 	
-			<div class="col category">
-				
-				<div class="container" style="padding: 0 25px;">
-				
-				<% var i = 0; for (var prop in items) {i++; item = items[prop];
-				
-					if (item.active === false) continue;
-				
-					var _item = node.data.payload ? (node.data.payload.items[item.id] || {}) : {};
+	<table width="100%">
+		<tbody>
+			<tr height="100%">
+				<td width="100%" valign="top">
 					
-					if (_item.item_data)
-					{
-						if (!item.title && _item.item_data.name) item.title = _item.item_data.name;
-						if (!item.description && _item.item_data.description) item.description = _item.item_data.description;
+					<div ng-if="query.id"><%- include('menu-modify.html'); %></div>
+					
+					<div ng-if="!query.id" class="row">
 						
-						if (!item.price && item.price !== false && _item.item_data.variations) item.price = _item.item_data.variations[0].item_variation_data.price_money.amount / 100;
-					}
+					<% var p = 0; for (var prop in layout) {p++; items = layout[prop] %>
 				
-				%>
-					
-					<% if (!item.id) { %>
-					<h4 class="section-heading"><%- item.title %></h4>
-					<% } %>
-					
-					<% if (item.id) { %>			
-					<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
-					   
-						<table class="item-heading" width="100%" style="margin: 0;">
-							<tbody>
-								<tr style="border: none;">
+						<div class="col category" data-category="<%- items[0].title %>">
+							
+							<div>
+							
+							<% var i = 0; for (var prop in items) {i++; item = items[prop];
+							
+								if (item.active === false) continue;
+							
+								var _item = node.data.payload ? (node.data.payload.items[item.id] || {}) : {};
+								
+								if (_item.item_data)
+								{
+									if (!item.title && _item.item_data.name) item.title = _item.item_data.name;
+									if (!item.description && _item.item_data.description) item.description = _item.item_data.description;
 									
-									<td width="100%" style="padding: 0;" valign="middle">
-										
-										<h3 class="item-title" style="margin: 0; font-weight: bolder; text-decoration: ;">
-											<% if (item.popular) { %>
-											<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
-											<% } %>
-											
-											<% if (item.new) { %>
-											<span style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
-											<% } %>
-											
-											<% if (item.limited) { %>
-											<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
-											<% } %>
-											
-											<span class="item-title-name" style="vertical-align: middle;"><%- item.title %></span>
-										</h3>
-										
-									</td>
+									if (!item.price && item.price !== false && _item.item_data.variations) item.price = _item.item_data.variations[0].item_variation_data.price_money.amount / 100;
+								}
+							
+							%>
+								
+								<% if (!item.id) { %>
+								<h4 class="section-heading"><%- item.title %></h4>
+								<% } %>
+								
+								<% if (item.id) { %>			
+								<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
 									
-									<td align="right" style="padding: 0; padding-left: 5px; white-space: nowrap;" valign="middle">
-										<% if (item.price) { %>
-										<div class="item-price">
-											<span>$<%- item.price %></span>
+									<div ng-click="ticketing.append('<%- item.id %>');">
+										
+										<table class="item-heading" width="100%" style="margin: 0;">
+											<tbody>
+												<tr style="border: none;">
+													
+													<td width="100%" style="padding: 0;" valign="middle">
+														
+														<h3 class="item-title" style="margin: 0; font-weight: bolder;">
+															
+															<i ng-if="cache.ticket.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i>
+															
+															<% if (item.popular) { %>
+															<span ng-if="!cache.ticket.qty" style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
+															<% } %>
+															
+															<% if (item.new) { %>
+															<span ng-if="!cache.ticket.qty" style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
+															<% } %>
+															
+															<% if (item.limited) { %>
+															<span ng-if="!cache.ticket.qty" style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
+															<% } %>
+															
+															<span class="item-title-name" style="vertical-align: middle;"><%- item.title %></span>
+														</h3>
+														
+													</td>
+													
+													<td align="right" style="padding: 0; padding-left: 5px; white-space: nowrap;" valign="middle">
+														<% if (item.price) { %>
+														<div class="item-price">
+															<span>$<%- item.price %></span>
+														</div>
+														<% } %>
+													
+													</td>
+													
+												</tr>
+											</tbody>
+										</table>
+									   
+										<% if (item.description) { %>
+										<div class="item-description">
+											<span>—</span>
+											<span><%- item.description %></span>
 										</div>
 										<% } %>
+										
+									</div>
 									
-									</td>
-									
-								</tr>
-							</tbody>
-						</table>
-					   
-						<% if (item.description) { %>
-						<div class="item-description">
-							<span>—</span>
-							<span><%- item.description %></span>
+									<div ng-if="cache.ticket.skus['<%- item.id %>']" style="margin-top: 5px;">
+										<div ng-repeat="(ID, has) in cache.ticket.skus['<%- item.id %>'].items" style="margin: 3px 0;">
+													
+											<button class="btn btn-link" style="font-size: 14px; vertical-align: middle; margin-right: 5px;" ng-click="ticketing.remove(cache.ticket.items[ID].sku, ID);">
+												<i class="fa fa-trash-o ng-scope" style="color: #bdbdbd;"></i>
+											</button>
+											
+											<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
+												<b style="vertical-align: middle;">({{cache.ticket.items[ID].qty}}x)</b>
+											</a>
+											
+											<span ng-repeat="(mod_id, modifiers) in cache.ticket.items[ID].modifiers" style="vertical-align: middle;" ng-if="node.data.payload.items[mod_id]">
+												<a ng-repeat="modifier in modifiers" href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" style="vertical-align: middle;">
+													<span ng-if="v.name" style="vertical-align: middle;">●</span>
+													<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v ? (v.name) : '');}}</span>
+												</a>
+											</span>
+											
+											<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
+												<span ng-if="cache.ticket.items[ID].notes" style="vertical-align: middle;">● {{cache.ticket.items[ID].notes}}</span>
+												
+												<i class="fa fa-pencil" style="vertical-align: middle;"></i>
+											</a>
+											
+												
+<!--
+												
+												<span ng-if="cache.ticket.items[ID].notes" style="vertical-align: middle;">{{cache.ticket.items[ID].notes}}</span>
+												
+												<i class="fa fa-pencil" style="vertical-align: middle;"></i>
+												
+-->
+											
+											
+										</div>
+									</div>
+								   
+								</div>
+								<% } %>
+								
+							<% } %>
+								
+								
+							</div>
+							
 						</div>
-						<% } %>
-					   
-					</div>
+				
+				
 					<% } %>
 					
+					</div>
+				</td>
 				
-				<% } %>
-					
-					
-				</div>
+				<td ng-if="cache.ticket.qty" valign="top" style="position: relative; min-width: 340px; overflow: hidden;">
+					<div><%- include('menu-checkout.html'); %></div>
+				</td>
 				
-			</div>
-	
-	
-		<% } %>
-	
-	</div>
+			</tr>
+		</tbody>
+	</table>
 
 </div>

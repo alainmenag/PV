@@ -169,9 +169,19 @@ input[type="radio"]:checked {
 	padding: 5px;
 }
 
+a.btn-round {
+	min-height: 55px;
+	min-width: 55px;
+	line-height: 55px;
+	vertical-align: middle;
+	text-align: center;
+	padding: 0;
+}
+
 .btn-pill {
     border-radius: 100px;
     min-width: 140px;
+    text-align: center;
 }
 
 .btn-outline {
@@ -182,6 +192,11 @@ input[type="radio"]:checked {
 
 .btn-easy {
 	background-color: #ffffff;
+	color: #000000;
+}
+
+.btn-gray {
+	background-color: #dfdfdf;
 	color: #000000;
 }
 
@@ -262,6 +277,10 @@ input[type="radio"]:checked {
 	color: #9e9e9e;
 }
 
+.text-bold {
+	font-weight: bold;
+}
+
 .text-left {
 	text-align: left;
 }
@@ -272,6 +291,18 @@ input[type="radio"]:checked {
 
 .text-right {
 	text-align: right;
+}
+
+.text-black {
+    color: #000000;
+}
+
+.text-white {
+    color: #ffffff;
+}
+
+.text-pink {
+    color: #E91E63;
 }
 
 .text-danger {
@@ -288,8 +319,11 @@ input[type="radio"]:checked {
 
 .link {
 	text-decoration: none;
-	display: block;
 	color: #3f51b5;
+}
+
+.link:hover {
+	color: #000000;
 }
 
 .link.active {
@@ -465,4 +499,15 @@ tags-input .tags .tag-item.selected {
 	border-radius: 100%;
 }
 
+.swal2-show {
+	border-radius: 0;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled) {
+    margin: 1px;
+    border-radius: 0 !important;
+    padding: 15px 25px;
+    font-size: 15px !important;
+    font-family: sans-serif;
+}
 

@@ -929,6 +929,11 @@ async function render(req, res, callback = function() {})
 			catch(err) {};
 		} else if (o.src.indexOf('.node') > -1)
 		{
+			if (payload.node.secure[o.config])
+			{
+				Object.assign(o, payload.node.secure[o.config]);
+			}
+			
 			try {
 				var fn = modules.resolveParent(modules[o.src], o.fn);
 				
@@ -940,6 +945,7 @@ async function render(req, res, callback = function() {})
 		payload.node.data[o.key] = d && d.body;
 	};
 	
+	delete payload.node.resources;
 	delete payload.node.secure;
 	
 	if (payload.node.render) payload.render = payload.node.render;
@@ -947,6 +953,10 @@ async function render(req, res, callback = function() {})
 	if (payload.render == 'json')
 	{
 		payload.template = await modules.renderView(__dirname + '/body.html', payload);	
+		
+		delete payload.res; // prevent circular
+		delete payload.req; // prevent circular
+		
 	} else if (payload.render == 'html')
 	{
 		payload.template = await modules.renderView(__dirname + '/index.html', payload);

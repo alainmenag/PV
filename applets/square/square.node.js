@@ -17,15 +17,17 @@ module.exports = function(modules, config) {
 
 	exports.catalog = async function(config, options)
 	{
-		var data_key = options.key || modules.sha1(JSON.stringify(options));
+		var data_key = options.cid || options.key || modules.sha1(JSON.stringify(options));
 		var data = await modules.redisClient.getAsync(data_key);
 		
 		var fetch = function(config, options, callback)
 		{
-			config.objects = config.objects || {};
+			options.objects = options.objects || {};
+			
+			console.log(options);
 		
-			var access_token = config.access_token;
-			var uri = config.host + '/v2/catalog/list';
+			var access_token = options.access_token;
+			var uri = options.host + '/v2/catalog/list';
 			
 			uri += '?t=1';
 			
@@ -53,7 +55,7 @@ module.exports = function(modules, config) {
 					item._id = item.id;
 					item.active = true;
 					
-					config.objects[item.id] = item;
+					options.objects[item.id] = item;
 				});
 				
 				if (body) options.cursor = body.cursor;
@@ -61,8 +63,8 @@ module.exports = function(modules, config) {
 				if (options.cursor) return fetch(config, options, callback);
 				
 				var payload = {
-					count: Object.values(config.objects).length,
-					items: config.objects,
+					count: Object.values(options.objects).length,
+					items: options.objects,
 					ts: Date.now()
 				};
 				

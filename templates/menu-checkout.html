@@ -1,0 +1,92 @@
+<table width="100%" height="100%" style="background-color: #e1e1e1; min-height: 100vh;">
+	<tbody>
+		<tr height="100%">
+			<td valign="top" style="word-break: break-all; padding: 5px 0;">
+				<div class="item entry" ng-repeat="ENTRY in cache.ticket.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}">
+					
+					<table width="100%">
+						<tbody>
+							<tr>
+								<td valign="top" style="position: relative; white-space: nowrap;" align="center">
+									
+									<button class="btn btn-easy btn-round hide-overflow ng-pristine ng-untouched ng-valid ng-binding ng-not-empty" type="number" placeholder="1" keyboard min="1" ng-model="ENTRY.qty" ng-change="add.qty(ENTRY);" autocomplete="off" aria-invalid="false">{{ENTRY.qty}}</button>
+
+									<button class="btn btn-link" style="font-size: 14px;" ng-click="ticketing.remove(ENTRY.sku, ENTRY.id);">
+										<i class="fa fa-trash-o ng-scope" style="color: #bdbdbd;"></i>
+									</button>
+									
+								</td>
+								<td valign="top" width="100%" style="padding-left: 5px;">
+									
+									<div class="row">
+										
+										<div class="col" style="padding: 0 2.5px;">
+									
+											<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}" style="font-size: 20px; word-break: break-word;" ng-class="{'text-pink': query.sku == ENTRY.sku && query.id == ENTRY.id}" class="entry-link">
+												<b>{{node.data.payload.items[ENTRY.sku].item_data.name}}</b>
+											</a>
+											
+										</div>
+									
+										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
+
+											<div>
+												<span editable-number="ENTRY.amount" onaftersave="ticketing.store();">${{((ENTRY.amount === 0 ? 0 : (ENTRY.amount || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0))) | formatPrice}}</span>
+											</div>
+											
+											
+										</div>
+									
+									</div>
+
+									<span ng-repeat="(mod_id, modifiers) in ENTRY.modifiers" style="vertical-align: middle; word-break: break-word;" ng-if="node.data.payload.items[mod_id]">
+										<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}&modifier={{mod_id}}" ng-repeat="modifier in modifiers" style="vertical-align: middle;" ng-class="{'text-pink': query.modifier == mod_id}">
+											<span ng-if="v.name" style="vertical-align: middle;">●</span>
+											<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v.name);}}</span>
+											<i ng-if="v.price_money.amount" style="vertical-align: middle;">(${{v.price_money.amount | formatPrice}})</i>
+										</a>
+									</span>
+									
+									<div class="row" style="margin-top: 5px;">
+										
+										<div class="col" style="padding: 0 2.5px;">
+											<span editable-textarea="ENTRY.notes" onaftersave="ticketing.store();" style="word-break: break-word; white-space: break-spaces;">{{ENTRY.notes || '...'}}</span>
+										</div>
+									
+										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
+											
+											<div>
+												<b style="white-space: nowrap;">${{((ENTRY.amount === 0 ? 0 : (ENTRY.amount || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0)) + ENTRY.addons) * ENTRY.qty | formatPrice}}</b>
+											</div>
+
+										</div>
+									
+									</div>
+									
+									
+								</td>
+
+							</tr>
+						</tbody>
+					</table>
+					
+					
+					
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table width="100%">
+					<tbody>
+						<tr>
+							<td>
+								<button ng-click="ticketing.reset();">reset</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>

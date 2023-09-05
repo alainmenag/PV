@@ -1,0 +1,174 @@
+<style>
+	
+	#keyboard_wrapper {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		min-height: 100vh;
+		background-color: rgba(0,0,0,.15);
+		width: 100%;
+		right: 0;
+		z-index: 1;
+	}
+	
+	#keyboard_table {
+		min-height: 100vh;
+	}
+	
+	#keyboard_wrapper[data-background="false"], #keyboard_wrapper[data-background="false"] #keyboard_table {
+		min-height: auto;
+		box-shadow: 0px -3px 0px 5px rgb(0 0 0 / 30%);
+	}
+
+</style>
+
+<div class="no-scroll" style="max-height: 100vh; overflow: auto;" md-swipe-down="keyboard.close();" md-swipe-up="keyboard.cancel();" md-swipe-left="keyboard.focus.value = '';">
+	<table id="keyboard_table" ng-show="keyboard.focus" class="ng-hide" width="100%" height="100%" ng-init="keyboard.init();">
+		<tbody>
+			<tr height="100%" nDg-click="keyboard.cancel();" ng-click="keyboard.close();">
+				<td valign="top">
+					
+					<style>
+						
+						table[ng-if="keyboard.focus.results.length"] tr:nth-child(odd) {
+							background-color: #f2f2f2;
+						}
+						
+					</style>
+					
+					<div ng-if="keyboard.focus.results" style="background-color: #ffffff; height: 100%; overflow: auto;" stop-propagation>
+						
+						<div ng-if="!keyboard.focus.results.length" style="padding: 25px; text-align: center;">No results for "{{keyboard.focus.value}}".</div>
+						
+						<table ng-if="keyboard.focus.results.length" width="100%">
+							<tbody>
+								<tr ng-repeat="result in keyboard.focus.results">
+									<td style="padding: 5px 15px;">
+										<b>{{result.name}}</b>
+										<div style="font-size: 12px;">{{result[keyboard.focus.key]}}</div>
+									</td>
+									<td style="padding: 5px 15px;" align="right">
+										<button class="btn" style="font-size: 12px;" ng-click="keyboard.focus.value = result[keyboard.focus.key]; keyboard.close();">Select</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					</div>
+					
+				</td>
+			</tr>
+			<tr style="background-color: #f2f2f2;">
+				<td valign="top">
+					
+					<div style="background-color: #000000; text-align: center;">
+						<table width="100%">
+							<tbody>
+								<tr>
+									<td width="25%" align="left" style="padding: 15px 25px;">
+										
+										<button class="btn btn-round btn-night" style="font-size: 14px; margin: 5px; font-weight: bold; vertical-align: middle;" ng-click="keyboard.cancel();">
+											<img ng-src="/assets/img/keyboard-hide-white.svg" style="max-width: 28px; max-height: 28px; display: block; margin: auto;" />
+										</button>
+										
+										<button class="btn btn-round btn-night" style="font-size: 12px; margin: 5px; font-weight: bold; vertical-align: middle;" ng-checked="next_keyboard = keyboard.toggleable[keyboard.toggleable.indexOf(keyboard.focus.type) + 1] || 'text';" ng-click="keyboard.focus.type = next_keyboard || 'Next';">{{keyboard.keyboards[next_keyboard].nickname || keyboard.keyboards[next_keyboard].name || 'Next'}}</button>
+										
+	<!--
+										<button ng-if="keyboard.focus.type != 'number'" class="btn btn-round btn-night" style="font-size: 14px; margin: 5px; font-weight: bold; vertical-align: middle;" ng-click="keyboard.focus.type = 'number';" title="Numpad">123</button>
+										
+										<button ng-if="keyboard.focus.type != 'text'" class="btn btn-round btn-night" style="font-size: 14px; margin: 5px; font-weight: bold; vertical-align: middle;" ng-click="keyboard.focus.type = 'text';" title="Texpad">ABc</button>
+	-->
+										
+										
+									</td>
+									<td width="50%">
+										
+										<textarea id="keyboard_input" style="width: 100%; max-width: 600px; padding: 25px; border: none; margin: auto; border-radius: 0; outline: none !important; font-size: 22px; resize: none; display: block; background-color: #f2f2f2;" ng-model="keyboard.focus.value" placeholder="Start typing.." autofocus="" ng-change="keyboard.typeahead();"></textarea>
+										
+									</td>
+									<td width="25%" align="right" style="padding: 15px 25px;">
+										
+										<button class="btn btn-round btn-success" style="font-size: 14px; margin: 5px; font-weight: bold;" ng-click="keyboard.close();">Save</button>
+										
+										<button class="btn btn-round btn-night" style="font-size: 14px; margin: 5px; font-weight: bold; vertical-align: middle;" ng-click="keyboard.cancel();">
+											<img ng-src="/assets/img/keyboard-hide-white.svg" style="max-width: 28px; max-height: 28px; display: block; margin: auto;" />
+										</button>
+										
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+	
+					<div ng-if="keyboard.focus.type == 'date'" style="background-color: #000000; text-align: center; padding: 5px;" ng-cloak>
+						<div style="display: inline-block; margin: auto; text-align: left; background-color: #f2f2f2;">
+							<md-calendar ng-model="keyboard.focus.value" ng-change="keyboard.close();"></md-calendar>
+						</div>
+					</div>
+	
+					<div ng-if="keyboard.focus.type == 'time'" style="background-color: #000000; text-align: center; padding: 5px;" ng-cloak>
+	
+						<table style="margin: auto; color: #ffffff;">
+							<tbody>
+								<tr>
+									<td valign="top">
+										<div style="padding: 15px;">{{keyboard.focus.h}}</div>
+										<div style="max-height: 205px; overflow: auto;">
+											<button class="btn btn-night btn-block" ng-repeat="n in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']" ng-click="keyboard.focus.h = n; keyboard.focus.value = (keyboard.focus.h + ':' + keyboard.focus.m + ' ' + keyboard.focus.a);" ng-class="{'active': keyboard.focus.h == n}">{{n}}</button>
+										</div>
+									</td>
+									<td valign="top">
+										<div style="padding: 15px;">{{keyboard.focus.m}}</div>
+										<div style="max-height: 205px; overflow: auto;">
+											<button class="btn btn-night btn-block" ng-repeat="n in ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55']" ng-click="keyboard.focus.m = n; keyboard.focus.value = (keyboard.focus.h + ':' + keyboard.focus.m + ' ' + keyboard.focus.a);" ng-class="{'active': keyboard.focus.m == n}">{{n}}</button>
+										</div>
+									</td>
+									<td valign="top">
+										<div style="padding: 15px;">{{keyboard.focus.a}}</div>
+											<button class="btn btn-night btn-block" ng-repeat="n in ['AM', 'PM']" ng-click="keyboard.focus.a = n; keyboard.focus.value = (keyboard.focus.h + ':' + keyboard.focus.m + ' ' + keyboard.focus.a);" ng-class="{'active': keyboard.focus.a == n}">{{n}}</button>
+									</td>
+									<td valign="top" style="padding-left: 5px;">
+										<div style="padding: 15px;">IN</div>
+										<div style="max-height: 205px; max-width: 160px; overflow: auto;">
+											<button class="btn btn-night" ng-repeat="n in ['0m', '5m', '10m', '20m', '30m', '1h']" ng-click="keyboard.focus.value = n; keyboard.close();" style="width: 80px;">{{n}}</button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					</div>
+	
+					<div ng-if="(keyboard.keyboards[keyboard.focus.type] || keyboard.keyboards.text).rows.length" style="max-width: 1024px; padding: 5px; margin: auto;">
+						
+						<div ng-repeat="row in (keyboard.keyboards[keyboard.focus.type] || keyboard.keyboards.text).rows" class="row">
+							<div class="col text-center" ng-repeat="col in row" style="color: #000000; padding: 1px; background-color: {{col.pressed ? '#cccccc' : '#ffffff'}}; max-width: {{col.width ? col.width : 'auto'}}" ng-click="col.fn ? col.fn($event) : keyboard.press($event, col); keyboard.pressed($event, col);">
+								<div style="border: 1px solid #cccccc; padding: 5px 10px;">
+									<table height="50" width="100%">
+										<tbody>
+											<tr>
+												<td align="center" valign="middle">
+													
+													<span ng-if="!col.img && !col.icon" class="hide-overflow" style="font-size: 20px;">{{keyboard.focus.caps || keyboard.focus.shift ? (col.caps || col.key) : col.key}}</span>
+													
+													<span ng-if="col.img">
+	<!-- 																<img ng-src="{{keyboard.focus.caps ? (col.caps || col.img) : col.img}}" style="max-width: 28px; max-height: 28px; display: block;" /> -->
+														<img ng-if="!keyboard.focus.caps && keyboard.focus.shift" ng-src="{{col.caps}}" style="max-width: 28px; max-height: 28px; display: block;" />
+														<img ng-if="keyboard.focus.shift && keyboard.focus.caps" ng-src="{{col.shift}}" style="max-width: 28px; max-height: 28px; display: block;" />
+														<img ng-if="!keyboard.focus.shift && !keyboard.focus.caps || (!col.shift && !col.caps)" ng-src="{{col.img}}" style="max-width: 28px; max-height: 28px; display: block;" />
+													</span>
+													
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

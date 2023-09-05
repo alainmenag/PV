@@ -6,29 +6,31 @@
 
 <% if (site.gtag) include(__dirname + '/templates/ga.html'); %>
 
-<div><%- include(__dirname + '/templates/memo.html'); %></div>
+<div class="area" id="memo"><%- include(__dirname + '/templates/memo.html'); %></div>
 
 <% if (site.banner && site.banner.template) { %>
-<div><%- include(__dirname + site.banner.template.src); %></div>
+<div class="area" id="template"><%- include(__dirname + site.banner.template.src); %></div>
 <% } %>
 
 <% if (site.message) { %>
-<div><%- include(__dirname + '/templates/message.html'); %></div>
+<div class="area" id="message"><%- include(__dirname + '/templates/message.html'); %></div>
 <% } %>
 
-<div><%- include(__dirname + '/templates/header.html'); %></div>
+<div class="area" id="header"><%- include(__dirname + '/templates/header.html'); %></div>
 
 <% if (site.menu && site.menu.src) { %>
-<div><%- include(__dirname + '/templates/navigator.html'); %></div>
+<div class="area" id="navigator"><%- include(__dirname + '/templates/navigator.html'); %></div>
 <% } %>
 
 <% if (node.template && node.template.src) { %>
-<div><%- include(__dirname + node.template.src); %></div>
+<div class="area" id="src"><%- include(__dirname + node.template.src); %></div>
 <% } else if (node.template && node.template.content) { %>
-<div><%- include(__dirname + '/templates/page.html'); %></div>
+<div class="area" id="page"><%- include(__dirname + '/templates/page.html'); %></div>
 <% } %>
 
-<div><%- include(__dirname + '/templates/sections.html', {modules: modules}); %></div>
+<div class="area" id="sections"><%- include(__dirname + '/templates/sections.html', {modules: modules}); %></div>
 
-<div><%- include(__dirname + '/templates/footer.html'); %></div>
-<div><%- include(__dirname + '/templates/copyright.html'); %></div>
+<div class="area" id="footer"><%- include(__dirname + '/templates/footer.html'); %></div>
+<div class="area" id="copyright"><%- include(__dirname + '/templates/copyright.html'); %></div>
+
+<div ng-if="keyboard.focus" id="keyboard_wrapper" data-background="{{keyboard.focus.background}}" ng-include="'/assets/templates/keyboard.html?cid=' + cid"></div>
