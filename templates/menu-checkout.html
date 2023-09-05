@@ -1,8 +1,34 @@
 <table width="100%" height="100%" style="background-color: #e1e1e1; min-height: 100vh;">
 	<tbody>
+		
+<!--
+		<tr>
+			<td>
+				<table width="100%">
+					<tbody>
+						<tr>
+							<td>
+								<button ng-click="ticketing.new();" class="btn btn-info btn-block" style="padding: 15px 25px;">New</button>
+							</td>
+							<td width="100%">
+								<button ng-click="ticketing.new();" class="btn btn-success btn-block" style="padding: 15px 25px;">Checkout</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+-->
+		
+		<tr height="0">
+			<td valign="top" style="word-break: break-all; padding: 5px;">
+				<input ng-model="cache.ticket.name" style="width: 100%; height: 80px;" placeholder="Ticket {{cache.ticket.id}}" keyboard ng-change="ticketing.store();" />
+			</td>
+		</tr>
+		
 		<tr height="100%">
-			<td valign="top" style="word-break: break-all; padding: 5px 0;">
-				<div class="item entry" ng-repeat="ENTRY in cache.ticket.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}">
+			<td valign="top" style="word-break: break-all; padding: 0;">
+				<div class="item entry" ng-repeat="ENTRY in cache.ticket.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}" id="{{ENTRY.id}}">
 					
 					<table width="100%">
 						<tbody>
@@ -31,9 +57,8 @@
 										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
 
 											<div>
-												<span editable-number="ENTRY.amount" onaftersave="ticketing.store();">${{((ENTRY.amount === 0 ? 0 : (ENTRY.amount || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0))) | formatPrice}}</span>
+												<span editable-number="ENTRY.price" e-keyboard="$0.00" e-autocomplete="off" onaftersave="ticketing.store();">${{((ENTRY.price === 0 ? 0 : (ENTRY.price || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0))) | formatPrice}}</span>
 											</div>
-											
 											
 										</div>
 									
@@ -41,28 +66,28 @@
 
 									<span ng-repeat="(mod_id, modifiers) in ENTRY.modifiers" style="vertical-align: middle; word-break: break-word;" ng-if="node.data.payload.items[mod_id]">
 										<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}&modifier={{mod_id}}" ng-repeat="modifier in modifiers" style="vertical-align: middle;" ng-class="{'text-pink': query.modifier == mod_id}">
+											
 											<span ng-if="v.name" style="vertical-align: middle;">●</span>
 											<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v.name);}}</span>
-											<i ng-if="v.price_money.amount" style="vertical-align: middle;">(${{v.price_money.amount | formatPrice}})</i>
+											<i ng-if="v.price_money.amount" style="vertical-align: middle;" data-addon="{{v.price_money.amount}}">(${{v.price_money.amount | formatPrice}})</i>
 										</a>
 									</span>
 									
 									<div class="row" style="margin-top: 5px;">
 										
 										<div class="col" style="padding: 0 2.5px;">
-											<span editable-textarea="ENTRY.notes" onaftersave="ticketing.store();" style="word-break: break-word; white-space: break-spaces;">{{ENTRY.notes || '...'}}</span>
+											<span editable-textarea="ENTRY.notes" e-keyboard="..." e-autocomplete="on" onaftersave="ticketing.store();" style="word-break: break-word; white-space: break-spaces;">{{ENTRY.notes || '...'}}</span>
 										</div>
 									
 										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
-											
+					
 											<div>
-												<b style="white-space: nowrap;">${{((ENTRY.amount === 0 ? 0 : (ENTRY.amount || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0)) + ENTRY.addons) * ENTRY.qty | formatPrice}}</b>
+												<b style="white-space: nowrap;">${{((ENTRY.amount || 0) * ENTRY.qty) | formatPrice}}</b>
 											</div>
 
 										</div>
 									
 									</div>
-									
 									
 								</td>
 
@@ -75,18 +100,22 @@
 				</div>
 			</td>
 		</tr>
+		
+<!--
 		<tr>
 			<td>
 				<table width="100%">
 					<tbody>
 						<tr>
 							<td>
-								<button ng-click="ticketing.reset();">reset</button>
+								<button ng-click="ticketing.new();">New</button>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</td>
 		</tr>
+-->
+		
 	</tbody>
 </table>

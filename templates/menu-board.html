@@ -76,21 +76,88 @@
 		
 		
 		
+		$rootScope.cache.tickets = JSON.parse(localStorage['tickets'] || null) || {};
+		
 		$rootScope.cache.ticket = localStorage['ticket'] ? JSON.parse(localStorage['ticket']) : null;
 		
-		$rootScope.ticketing = {
-			store: function()
+		$rootScope.ticketing = $rootScope.ticketing || {};
+		
+		$rootScope.ticketing.saving = false;
+		
+		$rootScope.ticketing.store = function()
 			{
-				$rootScope.cache.ticket.qty = Object.keys($rootScope.cache.ticket.items).length;
+			$timeout(function()
+			{
+				$rootScope.cache.ticket.id = ($rootScope.cache.ticket.id || $rootScope.cache.ticket.ts).toString();
+				
+				$rootScope.cache.ticket.qty = 0;
+				
+				_.each($rootScope.cache.ticket.items, function(item)
+				{
+					$rootScope.cache.ticket.qty += item.qty || 0;
+					
+					item.amount = 0; // reset total price
+					
+					var elm = $('.entry.item#' + item.id);
+											
+					try {
+						item.amount += parseInt($(elm).find('[editable-number="ENTRY.price"]').text().match(/\d+/g).join(''));
+					} catch(err) {};
+					
+					_.each($(elm).find('[data-addon]'), function(addon) {
+						item.amount += $(addon).data('addon') || 0;
+					});
+				});
+				
+				$rootScope.cache.tickets[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
 				
 				localStorage['ticket'] = JSON.stringify($rootScope.cache.ticket);
-			},
-			reset: function()
+				localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
+			
+			});
+		};
+			
+		$rootScope.ticketing.delete = function(id)
+		{
+			if ($rootScope.cache.ticket && $rootScope.cache.ticket.id == id)
 			{
-				$rootScope.cache.ticket = {ts: Date.now(), items: {}, skus: {}, qty: 0};
+				$rootScope.cache.ticket = null;
 				
-				$rootScope.ticketing.store();
+				localStorage.removeItem('ticket');
 			}
+			
+			$rootScope.ticketing.saving = true;
+			
+			delete $rootScope.cache.tickets[id];
+			
+			localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
+
+			$timeout(function() {
+				$rootScope.ticketing.saving = false;
+			})	
+		};
+			
+		$rootScope.ticketing.new = function()
+		{
+			// store current ticket
+			if ($rootScope.cache.ticket && $rootScope.cache.ticket.id)
+			{
+				var tickets = JSON.parse(localStorage['tickets'] || null) || {};
+				
+				tickets[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
+				
+				localStorage['tickets'] = JSON.stringify(tickets);
+			}
+
+			var ticket = {ts: Date.now(), items: {}, skus: {}, qty: 0};
+			
+			ticket.id = ticket.ts.toString();
+
+			$rootScope.navigate('/menu');
+			
+			$rootScope.cache.ticket = ticket;
+			
+			$rootScope.ticketing.store();
 		};
 		
 		$rootScope.ticketing.navigate = function(direction)
@@ -145,14 +212,25 @@
 			}
 		};
 		
+		$rootScope.ticketing.reset = function(sku, id)
+		{
+			$rootScope.notify({
+				type: 'question',
+				memo: 'Are you sure?'
+			}, function(c)
+			{
+				if (c.value) $rootScope.ticketing.append(sku, id);
+			});
+		};
+		
 		$rootScope.ticketing.append = function(sku, id)
 		{
-			if (!$rootScope.cache.ticket) $rootScope.ticketing.reset();
+			if (!$rootScope.cache.ticket) $rootScope.ticketing.new();
 				
 			var ts = Date.now();
 			var id = (id || ts).toString();
 			var ITEM = node.data.payload.items[sku];
-			var item = {id: id, sku: sku, qty: 1, ts: ts, modifiers: {}};
+			var item = {id: id, sku: sku, qty: 1, ts: ts, modifiers: {}, amount: 0, price: null};
 			
 			_.each(ITEM.item_data.modifier_list_info, function(modifier) {
 				_.each(modifier.modifier_overrides, function(override) {
@@ -187,7 +265,7 @@
 			
 			$rootScope.cache.ticket.skus[sku].qty = Object.keys($rootScope.cache.ticket.skus[sku].items).length;
 			
-			$rootScope.ticketing.store();
+			$timeout($rootScope.ticketing.store);
 
 /*
 			Swal.fire({
@@ -213,7 +291,7 @@
 		
 		$rootScope.ticketing.remove = function(sku, id)
 		{
-			if (!$rootScope.cache.ticket) $rootScope.ticketing.reset();
+			if (!$rootScope.cache.ticket) $rootScope.ticketing.new();
 			
 			var item = $rootScope.cache.ticket.items[id];
 			var proceed = function()
@@ -431,9 +509,11 @@
 			<tr height="100%">
 				<td width="100%" valign="top">
 					
-					<div ng-if="query.id"><%- include('menu-modify.html'); %></div>
+					<div ng-if="query.view == 'tickets'"><%- include('menu-tickets.html'); %></div>
 					
-					<div ng-if="!query.id" class="row">
+					<div ng-if="!query.view && query.id"><%- include('menu-modify.html'); %></div>
+					
+					<div ng-if="!query.view && !query.id" class="row">
 						
 					<% var p = 0; for (var prop in layout) {p++; items = layout[prop] %>
 				
@@ -568,8 +648,31 @@
 					</div>
 				</td>
 				
-				<td ng-if="cache.ticket.qty" valign="top" style="position: relative; min-width: 340px; overflow: hidden;">
-					<div><%- include('menu-checkout.html'); %></div>
+				<td valign="top" style="position: relative; overflow: hidden;">
+					<table width="100%" height="100%" style="min-height: 100vh;">
+						<tbody>
+							<tr>
+								<td ng-show="cache.ticket.qty" style="min-width: 380px;">
+									<div><%- include('menu-checkout.html'); %></div>
+								</td>
+								<td width="0" style="background-color: #000000;" valign="top">
+									
+									<a href="/menu" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': $location.$$url == '/menu'}">
+										<i class="fa fa-shopping-cart"></i>
+									</a>
+									
+									<a href="/menu?view=tickets" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': query.view == 'tickets'}">
+										<i class="fa fa-folder-open-o"></i>
+									</a>
+									
+									<button class="btn btn-block text-center btn-info" style="margin: 0;" ng-click="ticketing.new();">
+										<span>New</span>
+									</button>
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</td>
 				
 			</tr>

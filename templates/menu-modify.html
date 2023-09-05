@@ -18,7 +18,7 @@
 				
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': !query.modifier}">
 					<div class="hide-overflow">
-						<i class="fa {{cache.ticket.items[query.id].modifiers[undefined] ? 'fa-check-circle text-pink' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
+						<i class="fa {{cache.ticket.items[query.id].modifiers[undefined] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
 						<span style="vertical-align: middle;">{{node.data.payload.items[query.sku].item_data.name || 'Details'}}</span>
 					</div>
 				</a>
@@ -32,7 +32,7 @@
 				
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}&modifier={{modifier_list_info.modifier_list_id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': modifier_list_info.modifier_list_id == query.modifier}">
 					<div class="hide-overflow">
-						<i class="fa {{cache.ticket.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle text-pink' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
+						<i class="fa {{cache.ticket.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
 						<span style="vertical-align: middle;">{{MODIFIER_LIST.modifier_list_data.name}}</span>
 					</div>
 				</a>
@@ -104,6 +104,27 @@
 			<label style="display: block; margin-bottom: 5px;">Notes</label>
 			<textarea style="width: 100%; height: 120px;" ng-model="cache.ticket.items[query.id].notes" spellcheck="yes" placeholder="Item notes." keyboard onchange="$rootScope.ticketing.store();"></textarea>
 		</div>
+
+		<div style="margin-top: 15px;">
+			<div class="row">
+				<div class="col">
+					<button class="btn btn-danger btn-block" style="font-size: 14px;" ng-click="ticketing.remove(query.sku, query.id);">
+						<span>Delete</span>
+					</button>
+				</div>
+				<div class="col">
+					<button class="btn btn-info btn-block" style="font-size: 14px;" ng-click="ticketing.reset(query.sku, query.id);">
+						<span>Reset</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+
+		
+		
 
 	</div>
 	

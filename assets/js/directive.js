@@ -669,7 +669,7 @@ app.directive('dt', function($rootScope, $timeout, $compile) {
         restrict:'A',
         link: function(scope, elem, attrs)
         {
-	        if (attrs.src != undefined) $timeout(function()
+	        if (attrs.src != undefined) return $timeout(function()
 	        {
 				var columns = [];
 				
@@ -708,6 +708,13 @@ app.directive('dt', function($rootScope, $timeout, $compile) {
 						$http.post(attrs.src, data).then(a, a);
 					},
 					columns: columns
+				});
+	        });
+	        
+	        $timeout(function()
+	        {
+				elem[0].dt = $(elem).DataTable({
+					pageLength: 25
 				});
 	        });
         }        

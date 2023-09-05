@@ -301,6 +301,10 @@ a.btn-round {
     color: #ffffff;
 }
 
+.text-gray {
+	color: #dfdfdf;
+}
+
 .text-pink {
     color: #E91E63;
 }
@@ -509,5 +513,50 @@ div:where(.swal2-container) button:where(.swal2-styled) {
     padding: 15px 25px;
     font-size: 15px !important;
     font-family: sans-serif;
+}
+
+.dataTables_wrapper {
+    overflow: scroll;
+    width: 100%;
+    max-width: 100%;
+}
+
+.dataTables_info {
+	margin-bottom: 10px;
+}
+
+.dataTables_paginate {
+	margin-top: 5px;
+}
+
+table.dataTable {
+}
+
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 15px 10px;
+}
+
+table.dataTable, table.dataTable * {
+	border: none !important;
+}
+
+.dataTables_wrapper .dataTables_filter {
+	margin-bottom: 15px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+	margin-left: 10px;
+    border: 1px solid #cccccc;
+    padding: 15px;
+    min-height: 20px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	background-image: none !important;
+	border-radius: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+	color: #000000 !important;
 }
 
