@@ -1,30 +1,30 @@
 <div>
 	
-	<div ng-if="!cache.ticket.items[query.id]" style="padding: 45px;">
+	<div ng-if="!cart.current.items[query.id]" style="padding: 45px;">
 		
-		<h1 style="margin: 0;">No Ticket Item Matched</h1>
+		<h1 style="margin: 0;">No Item Matched</h1>
 		<p>Append a new "{{node.data.payload.items[query.sku].item_data.name || 'item'}}" entry?</p>
 		
-		<button class="btn btn-success btn-pill" ng-click="ticketing.append(query.sku, query.id);">Yes</button>
+		<button class="btn btn-success btn-pill" ng-click="cart.append(query.sku, query.id);">Yes</button>
 		
 		<a class="btn btn-info btn-pill" href="/menu">No</a>
 		
 	</div>
 	
-	<div ng-if="cache.ticket.items[query.id]" style="padding: 0 5px;">
+	<div ng-if="cart.current.items[query.id]" style="padding: 0 5px;">
 		<div style="margin-top: 5px; display: flex; justify-content: space-between; flex-wrap: wrap;">
 			
 			<div style="flex: 1; text-align: center; padding: 2.5px;" ng-class="{'active-step': !query.modifier}">
 				
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': !query.modifier}">
 					<div class="hide-overflow">
-						<i class="fa {{cache.ticket.items[query.id].modifiers[undefined] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
+						<i class="fa {{cart.current.items[query.id].modifiers[undefined] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
 						<span style="vertical-align: middle;">{{node.data.payload.items[query.sku].item_data.name || 'Details'}}</span>
 					</div>
 				</a>
 				
 				<!-- SET THAT THIS MOD HAS BEEN SEEN -->
-				<div ng-if="!cache.ticket.items[query.id].modifiers[query.modifier] && modifier_list_info.modifier_list_id == query.modifier" ng-init="cache.ticket.items[query.id].modifiers[query.modifier] = cache.ticket.items[query.id].modifiers[query.modifier] || {}; ticketing.store();"></div>
+				<div ng-if="!cart.current.items[query.id].modifiers[query.modifier] && modifier_list_info.modifier_list_id == query.modifier" ng-init="cart.current.items[query.id].modifiers[query.modifier] = cart.current.items[query.id].modifiers[query.modifier] || {}; cart.store();"></div>
 				
 			</div>
 			
@@ -32,20 +32,20 @@
 				
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}&modifier={{modifier_list_info.modifier_list_id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': modifier_list_info.modifier_list_id == query.modifier}">
 					<div class="hide-overflow">
-						<i class="fa {{cache.ticket.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
+						<i class="fa {{cart.current.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
 						<span style="vertical-align: middle;">{{MODIFIER_LIST.modifier_list_data.name}}</span>
 					</div>
 				</a>
 				
 				<!-- SET THAT THIS MOD HAS BEEN SEEN -->
-				<div ng-if="!cache.ticket.items[query.id].modifiers[query.modifier] && modifier_list_info.modifier_list_id == query.modifier" ng-init="cache.ticket.items[query.id].modifiers[query.modifier] = cache.ticket.items[query.id].modifiers[query.modifier] || {}; ticketing.store();"></div>
+				<div ng-if="!cart.current.items[query.id].modifiers[query.modifier] && modifier_list_info.modifier_list_id == query.modifier" ng-init="cart.current.items[query.id].modifiers[query.modifier] = cart.current.items[query.id].modifiers[query.modifier] || {}; cart.store();"></div>
 				
 			</div>
 			
 		</div>
 	</div>
 	
-	<div ng-if="cache.ticket.items[query.id]" style="padding: 15px 25px;">
+	<div ng-if="cart.current.items[query.id]" style="padding: 15px 25px;">
 		
 		<div class="row _align-items-center" style="margin: -15px;">
 			
@@ -55,7 +55,7 @@
 			
 			<div class="col" style="padding: 15px;">
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="link" style="margin: 0; font-size: 45px;">
-					<b>({{cache.ticket.items[query.id].qty || 1}}x)</b>
+					<b>({{cart.current.items[query.id].qty || 1}}x)</b>
 					<span>{{node.data.payload.items[query.sku].item_data.name || 'item'}}:</span>
 				</a>
 				<div style="margin-top: 5px;">
@@ -71,9 +71,9 @@
 				
 				<button class="btn btn-gray btn-round" style="padding: 0; line-height: 55px; height: 55px; width: 55px; font-size: 12px;" onclick="$rootScope.navigate('/menu');">Done</button>
 				
-				<button class="btn btn-easy btn-round" style="padding: 0; line-height: 55px; height: 55px; width: 55px; font-size: 12px;" onclick="$rootScope.ticketing.navigate('prev');">Back</button>
+				<button class="btn btn-easy btn-round" style="padding: 0; line-height: 55px; height: 55px; width: 55px; font-size: 12px;" onclick="$rootScope.cart.navigate('prev');">Back</button>
 				
-				<button class="btn btn-pink btn-round" style="padding: 0; line-height: 75px; height: 75px; width: 75px;" onclick="$rootScope.ticketing.navigate('next');">
+				<button class="btn btn-pink btn-round" style="padding: 0; line-height: 75px; height: 75px; width: 75px;" onclick="$rootScope.cart.navigate('next');">
 					<b>Next</b>
 				</button>
 				
@@ -84,17 +84,17 @@
 	</div>
 	
 	<!-- QTY AND DEFAULTS -->
-	<div ng-if="cache.ticket.items[query.id] && !node.data.payload.items[query.modifier]" style="padding: 15px 25px;">
+	<div ng-if="cart.current.items[query.id] && !node.data.payload.items[query.modifier]" style="padding: 15px 25px;">
 		
 		<div>
 			
-			<button class="btn btn-easy btn-round" style="font-size: 25px; vertical-align: middle; margin: 5px;" ng-click="cache.ticket.items[query.id].qty = (cache.ticket.items[query.id].qty - 1) || 1; ticketing.store();">
+			<button class="btn btn-easy btn-round" style="font-size: 25px; vertical-align: middle; margin: 5px;" ng-click="cart.current.items[query.id].qty = (cart.current.items[query.id].qty - 1) || 1; cart.store();">
 				<i class="fa fa-minus" style="color: #f44336;"></i>
 			</button>
 			
-			<b style="margin: 0 10px; font-size: 25px; vertical-align: middle; min-width: 45px; display: inline-block; text-align: center;">{{cache.ticket.items[query.id].qty || 1}}</b>
+			<b style="margin: 0 10px; font-size: 25px; vertical-align: middle; min-width: 45px; display: inline-block; text-align: center;">{{cart.current.items[query.id].qty || 1}}</b>
 			
-			<button class="btn btn-easy btn-round" style="font-size: 25px; vertical-align: middle; margin: 5px;" ng-click="cache.ticket.items[query.id].qty = cache.ticket.items[query.id].qty + 1; ticketing.store();">
+			<button class="btn btn-easy btn-round" style="font-size: 25px; vertical-align: middle; margin: 5px;" ng-click="cart.current.items[query.id].qty = cart.current.items[query.id].qty + 1; cart.store();">
 				<i class="fa fa-plus" style="color: #4caf50;"></i>
 			</button>
 			
@@ -102,19 +102,19 @@
 
 		<div style="margin-top: 15px;">
 			<label style="display: block; margin-bottom: 5px;">Notes</label>
-			<textarea style="width: 100%; height: 120px;" ng-model="cache.ticket.items[query.id].notes" spellcheck="yes" placeholder="Item notes." keyboard onchange="$rootScope.ticketing.store();"></textarea>
+			<textarea style="width: 100%; height: 120px;" ng-model="cart.current.items[query.id].notes" spellcheck="yes" placeholder="Item notes." keyboard onchange="$rootScope.cart.store();"></textarea>
 		</div>
 
 <!--
 		<div style="margin-top: 15px;">
 			<div class="row">
 				<div class="col">
-					<button class="btn btn-danger btn-block" style="font-size: 14px;" ng-click="ticketing.remove(query.sku, query.id);">
+					<button class="btn btn-danger btn-block" style="font-size: 14px;" ng-click="cart.remove(query.sku, query.id);">
 						<span>Delete</span>
 					</button>
 				</div>
 				<div class="col">
-					<button class="btn btn-info btn-block" style="font-size: 14px;" ng-click="ticketing.reset(query.sku, query.id);">
+					<button class="btn btn-info btn-block" style="font-size: 14px;" ng-click="cart.reset(query.sku, query.id);">
 						<span>Reset</span>
 					</button>
 				</div>
@@ -124,7 +124,7 @@
 
 	</div>
 	
-	<div ng-if="cache.ticket.items[query.id] && node.data.payload.items[query.modifier]">
+	<div ng-if="cart.current.items[query.id] && node.data.payload.items[query.modifier]">
 		<div ng-repeat="modifier_list_info in node.data.payload.items[query.sku].item_data.modifier_list_info" ng-if="modifier_list_info.modifier_list_id == query.modifier" ng-init="MODIFIER_LIST = node.data.payload.mappings.MODIFIER_LIST[modifier_list_info.modifier_list_id]; modifier_list_info.selection_type = MODIFIER_LIST.modifier_list_data.selection_type;" style="padding: 15px 25px;">
 			
 			<div ng-if="modifier_list_info.min_selected_modifiers == 1 && modifier_list_info.max_selected_modifiers == 1" ng-init="modifier_list_info.selection_type = 'SINGLE';"></div>
@@ -151,20 +151,20 @@
 											<span style="vertical-align: middle;" ng-if="modifier_list_info.selection_type == 'SINGLE'">
 											
 												<span style="vertical-align: middle; font-size: 25px;">
-													<i class="{{cache.ticket.items[query.id].modifiers[query.modifier][query.modifier].value == MODIFIER.id ? 'fa fa-check-circle text-success' : 'fa fa-circle-thin'}}"></i>
+													<i class="{{cart.current.items[query.id].modifiers[query.modifier][query.modifier].value == MODIFIER.id ? 'fa fa-check-circle text-success' : 'fa fa-circle-thin'}}"></i>
 												</span>
 											
-												<input class="hide" type="radio" name="{{query.modifier}}" ng-model="cache.ticket.items[query.id].modifiers[query.modifier][query.modifier].value" value="{{MODIFIER.id}}" ng-change="ticketing.store();" />
+												<input class="hide" type="radio" name="{{query.modifier}}" ng-model="cart.current.items[query.id].modifiers[query.modifier][query.modifier].value" value="{{MODIFIER.id}}" ng-change="cart.store();" />
 												
 											</span>
 	
 											<span style="vertical-align: middle; font-size: 25px;" ng-if="modifier_list_info.selection_type == 'MULTIPLE'">
 											
 												<span style="vertical-align: middle;">
-													<i class="{{cache.ticket.items[query.id].modifiers[query.modifier][MODIFIER.id].value == MODIFIER.id ? 'fa fa-check-circle text-success' : 'fa fa-circle-thin'}}"></i>
+													<i class="{{cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].value == MODIFIER.id ? 'fa fa-check-circle text-success' : 'fa fa-circle-thin'}}"></i>
 												</span>
 											
-												<input class="hide" type="checkbox" name="{{MODIFIER.id}}" style="vertical-align: middle;" ng-model="cache.ticket.items[query.id].modifiers[query.modifier][MODIFIER.id].value" value="{{MODIFIER.id}}" ng-change="ticketing.store();" ng-true-value="'{{MODIFIER.id}}'" ng-false-value="null" />
+												<input class="hide" type="checkbox" name="{{MODIFIER.id}}" style="vertical-align: middle;" ng-model="cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].value" value="{{MODIFIER.id}}" ng-change="cart.store();" ng-true-value="'{{MODIFIER.id}}'" ng-false-value="null" />
 												
 											</span>
 											
@@ -191,7 +191,7 @@
 	
 
 <!--
-{{cache.ticket.items[query.id]}}
+{{cart.current.items[query.id]}}
 {{node.data.payload.items[query.sku]}}
 {{node.data.payload.items[query.modifier]}}
 -->

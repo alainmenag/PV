@@ -8,10 +8,10 @@
 					<tbody>
 						<tr>
 							<td>
-								<button ng-click="ticketing.new();" class="btn btn-info btn-block" style="padding: 15px 25px;">New</button>
+								<button ng-click="cart.new();" class="btn btn-info btn-block" style="padding: 15px 25px;">New</button>
 							</td>
 							<td width="100%">
-								<button ng-click="ticketing.new();" class="btn btn-success btn-block" style="padding: 15px 25px;">Checkout</button>
+								<button ng-click="cart.new();" class="btn btn-success btn-block" style="padding: 15px 25px;">Checkout</button>
 							</td>
 						</tr>
 					</tbody>
@@ -22,13 +22,13 @@
 		
 		<tr height="0">
 			<td valign="top" style="word-break: break-all; padding: 5px;">
-				<input ng-model="cache.ticket.name" style="width: 100%; height: 80px;" placeholder="Ticket {{cache.ticket.id}}" keyboard ng-change="ticketing.store();" />
+				<input ng-model="cart.current.name" style="width: 100%; height: 80px;" placeholder="#{{cart.current.id}}" keyboard ng-change="cart.store();" />
 			</td>
 		</tr>
 		
 		<tr height="100%">
 			<td valign="top" style="word-break: break-all; padding: 0;">
-				<div class="item entry" ng-repeat="ENTRY in cache.ticket.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}" id="{{ENTRY.id}}">
+				<div class="item entry" ng-repeat="ENTRY in cart.current.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}" id="{{ENTRY.id}}">
 					
 					<table width="100%">
 						<tbody>
@@ -38,7 +38,7 @@
 									<button class="btn btn-easy btn-round hide-overflow ng-pristine ng-untouched ng-valid ng-binding ng-not-empty" type="number" placeholder="1" keyboard min="1" ng-model="ENTRY.qty" ng-change="add.qty(ENTRY);" autocomplete="off" aria-invalid="false">{{ENTRY.qty}}</button>
 									
 									<div style="margin-top: 3px;">
-										<button class="btn btn-link" style="font-size: 16px;" ng-click="ticketing.remove(ENTRY.sku, ENTRY.id);">
+										<button class="btn btn-link" style="font-size: 16px;" ng-click="cart.remove(ENTRY.sku, ENTRY.id);">
 											<i class="fa fa-trash-o"></i>
 										</button>
 									</div>
@@ -60,7 +60,7 @@
 										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
 
 											<div>
-												<span editable-number="ENTRY.price" e-keyboard="$0.00" e-autocomplete="off" onaftersave="ticketing.store();">${{((ENTRY.price === 0 ? 0 : (ENTRY.price || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0))) | formatPrice}}</span>
+												<span editable-number="ENTRY.price" e-keyboard="$0.00" e-autocomplete="off" onaftersave="cart.store();">${{((ENTRY.price === 0 ? 0 : (ENTRY.price || node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount || 0))) | formatPrice}}</span>
 											</div>
 											
 										</div>
@@ -79,7 +79,7 @@
 									<div class="row" style="margin-top: 5px;">
 										
 										<div class="col">
-											<span editable-textarea="ENTRY.notes" e-keyboard="..." e-autocomplete="on" onaftersave="ticketing.store();" style="word-break: break-word; white-space: break-spaces;">{{(ENTRY.notes ? ('— ' + ENTRY.notes) : null) || '...'}}</span>
+											<span editable-textarea="ENTRY.notes" e-keyboard="..." e-autocomplete="on" onaftersave="cart.store();" style="word-break: break-word; white-space: break-spaces;">{{(ENTRY.notes ? ('— ' + ENTRY.notes) : null) || '...'}}</span>
 										</div>
 									
 										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
@@ -102,7 +102,7 @@
 					
 				</div>
 				<div class="item entry" style="padding: 0 5px; margin: 0;">
-					<button class="btn btn-block btn-gray" ng-click="ticketing.append();">
+					<button class="btn btn-block btn-gray" ng-click="cart.append();">
 						<i class="fa fa-plus" aria-hidden="true"></i>
 					</button>
 				</div>
@@ -116,7 +116,7 @@
 					<tbody>
 						<tr>
 							<td>
-								<button ng-click="ticketing.new();">New</button>
+								<button ng-click="cart.new();">New</button>
 							</td>
 						</tr>
 					</tbody>

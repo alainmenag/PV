@@ -20,8 +20,6 @@ var main = function (
 	$rootScope.uid = window.uid;
 	$rootScope.gid = window.gid;
 	$rootScope.tid = window.tid;
-
-	window.$rootScope = Object.assign($rootScope, window.$rootScope);
 	
 	window.$timeout = $timeout;
 	window.$location = $location;

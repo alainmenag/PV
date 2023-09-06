@@ -1,0 +1,44 @@
+<div class="container">
+	<div style="padding: 45px 15px;">
+		
+		<style>
+			
+			table[dt] .dt-row.active {
+				background-color: #cccccc;
+			}
+			
+		</style>
+		
+		<div ng-if="!cart.saving">
+			<table dt id="carts" class="display" style="width: 100%;">
+				
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr class="dt-row" ng-repeat="item in cart.carts.list" ng-class="{'active': item.id == cart.current.id}">
+						<td>
+							<div>{{item.id}}</div>
+							<div style="font-size: 12px;">{{item.ts | date: 'h:mm:ss a • MMM d, y'}}</div>
+						</td>
+						<td>{{item.name || 'N/A'}}</td>
+						<td align="right">
+							
+							<button class="btn btn-easy btn-round" style="width: 50px; height: 50px; padding: 0; font-size: 12px;" ng-click="cart.current = item; cart.store();" ng-disabled="item.id == cart.current.id">Load</button>
+							
+							<button class="btn btn-danger btn-round" style="width: 50px; height: 50px; padding: 0; font-size: 12px;" ng-click="cart.delete(item.id);">Del.</button>
+							
+						</td>
+					</tr>
+				</tbody>
+				
+			</table>
+		</div>
+		
+	</div>
+</div>

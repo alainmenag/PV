@@ -22,7 +22,9 @@ app.config(function($locationProvider, $routeProvider, $controllerProvider)
 	});
 });
 
-app.run(function($rootScope, $http, $templateCache, editableOptions, editableThemes) {
+app.run(function($rootScope, $http, $templateCache, editableOptions, editableThemes)
+{	
+	window.$rootScope = Object.assign($rootScope, window.$rootScope);
 	
 	editableOptions.theme = 'default';
 	editableOptions.blurForm = 'submit';

@@ -5,358 +5,7 @@
 	var mode = query.mode || 'view'; //fullscreen,print
 
 %>
-
 <div id="menu_board" class="no-select" oncontextmenu="event.preventDefault(); window.location.reload(true);">
-	
-	<script>
-		
-		addEventListener("unload", (event) =>
-		{
-			$rootScope.ticketing.store();
-		});
-		
-		try {
-			node.data.payload.mappings = {};
-			
-			_.each(node.data.payload.items, function(item, sku) {
-				
-				if (item.item_data && item.item_data.modifier_list_info)
-				{
-					item.item_data.modifier_list_info = _.sortBy(item.item_data.modifier_list_info, function(l)
-					{
-						var MODIFIER_LIST = node.data.payload.items[l.modifier_list_id];
-						
-						return MODIFIER_LIST.modifier_list_data.ordinal;
-/*
-						var i = 0;
-						
-						console.log(l);
-					
-						var MODIFIER_LIST = data.mappings.MODIFIER_LIST[l.modifier_list_id];
-						var i = 0; try {
-							i = MODIFIER_LIST.modifier_list_data.ordinal;
-						} catch(err) {};
-*/
-						
-						return;
-						
-					});
-				}
-				
-					
-					/*
-				if (item.type == 'MODIFIER_LIST')
-				{
-					
-					console.log(item);
-					
-					
-				}
-					*/
-				
-				node.data.payload.mappings[item.type] = node.data.payload.mappings[item.type] || {};
-				
-				node.data.payload.mappings[item.type][sku] = item;
-			});
-		}
-		catch(err) {};
-		
-		
-/*
-			ITEM.item_data.modifier_list_info = _.sortBy(ITEM.item_data.modifier_list_info, function(l) {
-				
-				var MODIFIER_LIST = data.mappings.MODIFIER_LIST[l.modifier_list_id];
-				var i = 0; try {
-					i = MODIFIER_LIST.modifier_list_data.ordinal;
-				} catch(err) {};
-				
-				return i;
-			});
-*/
-		
-		
-		
-		$rootScope.cache.tickets = JSON.parse(localStorage['tickets'] || null) || {count: 0, list: {}};
-		
-		$rootScope.cache.ticket = localStorage['ticket'] ? JSON.parse(localStorage['ticket']) : null;
-		
-		$rootScope.ticketing = $rootScope.ticketing || {};
-		
-		$rootScope.ticketing.saving = false;
-		
-		$rootScope.ticketing.store = function()
-		{
-			$rootScope.cache.tickets.list = $rootScope.cache.tickets.list || {};
-				
-			$timeout(function()
-			{
-				$rootScope.cache.ticket.id = ($rootScope.cache.ticket.id || $rootScope.cache.ticket.ts).toString();
-				
-				$rootScope.cache.ticket.qty = 0;
-				
-				_.each($rootScope.cache.ticket.items, function(item)
-				{
-					$rootScope.cache.ticket.qty += item.qty || 0;
-					
-					item.amount = 0; // reset total price
-					
-					var elm = $('.entry.item#' + item.id);
-											
-					try {
-						item.amount += parseInt($(elm).find('[editable-number="ENTRY.price"]').text().match(/\d+/g).join(''));
-					} catch(err) {};
-					
-					_.each($(elm).find('[data-addon]'), function(addon) {
-						item.amount += $(addon).data('addon') || 0;
-					});
-				});
-				
-				$rootScope.cache.tickets.list[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
-				
-				$rootScope.cache.tickets.count = Object.keys($rootScope.cache.tickets.list).length;
-				
-				localStorage['ticket'] = JSON.stringify($rootScope.cache.ticket);
-				localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
-			
-			});
-		};
-			
-		$rootScope.ticketing.unload = function()
-		{
-			$rootScope.ticketing.store();
-			
-			$rootScope.cache.ticket = null;
-			
-			localStorage.removeItem('ticket');
-		};
-			
-		$rootScope.ticketing.delete = function(id)
-		{
-			var proceed = function()
-			{
-				if ($rootScope.cache.ticket && $rootScope.cache.ticket.id == id)
-				{
-					$rootScope.cache.ticket = null;
-					
-					localStorage.removeItem('ticket');
-				}
-				
-				$rootScope.ticketing.saving = true;
-				
-				delete $rootScope.cache.tickets.list[id];
-				
-				$rootScope.cache.tickets.count = Object.keys($rootScope.cache.tickets.list).length;
-				
-				localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
-	
-				$timeout(function() {
-					$rootScope.ticketing.saving = false;
-				});
-			};
-
-			$rootScope.notify({
-				type: 'question',
-				memo: 'Delete ticket?'
-			}, function(c)
-			{
-				if (c.value) proceed();
-			});
-		};
-			
-		$rootScope.ticketing.new = function()
-		{
-			// store current ticket
-			if ($rootScope.cache.ticket && $rootScope.cache.ticket.id)
-			{
-				var tickets = JSON.parse(localStorage['tickets'] || null) || $rootScope.cache.tickets || {};
-				
-				tickets.list = tickets.list || {};
-				
-				tickets.list[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
-				
-				tickets.count = Object.keys(tickets.list).length;
-				
-				$rootScope.cache.tickets = tickets;
-				
-				localStorage['tickets'] = JSON.stringify(tickets);
-			}
-
-			var ticket = {ts: Date.now(), items: {}, skus: {}, qty: 0};
-			
-			ticket.id = ticket.ts.toString();
-
-			$rootScope.navigate('/menu');
-			
-			$rootScope.cache.ticket = ticket;
-			
-			$rootScope.ticketing.store();
-		};
-		
-		$rootScope.ticketing.navigate = function(direction)
-		{
-			direction = direction || 'next';
-			
-			var nextLink = null;
-			
-			if (direction == 'next')
-			{
-				if ($('.active-step').next().length)
-				{
-					nextLink = $('.active-step').next().find('a');
-				}
-				
-				if (!nextLink && $('.active-entry').next().length)
-				{
-					nextLink = $('.active-entry').next().find('.entry-link');
-				}
-				
-				if (!nextLink && $('.item.entry').length)
-				{
-					nextLink = $('.item.entry').first().find('.entry-link');
-				}
-			}
-			
-			if (direction == 'prev')
-			{
-				if ($('.active-step').prev().length)
-				{
-					nextLink = $('.active-step').prev().find('a');
-				}
-				
-				if (!nextLink && $('.active-entry').prev().length)
-				{
-					nextLink = $('.active-entry').prev().find('.entry-link');
-				}
-				
-				if (!nextLink && $('.item.entry').length)
-				{
-					nextLink = $('.item.entry').last().find('.entry-link');
-				}
-			}
-			
-			if (nextLink.length && $(nextLink).attr('href') == $location.$$url) nextLink = null;
-
-			if (nextLink)
-			{
-				$(nextLink).trigger('click');
-			} else {
-				$rootScope.navigate('/menu');
-			}
-		};
-		
-		$rootScope.ticketing.reset = function(sku, id)
-		{
-			$rootScope.notify({
-				type: 'question',
-				memo: 'Are you sure?'
-			}, function(c)
-			{
-				if (c.value) $rootScope.ticketing.append(sku, id);
-			});
-		};
-		
-		$rootScope.ticketing.append = function(sku, id)
-		{
-			if (!$rootScope.cache.ticket) $rootScope.ticketing.new();
-				
-			var ts = Date.now();
-			var id = (id || ts).toString();
-			var ITEM = node.data.payload.items[sku];
-			var item = {id: id, sku: sku, qty: 1, ts: ts, modifiers: {}, amount: 0, price: null};
-			
-			item.ref = '#' + id.substr(-4);
-			
-			if (ITEM) _.each(ITEM.item_data.modifier_list_info, function(modifier) {
-				_.each(modifier.modifier_overrides, function(override) {
-					if (override.on_by_default)
-					{
-						if (!item.modifiers[modifier.modifier_list_id])
-						{
-							item.modifiers[modifier.modifier_list_id] = {};
-						}
-						
-						var selection_type = 'SINGLE'; try {
-							selection_type = $rootScope.node.data.payload.items[modifier.modifier_list_id].modifier_list_data.selection_type;
-						} catch(err) {};
-						
-						if (modifier.min_selected_modifiers == 1 && modifier.max_selected_modifiers == 1)
-						{
-							selection_type = 'SINGLE';
-						}
-						
-						item.modifiers[modifier.modifier_list_id][selection_type == 'SINGLE' ? modifier.modifier_list_id : override.modifier_id] = {
-							value: override.modifier_id	
-						};
-					}
-				});
-			});
-			
-			$rootScope.cache.ticket.items[id] = item;
-			
-			$rootScope.cache.ticket.skus[sku] = $rootScope.cache.ticket.skus[sku] || {qty: 0, items: {}};
-			
-			$rootScope.cache.ticket.skus[sku].items[id] = true;
-			
-			$rootScope.cache.ticket.skus[sku].qty = Object.keys($rootScope.cache.ticket.skus[sku].items).length;
-			
-			$timeout($rootScope.ticketing.store);
-
-/*
-			Swal.fire({
-				title: 'What next?',
-				confirmButtonText: 'Modify',
-				//showDenyButton: true,
-				//denyButtonText: 'Checkout',
-				showCancelButton: true,
-				cancelButtonText: 'Shop',
-			}).then((result) => {
-				
-				if (result.isDismissed) return $rootScope.navigate('/menu');
-				
-				if (result.isConfirmed) return $rootScope.navigate('/menu', {
-					sku: sku,
-					id: id
-				});
-			
-			});
-*/
-			
-		};
-		
-		$rootScope.ticketing.remove = function(sku, id)
-		{
-			if (!$rootScope.cache.ticket) $rootScope.ticketing.new();
-			
-			var item = $rootScope.cache.ticket.items[id];
-			var proceed = function()
-			{
-				delete $rootScope.cache.ticket.items[id];
-				
-				delete $rootScope.cache.ticket.skus[sku].items[id];
-				
-				$rootScope.cache.ticket.skus[sku].qty = Object.keys($rootScope.cache.ticket.skus[sku].items).length;
-				
-				if (!$rootScope.cache.ticket.skus[sku].qty) delete $rootScope.cache.ticket.skus[sku];
-	
-				$rootScope.ticketing.store();
-			};
-			
-			if (!item || (!item.notes && !item.modifiers['undefined'])) return proceed();
-			
-			$rootScope.notify({
-				type: 'question',
-				memo: 'Delete item?'
-			}, function(c)
-			{
-				if (!c.value) return;
-				
-				if ($rootScope.query.id == id) $rootScope.navigate('/menu');
-				
-				proceed();
-			});
-		};
-		
-	</script>
 
 	<style>
 		
@@ -543,7 +192,7 @@
 			<tr height="100%">
 				<td width="100%" valign="top">
 					
-					<div ng-if="query.view == 'tickets'"><%- include('menu-tickets.html'); %></div>
+					<div ng-if="query.view == 'carts'"><%- include('menu-carts.html'); %></div>
 					
 					<div ng-if="!query.view && query.id"><%- include('menu-modify.html'); %></div>
 					
@@ -578,7 +227,7 @@
 								<% if (item.id) { %>			
 								<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
 									
-									<div ng-click="ticketing.append('<%- item.id %>');" class="btn-link">
+									<div ng-click="cart.append('<%- item.id %>');" class="btn-link">
 										
 										<table class="item-heading" width="100%" style="margin: 0;">
 											<tbody>
@@ -588,9 +237,9 @@
 														
 														<h3 class="item-title" style="margin: 0; font-weight: bolder;">
 															
-<!-- 															<i ng-if="cache.ticket.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i> -->
+<!-- 															<i ng-if="cart.current.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i> -->
 															
-															<i ng-if="cache.ticket || query.order == 'online'" class="fa fa-plus btn-link" style="vertical-align: middle; font-size: 12px;"></i>
+															<i ng-if="cart.current || query.order == 'online'" class="fa fa-plus btn-link" style="vertical-align: middle; font-size: 12px;"></i>
 															
 															<% if (item.popular) { %>
 															<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
@@ -604,7 +253,7 @@
 															<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
 															<% } %>
 															
-															<span class="item-title-name btn-link" ng-class="{'text-pink': cache.ticket.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
+															<span class="item-title-name btn-link" ng-class="{'text-pink': cart.current.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
 														</h3>
 														
 													</td>
@@ -631,8 +280,8 @@
 										
 									</div>
 									
-									<div ng-if="cache.ticket.skus['<%- item.id %>']" style="margin-top: 5px;">
-										<div ng-repeat="(ID, has) in cache.ticket.skus['<%- item.id %>'].items" style="margin: 3px 0;">
+									<div ng-if="cart.current.skus['<%- item.id %>']" style="margin-top: 5px;">
+										<div ng-repeat="(ID, has) in cart.current.skus['<%- item.id %>'].items" style="margin: 3px 0;">
 											
 											
 											
@@ -641,7 +290,7 @@
 													<tr>
 														<td valign="top" style="padding-right: 10px;">
 															
-															<button class="btn btn-link block" style="font-size: 16px;" ng-click="ticketing.remove(cache.ticket.items[ID].sku, ID);">
+															<button class="btn btn-link block" style="font-size: 16px;" ng-click="cart.remove(cart.current.items[ID].sku, ID);">
 																<i class="fa fa-trash-o ng-scope block"></i>
 															</button>
 															
@@ -649,22 +298,22 @@
 														<td valign="top" width="100%">
 															
 															<div>
-																<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" class="link">
-																	<b>({{cache.ticket.items[ID].qty}}x)</b>
-																	<span style="font-size: 12px;">{{cache.ticket.items[ID].ref}}</span>
+																<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" class="link">
+																	<b>({{cart.current.items[ID].qty}}x)</b>
+																	<span style="font-size: 12px;">{{cart.current.items[ID].ref}}</span>
 																</a>
 															</div>
 															
 															<div style="line-height: 14px; font-size: 14px;">
 																
-																<span ng-repeat="(mod_id, modifiers) in cache.ticket.items[ID].modifiers" ng-if="node.data.payload.items[mod_id]">
-																	<a ng-repeat="modifier in modifiers" href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" class="link">
+																<span ng-repeat="(mod_id, modifiers) in cart.current.items[ID].modifiers" ng-if="node.data.payload.items[mod_id]">
+																	<a ng-repeat="modifier in modifiers" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" class="link">
 																		<span ng-if="v.name" style="vertical-align: middle;">●</span>
 																		<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v ? (v.name) : '');}}</span>
 																	</a>
 																</span>
 																
-																<a ng-if="cache.ticket.items[ID].notes" href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;" class="link">— {{cache.ticket.items[ID].notes}}</a>
+																<a ng-if="cart.current.items[ID].notes" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;" class="link">— {{cart.current.items[ID].notes}}</a>
 																
 															</div>
 															
@@ -675,25 +324,25 @@
 											
 											
 											<!--
-											<span>{{cache.ticket.items[ID].ref}}</span>
+											<span>{{cart.current.items[ID].ref}}</span>
 													
-											<button class="btn btn-link" style="font-size: 16px; vertical-align: middle; margin-right: 5px;" ng-click="ticketing.remove(cache.ticket.items[ID].sku, ID);">
+											<button class="btn btn-link" style="font-size: 16px; vertical-align: middle; margin-right: 5px;" ng-click="cart.remove(cart.current.items[ID].sku, ID);">
 												<i class="fa fa-trash-o ng-scope"></i>
 											</button>
 											
-											<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
-												<b style="vertical-align: middle;">({{cache.ticket.items[ID].qty}}x)</b>
+											<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
+												<b style="vertical-align: middle;">({{cart.current.items[ID].qty}}x)</b>
 											</a>
 											
-											<span ng-repeat="(mod_id, modifiers) in cache.ticket.items[ID].modifiers" style="vertical-align: middle;" ng-if="node.data.payload.items[mod_id]">
-												<a ng-repeat="modifier in modifiers" href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" style="vertical-align: middle;">
+											<span ng-repeat="(mod_id, modifiers) in cart.current.items[ID].modifiers" style="vertical-align: middle;" ng-if="node.data.payload.items[mod_id]">
+												<a ng-repeat="modifier in modifiers" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" style="vertical-align: middle;">
 													<span ng-if="v.name" style="vertical-align: middle;">●</span>
 													<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v ? (v.name) : '');}}</span>
 												</a>
 											</span>
 											
-											<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
-												<span ng-if="cache.ticket.items[ID].notes" style="vertical-align: middle;">● {{cache.ticket.items[ID].notes}}</span>
+											<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
+												<span ng-if="cart.current.items[ID].notes" style="vertical-align: middle;">● {{cart.current.items[ID].notes}}</span>
 												
 												<i class="fa fa-pencil" style="vertical-align: middle;"></i>
 											</a>
@@ -722,7 +371,7 @@
 					<table width="100%" height="100%" style="min-height: 100vh;">
 						<tbody>
 							<tr>
-								<td ng-show="cache.ticket.id" style="min-width: 340px;">
+								<td ng-show="cart.current.id" style="min-width: 340px;">
 									<div><%- include('menu-checkout.html'); %></div>
 								</td>
 								<td width="0" style="background-color: #000000;" valign="top">
@@ -730,26 +379,26 @@
 									<a href="/menu" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': $location.$$url == '/menu'}">
 										<div style="position: relative;">
 											<i class="fa fa-shopping-cart"></i>
-											<span ng-if="cache.ticket.qty" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">{{cache.ticket.qty}}</span>
+											<span ng-if="cart.current.qty" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">{{cart.current.qty}}</span>
 										</div>
 									</a>
 									
-									<a href="/menu?view=tickets" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': query.view == 'tickets'}">
+									<a href="/menu?view=carts" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': query.view == 'carts'}">
 										<div style="position: relative;">
 											<i class="fa fa-folder-open-o"></i>
-											<span ng-if="cache.tickets.count" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">{{cache.tickets.count}}</span>
+											<span ng-if="cart.carts.count" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">{{cart.carts.count}}</span>
 										</div>
 									</a>
 									
-									<button class="btn btn-block text-center btn-info" style="margin: 0;" ng-click="ticketing.new();">
+									<button class="btn btn-block text-center btn-info" style="margin: 0;" ng-click="cart.new();">
 										<span>New</span>
 									</button>
 									
-									<button ng-if="cache.ticket.id" class="btn btn-block text-center btn-danger" style="margin: 0;" ng-click="ticketing.delete(cache.ticket.id);">
+									<button ng-if="cart.current.id" class="btn btn-block text-center btn-danger" style="margin: 0;" ng-click="cart.delete(cart.current.id);">
 										<span>Del.</span>
 									</button>
 									
-									<button ng-if="cache.ticket.id" class="btn btn-block text-center btn-easy" style="margin: 0; font-size: 16px;" ng-click="ticketing.unload();">
+									<button ng-if="cart.current.id" class="btn btn-block text-center btn-easy" style="margin: 0; font-size: 16px;" ng-click="cart.unload();">
 										<i class="fa fa-eject"></i>
 									</button>
 									
