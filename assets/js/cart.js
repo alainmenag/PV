@@ -4,32 +4,6 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 //==========================================================================
 // CART
 //==========================================================================
-
-	try {
-		node.data.payload.mappings = {};
-		
-		_.each(node.data.payload.items, function(item, sku) {
-			
-			if (item.item_data && item.item_data.modifier_list_info)
-			{
-				item.item_data.modifier_list_info = _.sortBy(item.item_data.modifier_list_info, function(l)
-				{
-					var MODIFIER_LIST = node.data.payload.items[l.modifier_list_id];
-					
-					return MODIFIER_LIST.modifier_list_data.ordinal;
-				});
-			}
-			
-			node.data.payload.mappings[item.type] = node.data.payload.mappings[item.type] || {};
-			
-			node.data.payload.mappings[item.type][sku] = item;
-		});
-	}
-	catch(err) {};
-
-//==========================================================================
-// CART
-//==========================================================================
 	
 	$rootScope.cart = $rootScope.cart || {};
 
@@ -46,8 +20,10 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 		$timeout(function()
 		{
 			$rootScope.cart.current.id = ($rootScope.cart.current.id || $rootScope.cart.current.ts).toString();
-			
+			$rootScope.cart.current.ref = '#' + $rootScope.cart.current.id.substr(-4);
+			$rootScope.cart.current.count = Object.keys($rootScope.cart.current.items).length;
 			$rootScope.cart.current.qty = 0;
+			$rootScope.cart.current.amount = 0;
 			
 			_.each($rootScope.cart.current.items, function(item)
 			{
@@ -56,6 +32,19 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 				item.amount = 0; // reset total price
 				
 				var elm = $('.entry.item#' + item.id);
+				
+				if (elm.length)
+				{
+					item.title = $(elm).find('.item-title').text();
+					item.description = ($(elm).find('.item-addons')[0] || {}).innerText || null;
+					
+					var copy = $($(elm).find('.item-addons')[0].innerHTML);
+					
+					$(copy).find('.item-addon-price').remove();
+					
+					// include a clean version of the item description (w/o prices);
+					item.subject = $(copy).text().replace(/\n\n/g, '').replace(/\n/g, ' ').trim() || null;
+				}
 										
 				try {
 					item.amount += parseInt($(elm).find('[editable-number="ENTRY.price"]').text().match(/\d+/g).join(''));
@@ -64,6 +53,8 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 				_.each($(elm).find('[data-addon]'), function(addon) {
 					item.amount += $(addon).data('addon') || 0;
 				});
+				
+				$rootScope.cart.current.amount += item.amount;
 			});
 			
 			$rootScope.cart.carts.list[$rootScope.cart.current.id] = $rootScope.cart.current;

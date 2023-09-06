@@ -1,0 +1,17 @@
+{
+	"title": "Checkout",
+	"description": "Checkout your cart.",
+	"keywords": ["pay"],
+	"_template": {"src": "/nodes/home.html"},
+	"_image": {"src": "/nodes/home/spacex-uj3hvdfQujI-unsplash.jpg"},
+	"sections": [
+		
+		{
+			"id": "checkout",
+			"template": "/templates/checkout.html",
+			"data": []
+		}	
+
+	],
+	"resources": []
+}

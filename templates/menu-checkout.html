@@ -35,7 +35,7 @@
 							<tr>
 								<td valign="top" style="position: relative; white-space: nowrap;" align="center">
 									
-									<button class="btn btn-easy btn-round hide-overflow ng-pristine ng-untouched ng-valid ng-binding ng-not-empty" type="number" placeholder="1" keyboard min="1" ng-model="ENTRY.qty" ng-change="add.qty(ENTRY);" autocomplete="off" aria-invalid="false">{{ENTRY.qty}}</button>
+									<button class="btn btn-easy btn-round hide-overflow ng-pristine ng-untouched ng-valid ng-binding ng-not-empty" type="number" placeholder="1" keyboard min="1" ng-model="ENTRY.qty" ng-change="cart.store();" autocomplete="off" aria-invalid="false">{{ENTRY.qty}}</button>
 									
 									<div style="margin-top: 3px;">
 										<button class="btn btn-link" style="font-size: 16px;" ng-click="cart.remove(ENTRY.sku, ENTRY.id);">
@@ -51,7 +51,7 @@
 										<div class="col">
 									
 											<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}" style="font-size: 20px; word-break: break-word;" class="entry-link text-black btn-link {{query.sku == ENTRY.sku && query.id == ENTRY.id ? 'text-pink' : 'link'}}">
-												<b>{{node.data.payload.items[ENTRY.sku].item_data.name}}</b>
+												<b class="item-title">{{node.data.payload.items[ENTRY.sku].item_data.name}}</b>
 												<div style="margin-top: 5px; font-size: 12px;">{{ENTRY.ref}}</div>
 											</a>
 											
@@ -66,20 +66,22 @@
 										</div>
 									
 									</div>
-
-									<span ng-repeat="(mod_id, modifiers) in ENTRY.modifiers" style="vertical-align: middle; word-break: break-word;" ng-if="node.data.payload.items[mod_id]">
-										<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}&modifier={{mod_id}}" ng-repeat="modifier in modifiers" class="{{query.modifier == mod_id ? 'text-pink' : 'link'}}" style="vertical-align: middle;">
-											
-											<span ng-if="v.name" style="vertical-align: middle;">●</span>
-											<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v.name);}}</span>
-											<i ng-if="v.price_money.amount" style="vertical-align: middle;" data-addon="{{v.price_money.amount}}">(${{v.price_money.amount | formatPrice}})</i>
-										</a>
-									</span>
+									
+									<div class="item-addons">
+										<span ng-repeat="(mod_id, modifiers) in ENTRY.modifiers" style="vertical-align: middle; word-break: break-word;" ng-if="node.data.payload.items[mod_id]">
+											<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}&modifier={{mod_id}}" ng-repeat="modifier in modifiers" class="{{query.modifier == mod_id ? 'text-pink' : 'link'}}" style="vertical-align: middle;">
+												
+												<span ng-if="v.name" style="vertical-align: middle;">●</span>
+												<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v.name);}}</span>
+												<i class="item-addon-price" ng-if="v.price_money.amount" style="vertical-align: middle;" data-addon="{{v.price_money.amount}}">(${{v.price_money.amount | formatPrice}})</i>
+											</a>
+										</span>
+									</div>
 									
 									<div class="row" style="margin-top: 5px;">
 										
 										<div class="col">
-											<span editable-textarea="ENTRY.notes" e-keyboard="..." e-autocomplete="on" onaftersave="cart.store();" style="word-break: break-word; white-space: break-spaces;">{{(ENTRY.notes ? ('— ' + ENTRY.notes) : null) || '...'}}</span>
+											<span class="item-notes" editable-textarea="ENTRY.notes" e-keyboard="..." e-autocomplete="on" onaftersave="cart.store();" style="word-break: break-word; white-space: break-spaces;">{{(ENTRY.notes ? ('— ' + ENTRY.notes) : null) || '...'}}</span>
 										</div>
 									
 										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
@@ -101,11 +103,17 @@
 					
 					
 				</div>
+				
 				<div class="item entry" style="padding: 0 5px; margin: 0;">
 					<button class="btn btn-block btn-gray" ng-click="cart.append();">
 						<i class="fa fa-plus" aria-hidden="true"></i>
 					</button>
 				</div>
+				
+				<div class="item entry" style="padding: 5px; margin: 0;">
+					<textarea ng-model="cart.current.notes" placeholder="..." style="width: 100%; height: 120px; font-size: 12px;" keyboard onchange="$rootScope.cart.store();"></textarea>
+				</div>
+				
 			</td>
 		</tr>
 		
