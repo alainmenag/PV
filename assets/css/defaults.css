@@ -29,6 +29,10 @@ html {
     display: none !important;
 }
 
+[ng-click] {
+	cursor: pointer;
+}
+
 html, body, form {
 	margin: 0;
 	padding: 0;
@@ -79,6 +83,22 @@ label {
 
 [disabled="disabled"] {
 	pointer-events: none;
+}
+
+.hide {
+	display: none;
+}
+
+.inline {
+	display: inline;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.block {
+	display: block;
 }
 
 .hideOverflow,
@@ -275,6 +295,8 @@ a.btn-round {
 .btn-link:hover {
 	background-color: transparent !important;
 	color: #9e9e9e;
+	color: #3f51b5;
+	color: #757575;
 }
 
 .text-bold {

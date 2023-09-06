@@ -76,7 +76,7 @@
 		
 		
 		
-		$rootScope.cache.tickets = JSON.parse(localStorage['tickets'] || null) || {};
+		$rootScope.cache.tickets = JSON.parse(localStorage['tickets'] || null) || {count: 0, list: {}};
 		
 		$rootScope.cache.ticket = localStorage['ticket'] ? JSON.parse(localStorage['ticket']) : null;
 		
@@ -85,7 +85,9 @@
 		$rootScope.ticketing.saving = false;
 		
 		$rootScope.ticketing.store = function()
-			{
+		{
+			$rootScope.cache.tickets.list = $rootScope.cache.tickets.list || {};
+				
 			$timeout(function()
 			{
 				$rootScope.cache.ticket.id = ($rootScope.cache.ticket.id || $rootScope.cache.ticket.ts).toString();
@@ -109,7 +111,9 @@
 					});
 				});
 				
-				$rootScope.cache.tickets[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
+				$rootScope.cache.tickets.list[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
+				
+				$rootScope.cache.tickets.count = Object.keys($rootScope.cache.tickets.list).length;
 				
 				localStorage['ticket'] = JSON.stringify($rootScope.cache.ticket);
 				localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
@@ -117,24 +121,46 @@
 			});
 		};
 			
+		$rootScope.ticketing.unload = function()
+		{
+			$rootScope.ticketing.store();
+			
+			$rootScope.cache.ticket = null;
+			
+			localStorage.removeItem('ticket');
+		};
+			
 		$rootScope.ticketing.delete = function(id)
 		{
-			if ($rootScope.cache.ticket && $rootScope.cache.ticket.id == id)
+			var proceed = function()
 			{
-				$rootScope.cache.ticket = null;
+				if ($rootScope.cache.ticket && $rootScope.cache.ticket.id == id)
+				{
+					$rootScope.cache.ticket = null;
+					
+					localStorage.removeItem('ticket');
+				}
 				
-				localStorage.removeItem('ticket');
-			}
-			
-			$rootScope.ticketing.saving = true;
-			
-			delete $rootScope.cache.tickets[id];
-			
-			localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
+				$rootScope.ticketing.saving = true;
+				
+				delete $rootScope.cache.tickets.list[id];
+				
+				$rootScope.cache.tickets.count = Object.keys($rootScope.cache.tickets.list).length;
+				
+				localStorage['tickets'] = JSON.stringify($rootScope.cache.tickets);
+	
+				$timeout(function() {
+					$rootScope.ticketing.saving = false;
+				});
+			};
 
-			$timeout(function() {
-				$rootScope.ticketing.saving = false;
-			})	
+			$rootScope.notify({
+				type: 'question',
+				memo: 'Delete ticket?'
+			}, function(c)
+			{
+				if (c.value) proceed();
+			});
 		};
 			
 		$rootScope.ticketing.new = function()
@@ -142,9 +168,15 @@
 			// store current ticket
 			if ($rootScope.cache.ticket && $rootScope.cache.ticket.id)
 			{
-				var tickets = JSON.parse(localStorage['tickets'] || null) || {};
+				var tickets = JSON.parse(localStorage['tickets'] || null) || $rootScope.cache.tickets || {};
 				
-				tickets[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
+				tickets.list = tickets.list || {};
+				
+				tickets.list[$rootScope.cache.ticket.id] = $rootScope.cache.ticket;
+				
+				tickets.count = Object.keys(tickets.list).length;
+				
+				$rootScope.cache.tickets = tickets;
 				
 				localStorage['tickets'] = JSON.stringify(tickets);
 			}
@@ -232,7 +264,9 @@
 			var ITEM = node.data.payload.items[sku];
 			var item = {id: id, sku: sku, qty: 1, ts: ts, modifiers: {}, amount: 0, price: null};
 			
-			_.each(ITEM.item_data.modifier_list_info, function(modifier) {
+			item.ref = '#' + id.substr(-4);
+			
+			if (ITEM) _.each(ITEM.item_data.modifier_list_info, function(modifier) {
 				_.each(modifier.modifier_overrides, function(override) {
 					if (override.on_by_default)
 					{
@@ -311,7 +345,7 @@
 			
 			$rootScope.notify({
 				type: 'question',
-				memo: 'Are you sure?'
+				memo: 'Delete item?'
 			}, function(c)
 			{
 				if (!c.value) return;
@@ -544,7 +578,7 @@
 								<% if (item.id) { %>			
 								<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
 									
-									<div ng-click="ticketing.append('<%- item.id %>');">
+									<div ng-click="ticketing.append('<%- item.id %>');" class="btn-link">
 										
 										<table class="item-heading" width="100%" style="margin: 0;">
 											<tbody>
@@ -554,21 +588,23 @@
 														
 														<h3 class="item-title" style="margin: 0; font-weight: bolder;">
 															
-															<i ng-if="cache.ticket.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i>
+<!-- 															<i ng-if="cache.ticket.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i> -->
+															
+															<i ng-if="cache.ticket || query.order == 'online'" class="fa fa-plus btn-link" style="vertical-align: middle; font-size: 12px;"></i>
 															
 															<% if (item.popular) { %>
-															<span ng-if="!cache.ticket.qty" style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
+															<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
 															<% } %>
 															
 															<% if (item.new) { %>
-															<span ng-if="!cache.ticket.qty" style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
+															<span style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
 															<% } %>
 															
 															<% if (item.limited) { %>
-															<span ng-if="!cache.ticket.qty" style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
+															<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
 															<% } %>
 															
-															<span class="item-title-name" style="vertical-align: middle;"><%- item.title %></span>
+															<span class="item-title-name btn-link" ng-class="{'text-pink': cache.ticket.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
 														</h3>
 														
 													</td>
@@ -597,9 +633,52 @@
 									
 									<div ng-if="cache.ticket.skus['<%- item.id %>']" style="margin-top: 5px;">
 										<div ng-repeat="(ID, has) in cache.ticket.skus['<%- item.id %>'].items" style="margin: 3px 0;">
+											
+											
+											
+											<table width="100%">
+												<tbody>
+													<tr>
+														<td valign="top" style="padding-right: 10px;">
+															
+															<button class="btn btn-link block" style="font-size: 16px;" ng-click="ticketing.remove(cache.ticket.items[ID].sku, ID);">
+																<i class="fa fa-trash-o ng-scope block"></i>
+															</button>
+															
+														</td>
+														<td valign="top" width="100%">
+															
+															<div>
+																<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" class="link">
+																	<b>({{cache.ticket.items[ID].qty}}x)</b>
+																	<span style="font-size: 12px;">{{cache.ticket.items[ID].ref}}</span>
+																</a>
+															</div>
+															
+															<div style="line-height: 14px; font-size: 14px;">
+																
+																<span ng-repeat="(mod_id, modifiers) in cache.ticket.items[ID].modifiers" ng-if="node.data.payload.items[mod_id]">
+																	<a ng-repeat="modifier in modifiers" href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" class="link">
+																		<span ng-if="v.name" style="vertical-align: middle;">●</span>
+																		<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v ? (v.name) : '');}}</span>
+																	</a>
+																</span>
+																
+																<a ng-if="cache.ticket.items[ID].notes" href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;" class="link">— {{cache.ticket.items[ID].notes}}</a>
+																
+															</div>
+															
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											
+											
+											<!--
+											<span>{{cache.ticket.items[ID].ref}}</span>
 													
-											<button class="btn btn-link" style="font-size: 14px; vertical-align: middle; margin-right: 5px;" ng-click="ticketing.remove(cache.ticket.items[ID].sku, ID);">
-												<i class="fa fa-trash-o ng-scope" style="color: #bdbdbd;"></i>
+											<button class="btn btn-link" style="font-size: 16px; vertical-align: middle; margin-right: 5px;" ng-click="ticketing.remove(cache.ticket.items[ID].sku, ID);">
+												<i class="fa fa-trash-o ng-scope"></i>
 											</button>
 											
 											<a href="/menu?sku={{cache.ticket.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
@@ -619,15 +698,8 @@
 												<i class="fa fa-pencil" style="vertical-align: middle;"></i>
 											</a>
 											
-												
-<!--
-												
-												<span ng-if="cache.ticket.items[ID].notes" style="vertical-align: middle;">{{cache.ticket.items[ID].notes}}</span>
-												
-												<i class="fa fa-pencil" style="vertical-align: middle;"></i>
-												
--->
-											
+											-->
+
 											
 										</div>
 									</div>
@@ -637,11 +709,9 @@
 								
 							<% } %>
 								
-								
 							</div>
 							
 						</div>
-				
 				
 					<% } %>
 					
@@ -652,21 +722,35 @@
 					<table width="100%" height="100%" style="min-height: 100vh;">
 						<tbody>
 							<tr>
-								<td ng-show="cache.ticket.qty" style="min-width: 380px;">
+								<td ng-show="cache.ticket.id" style="min-width: 340px;">
 									<div><%- include('menu-checkout.html'); %></div>
 								</td>
 								<td width="0" style="background-color: #000000;" valign="top">
 									
 									<a href="/menu" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': $location.$$url == '/menu'}">
-										<i class="fa fa-shopping-cart"></i>
+										<div style="position: relative;">
+											<i class="fa fa-shopping-cart"></i>
+											<span ng-if="cache.ticket.qty" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">{{cache.ticket.qty}}</span>
+										</div>
 									</a>
 									
 									<a href="/menu?view=tickets" class="btn btn-block text-center btn-black text-white" style="margin: 0;" ng-class="{'active': query.view == 'tickets'}">
-										<i class="fa fa-folder-open-o"></i>
+										<div style="position: relative;">
+											<i class="fa fa-folder-open-o"></i>
+											<span ng-if="cache.tickets.count" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">{{cache.tickets.count}}</span>
+										</div>
 									</a>
 									
 									<button class="btn btn-block text-center btn-info" style="margin: 0;" ng-click="ticketing.new();">
 										<span>New</span>
+									</button>
+									
+									<button ng-if="cache.ticket.id" class="btn btn-block text-center btn-danger" style="margin: 0;" ng-click="ticketing.delete(cache.ticket.id);">
+										<span>Del.</span>
+									</button>
+									
+									<button ng-if="cache.ticket.id" class="btn btn-block text-center btn-easy" style="margin: 0; font-size: 16px;" ng-click="ticketing.unload();">
+										<i class="fa fa-eject"></i>
 									</button>
 									
 								</td>

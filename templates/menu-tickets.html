@@ -21,7 +21,7 @@
 				</thead>
 				
 				<tbody>
-					<tr class="dt-row" ng-repeat="ticket in cache.tickets" ng-class="{'active': ticket.id == cache.ticket.id}">
+					<tr class="dt-row" ng-repeat="ticket in cache.tickets.list" ng-class="{'active': ticket.id == cache.ticket.id}">
 						<td>
 							<div>{{ticket.id}}</div>
 							<div style="font-size: 12px;">{{ticket.ts | date: 'h:mm:ss a • MMM d, y'}}</div>
