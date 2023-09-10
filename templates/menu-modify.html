@@ -54,7 +54,7 @@
 			</div>
 			
 			<div class="col" style="padding: 15px;">
-				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="link" style="margin: 0; font-size: 45px;">
+				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="link" style="margin: 0; font-size: 35px;">
 					<b>({{cart.current.items[query.id].qty || 1}}x)</b>
 					<span>{{node.data.payload.items[query.sku].item_data.name || 'item'}}:</span>
 				</a>
@@ -101,7 +101,7 @@
 		</div>
 
 		<div style="margin-top: 15px;">
-			<label style="display: block; margin-bottom: 5px;">Notes</label>
+			<label style="display: block; margin-bottom: 5px;">Item Notes</label>
 			<textarea style="width: 100%; height: 120px;" ng-model="cart.current.items[query.id].notes" spellcheck="yes" placeholder="..." keyboard onchange="$rootScope.cart.store();"></textarea>
 		</div>
 
@@ -172,7 +172,7 @@
 											
 										</div>
 										
-										<div ng-if="MODIFIER.modifier_data.price_money.amount" style="margin-top: 10px;">
+										<div ng-if="MODIFIER.modifier_data.price_money.amount">
 											<span style="vertical-align: middle; font-weight: normal; font-style: italic;">${{(MODIFIER.modifier_data.price_money.amount | formatPrice)}}</span>
 										</div>
 										

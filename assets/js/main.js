@@ -79,6 +79,13 @@ var main = function (
 		if (_prev.pathname != _path.pathname) $rootScope.templates.load(newPath);
 		
 		//$timeout($rootScope.state.store); // store location into breadcrumbs
+		
+		$timeout(function() {
+			$(':focus').trigger('blur');
+			$(':focus').blur();
+			$(':hover').trigger('blur');
+			$(':hover').blur();
+		});
 	});
 
     $rootScope.cleanInput = function(data) {

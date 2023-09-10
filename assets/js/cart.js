@@ -6,19 +6,31 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 //==========================================================================
 	
 	$rootScope.cart = $rootScope.cart || {};
-
+	
+	$rootScope.cart.disabled = false;
+	$rootScope.cart.fit = false;
 	$rootScope.cart.carts = JSON.parse(localStorage['carts'] || null) || {count: 0, list: {}};
-	
 	$rootScope.cart.current = localStorage['cart'] ? JSON.parse(localStorage['cart']) : null;
-	
 	$rootScope.cart.saving = false;
-	
+
+	$rootScope.$on('$locationChangeStart', function(e, newPath, oldPath) // success
+	{
+		$rootScope.cart.fit = false;
+	});
+
 	$rootScope.cart.store = function()
 	{
 		$rootScope.cart.carts.list = $rootScope.cart.carts.list || {};
+		
+		$rootScope.cart.saving = true;
 			
 		$timeout(function()
 		{
+			if (!$rootScope.cart.current) return (function()
+			{
+				$rootScope.cart.saving = false;
+			})();
+			
 			$rootScope.cart.current.id = ($rootScope.cart.current.id || $rootScope.cart.current.ts).toString();
 			$rootScope.cart.current.ref = '#' + $rootScope.cart.current.id.substr(-4);
 			$rootScope.cart.current.count = Object.keys($rootScope.cart.current.items).length;
@@ -63,6 +75,10 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			
 			localStorage['cart'] = JSON.stringify($rootScope.cart.current);
 			localStorage['carts'] = JSON.stringify($rootScope.cart.carts);
+			
+			$timeout(function() {
+				$rootScope.cart.saving = false;
+			}, 100);
 		
 		});
 	};
@@ -180,9 +196,11 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			}
 		}
 		
+		console.log(nextLink);
+		
 		if (nextLink.length && $(nextLink).attr('href') == $location.$$url) nextLink = null;
 
-		if (nextLink)
+		if (nextLink.length)
 		{
 			$(nextLink).trigger('click');
 		} else {
@@ -203,6 +221,8 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 	
 	$rootScope.cart.append = function(sku, id)
 	{
+		if ($rootScope.cart.disabled) return;
+		
 		if (!$rootScope.cart.current) $rootScope.cart.new();
 			
 		var ts = Date.now();
@@ -279,6 +299,23 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			if ($rootScope.query.id == id) $rootScope.navigate('/menu');
 			
 			proceed();
+		});
+	};
+	
+	$rootScope.cart.purge = function()
+	{
+		$rootScope.notify({
+			type: 'question',
+			memo: 'Remove all carts?'
+		}, function(c)
+		{
+			if (!c.value) return;
+			
+			$rootScope.cart.current = null;
+			$rootScope.cart.carts = {count: 0, list: {}};
+			
+			localStorage.removeItem('cart');
+			localStorage.removeItem('carts');
 		});
 	};
 
