@@ -441,6 +441,15 @@ button {
 	cursor: pointer;
 }
 
+table td.md-calendar-date {
+	text-align: center;
+}
+
+table.md-calendar-day-header tr th {
+	vertical-align: middle;
+	text-align: center;
+}
+
 .MODIFIER_LIST .modifier + .as-is,
 .MODIFIER_LIST .modifier:last-of-type .comma {
 	display: none !important;
@@ -589,5 +598,9 @@ table.dataTable, table.dataTable * {
 
 [platform="desktop"] .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 	color: #000000 !important;
+}
+
+.uk-card-default {
+	box-shadow: none;
 }
 

@@ -3,12 +3,150 @@
 		
 		<div class="row">
 			
-			<div class="col col-auto" style="padding: 0 15px;">
-				left
+			<div class="col" style="padding: 0 15px;">
+
+				<ul uk-accordion="multiple: true">
+					
+				    <li class="uk-open">
+				        <a class="uk-accordion-title" href="#">Shipping & handling ({{cart.current.handling}})</a>
+				        <div class="uk-accordion-content">
+					        
+					        <div class="row" style="margin: -5px;">
+						        <div class="col" style="padding: 5px;">
+							        <button class="uk-button uk-button-default btn-block" ng-class="{'uk-button-secondary': cart.current.handling == 'TAKEOUT'}" ng-click="cart.current.handling = 'TAKEOUT'; cart.store();" style="line-height: 20px; padding: 10px 15px; height: 100%;">TAKEOUT</button>
+						        </div>
+						        <div class="col" style="padding: 5px;">
+							        <button class="uk-button uk-button-default btn-block" ng-class="{'uk-button-secondary': cart.current.handling == 'CURBSIDE'}" ng-click="cart.current.handling = 'CURBSIDE'; cart.store();" style="line-height: 20px; padding: 10px 15px; height: 100%;">CURBSIDE</button>
+						        </div>
+						        <div class="col" style="padding: 5px;">
+							        <button class="uk-button uk-button-default btn-block" ng-class="{'uk-button-secondary': cart.current.handling == 'DINE-IN'}" ng-click="cart.current.handling = 'DINE-IN'; cart.store();" style="line-height: 20px; padding: 10px 15px; height: 100%;">DINE-IN</button>
+						        </div>
+					        </div>
+					        
+					        <div style=" margin: -1px; margin-top: 5px;">
+								<table width="100%">
+									<tbody>
+										
+										
+										<tr>
+											<td width="50%" style="padding: 1px;">
+												<input value="{{cart.current.time}}" type="time" name="time" placeholder="12:40:34" style="height: 50px; width: 100%;" onchange="$rootScope.cart.current.time = this.value; $rootScope.cart.store();" keyboard>
+											</td>
+											<td width="50%" style="padding: 1px;">
+												<input value="{{cart.current.date}}" type="date" name="date" placeholder="2023-09-11" style="height: 50px; width: 100%;" onchange="$rootScope.cart.current.date = this.value; $rootScope.cart.store();" keyboard>
+											</td>
+										</tr>
+										
+									</tbody>
+								</table>
+								
+								<div style="font-size: 12px; margin-top: 5px;">Orders outside of business hours will require a confirmation. All orders require a minimum of 15 minutes to process.</div>
+					        </div>
+					        
+				        </div>
+				    </li>
+				    
+				    <li class="uk-open">
+				        <a class="uk-accordion-title" href="#">Items ({{cart.current.qty || 0}})</a>
+				        <div class="uk-accordion-content">
+					        
+					        <div ng-if="!cart.current.qty">No items in your cart.</div>
+					        
+							<div class="uk-card uk-card-default" ng-repeat="item in cart.current.items" style="margin-top: {{$first ? '0' : '10px'}};">
+							    <div class="uk-card-header">
+							        <div class="uk-grid-small uk-flex-middle" uk-grid>
+							            <div class="uk-width-auto">
+							                <input ng-model="item.qty" keyboard autocomplete="off" type="number" placeholder="Qty." style="max-width: 60px; height: 60px; border-radius: 100% !important; text-align: center;" onchange="$rootScope.cart.store();" />
+							            </div>
+							            <div class="uk-width-expand">
+							                <h3 class="uk-card-title uk-margin-remove-bottom">
+								                <a href="/menu?sku={{item.sku}}&id={{item.id}}" class="text-black btn-link link" style="text-decoration: none;">{{item.title}}</a>
+							                </h3>
+							                <p class="uk-text-meta uk-margin-remove-top">
+								                <span>${{item.amount * item.qty | formatPrice}}</span>
+							                </p>
+							            </div>
+							        </div>
+							    </div>
+							    <div ng-if="item.description || item.notes" class="uk-card-body">
+							        <div ng-if="item.description">{{item.description}}</div>
+							        <div ng-if="item.notes" style="margin-top: {{item.description ? '5px' : '0px'}};">— {{item.notes}}</div>
+							    </div>
+							</div>
+							
+				        </div>
+				    </li>
+				    
+				    <li class="uk-open" ng-if="cart.current.qty">
+				        <a class="uk-accordion-title" href="#">Payment Method</a>
+				        <div class="uk-accordion-content">
+					        
+				            <p>Coming soon. The order system is being worked on. Sebastian. 9/11/23 @1PM.</p>
+				            
+				        </div>
+				    </li>
+				    
+				</ul>
+
 			</div>
 			
 			<div class="col text-right" style="padding: 0 15px;">
-				right
+				
+				
+				<div class="uk-background-muted uk-height-large">
+				    <div class="uk-card uk-card-default uk-card-body uk-text-left uk-position-z-index" uk-sticky="end: !.container; offset: 80">
+					    
+					    <div style="font-weight: bold;">Order Summary</div>
+					    
+					    <div style="padding-left: 15px; margin-top: 10px;">
+	
+							<div class="uk-grid-small" uk-grid>
+							    <div class="uk-width-expand" uk-leader>Sub-total:</div>
+							    <div>${{cart.current.amount | formatPrice}}</div>
+							</div>	
+	
+							<div class="uk-grid-small" uk-grid>
+							    <div class="uk-width-expand" uk-leader>Shipping & handling:</div>
+							    <div>$0.00</div>
+							</div>	
+	
+							<div class="uk-grid-small" uk-grid>
+							    <div class="uk-width-expand" uk-leader>Your coupon savings:</div>
+							    <div>$0.00</div>
+							</div>	
+	
+							<div class="uk-grid-small" uk-grid>
+							    <div class="uk-width-expand" uk-leader>Fees:</div>
+							    <div>$0.00</div>
+							</div>	
+	
+							<div class="uk-grid-small" uk-grid>
+							    <div class="uk-width-expand" uk-leader>Estimated tax to be collected:</div>
+							    <div>${{cart.current.tax | formatPrice}}</div>
+							</div>	
+						
+					    </div>	
+							
+							
+							
+						<table width="100%" style="font-size: 24px; margin-top: 10px;">
+							<tbody>
+								<tr>
+									<td>
+										<div>Total:</div>
+									</td>
+									<td align="right">
+										<div class="text-danger" style="font-weight: bold;">$0.00</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>		
+					    
+					    
+				    </div>
+				</div>
+				
+				
 			</div>
 			
 		</div>

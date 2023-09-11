@@ -35,7 +35,7 @@
 					<b>{{cart.current.ref}}</b>
 				</div>
 				
-				<div class="item entry" ng-repeat="ENTRY in cart.current.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}" id="{{ENTRY.id}}">
+				<div class="item entry" ng-repeat="ENTRY in cart.current.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}" id="{{ENTRY.id}}" data-msrp="{{node.data.payload.items[ENTRY.sku].item_data.variations[0].item_variation_data.price_money.amount}}">
 					
 					<table width="100%">
 						<tbody>

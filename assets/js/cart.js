@@ -36,17 +36,20 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			$rootScope.cart.current.count = Object.keys($rootScope.cart.current.items).length;
 			$rootScope.cart.current.qty = 0;
 			$rootScope.cart.current.amount = 0;
+			$rootScope.cart.current.tax = 0;
 			
 			_.each($rootScope.cart.current.items, function(item)
 			{
-				$rootScope.cart.current.qty += item.qty || 0;
-				
-				item.amount = 0; // reset total price
-				
 				var elm = $('.entry.item#' + item.id);
+				
+				$rootScope.cart.current.qty += item.qty || 0;
 				
 				if (elm.length)
 				{
+					
+					item.price = item.price !== null ? item.price : (parseInt($(elm).data('msrp')) || null);
+					item.amount = item.price; // reset total price
+					
 					item.title = $(elm).find('.item-title').text();
 					item.description = ($(elm).find('.item-addons')[0] || {}).innerText || null;
 					
@@ -56,18 +59,16 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 					
 					// include a clean version of the item description (w/o prices);
 					item.subject = $(copy).text().replace(/\n\n/g, '').replace(/\n/g, ' ').trim() || null;
+					
+					_.each($(elm).find('[data-addon]'), function(addon) {
+						item.amount += $(addon).data('addon') || 0;
+					});
 				}
-										
-				try {
-					item.amount += parseInt($(elm).find('[editable-number="ENTRY.price"]').text().match(/\d+/g).join(''));
-				} catch(err) {};
-				
-				_.each($(elm).find('[data-addon]'), function(addon) {
-					item.amount += $(addon).data('addon') || 0;
-				});
 				
 				$rootScope.cart.current.amount += item.amount;
 			});
+			
+			$rootScope.cart.current.tax = $rootScope.cart.current.amount * .07;
 			
 			$rootScope.cart.carts.list[$rootScope.cart.current.id] = $rootScope.cart.current;
 			
@@ -143,7 +144,7 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			localStorage['carts'] = JSON.stringify(carts);
 		}
 
-		var cart = {ts: Date.now(), items: {}, skus: {}, qty: 0};
+		var cart = {ts: Date.now(), items: {}, skus: {}, qty: 0, handling: 'TAKEOUT'};
 		
 		cart.id = cart.ts.toString();
 
