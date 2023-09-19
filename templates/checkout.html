@@ -107,7 +107,7 @@
 										<span>{{method.title}}</span>
 										
 										<div ng-if="cart.current.due > 0" style="margin-top: 7px; font-size: 22px;">
-											<b>${{b = cart.current.due; b = (b + (b * (method.fee.interchange || 0) / 100)); b = (b + method.fee.processing || 0); b = (b + (b * (method.tax || 0) / 100)); b - cart.current.paid | formatPrice}}</b>
+											<b>${{b = cart.current.amount; b = (b + (b * (method.fee.interchange || 0) / 100)); b = (b + method.fee.processing || 0); b = (b + (b * (method.tax || 0) / 100)); b - cart.current.paid | formatPrice}}</b>
 										</div>
 										
 							        </button>

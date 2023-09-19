@@ -3,6 +3,7 @@
 	//var layout = node.template.layout;
 	var layout = section.layout || node.template.layout;
 	var mode = query.mode || 'view'; //fullscreen,print
+	var enableCart = site?.cart?.enabled;
 
 %>
 
@@ -290,7 +291,7 @@
 								<% if (item.id) { %>			
 								<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
 									
-									<div ng-click="cart.append('<%- item.id %>');" class="btn-link">
+									<div n<%- enableCart ? '' : '_' %>g-click="cart.append('<%- item.id %>');" class="<%- enableCart ? 'btn-link' : '' %>">
 										
 										<table class="item-heading" width="100%" style="margin: 0;">
 											<tbody>
@@ -302,7 +303,7 @@
 															
 <!-- 															<i ng-if="cart.current.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i> -->
 															
-															<i ng-if="cart.current || query.order == 'online'" class="fa fa-plus btn-link" style="vertical-align: middle; font-size: 12px;"></i>
+															<i ng-if="cart.current || query.order == 'online'" class="fa fa-plus <%- enableCart ? 'btn-link' : '' %>" style="vertical-align: middle; font-size: 12px;"></i>
 															
 															<% if (item.popular) { %>
 															<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
@@ -316,7 +317,7 @@
 															<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
 															<% } %>
 															
-															<span class="item-title-name btn-link" ng-class="{'text-pink': cart.current.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
+															<span class="item-title-name <%- enableCart ? 'btn-link' : '' %>" ng-class="{'text-pink': cart.current.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
 														</h3>
 														
 													</td>
@@ -430,7 +431,8 @@
 					</div>
 				</td>
 				
-				<td ng-if="!cart.disabled" id="menu_right_wrapper" valign="top" style="position: relative; overflow: hidden;">
+				<% if (enableCart) { %>
+				<td id="menu_right_wrapper" valign="top" style="position: relative; overflow: hidden;">
 					<table width="100%" height="100%" style="min-height: 100vh;">
 						<tbody>
 							<tr>
@@ -503,6 +505,7 @@
 						</tbody>
 					</table>
 				</td>
+				<% } // if cart is enabled %>
 				
 			</tr>
 		</tbody>

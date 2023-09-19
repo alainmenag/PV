@@ -7,7 +7,6 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 	
 	$rootScope.cart = $rootScope.cart || {};
 	
-	$rootScope.cart.disabled = false;
 	$rootScope.cart.fit = false;
 	$rootScope.cart.carts = JSON.parse(localStorage['carts'] || null) || {count: 0, list: {}};
 	$rootScope.cart.current = localStorage['cart'] ? JSON.parse(localStorage['cart']) : null;
@@ -80,6 +79,11 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 
 			_.each($rootScope.cart.current.payments, function(payment)
 			{
+				if (payment.paid)
+				{
+					$rootScope.cart.current.paid += payment.paid;
+					$rootScope.cart.current.due -= payment.paid;
+				}
 				
 /*
 				if (payment.taxes) $rootScope.cart.current.taxes += payment.taxes;
@@ -256,8 +260,6 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 	
 	$rootScope.cart.append = function(sku, id)
 	{
-		if ($rootScope.cart.disabled) return;
-		
 		if (!$rootScope.cart.current) $rootScope.cart.new();
 			
 		var ts = Date.now();
@@ -384,9 +386,8 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			method.fees = 0;
 			method.paid = 0;
 			method.taxes = 0;
-			method.amount = $rootScope.cart.current.due;
-			
-			/*
+			method.amount = $rootScope.cart.current.amount - $rootScope.cart.current.paid;
+
 			if (method.fee && method.fee.interchange)
 			{
 				method.fees += (method.amount * (method.fee.interchange / 100));
@@ -403,10 +404,15 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			
 			method.amount += method.taxes; // tax
 			
-			method.amount -= $rootScope.cart.current.paid; // applied credits
-			*/
+			console.log(method);
+			
+			/*
+				
+				tax calc. needs to be fixed, so that tickts can be split into multiple payment types*/
 
+/*
 			$rootScope.cart.current.payments[method.id] = method;
+*/
 			
 			$rootScope.cart.store();
 		});
