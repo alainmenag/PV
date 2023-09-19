@@ -4,11 +4,21 @@
 		<div class="row">
 			
 			<div class="col" style="padding: 0 15px;">
+				
+				<div ng-if="site.hours.memo">
+					<div style="font-size: 23px; font-weight: bold;">Hours:</div>
+					<div ng-bind-html="site.hours.memo | trust"></div>
+				</div>
 
-				<ul uk-accordion="multiple: true">
+				<ul uk-accordion="multiple: false">
 					
-				    <li class="uk-open">
-				        <a class="uk-accordion-title" href="#">Shipping & handling ({{cart.current.handling}})</a>
+				    <li ng-class="{'uk-open': !cart.current.confirmed.handling}">
+				        <a class="uk-accordion-title" href="#" ng-click="cart.current.confirmed.handling = true; cart.store();">
+					        <span ng-show="!cart.current.confirmed.handling" class="btn btn-info" style="font-size: 12px; padding: 10px 15px; border: 2px solid #ffffff; font-weight: bold;">
+					        	<i class="fa fa-check-circle" style="margin-right: 5px;"></i>Confirm</span>
+					        <span style="vertical-align: middle;">Handling</span>
+					        <span ng-if="cart.current.handling" style="vertical-align: middle;">({{cart.current.handling}})</span>
+				        </a>
 				        <div class="uk-accordion-content">
 					        
 					        <div class="row" style="margin: -5px;">
@@ -40,14 +50,17 @@
 									</tbody>
 								</table>
 								
-								<div style="font-size: 12px; margin-top: 5px;">Orders outside of business hours will require a confirmation. All orders require a minimum of 15 minutes to process.</div>
+								<div style="font-size: 12px; margin-top: 5px;">Orders outside of business hours will require a confirmation. All orders require a minimum of 15 minutes to process. As soon as possible is the default.</div>
 					        </div>
 					        
 				        </div>
 				    </li>
 				    
-				    <li class="uk-open">
-				        <a class="uk-accordion-title" href="#">Items ({{cart.current.qty || 0}})</a>
+				    <li ng-class="{'uk-open': !cart.current.confirmed.items}" ng-if="cart.current.confirmed.handling">
+				        <a class="uk-accordion-title" href="#" ng-click="cart.current.confirmed.items = true; cart.store();">
+					        <span ng-show="!cart.current.confirmed.items" class="btn btn-info" style="font-size: 12px; padding: 10px 15px; border: 2px solid #ffffff; font-weight: bold;"><i class="fa fa-check-circle" style="margin-right: 5px;"></i>Confirm</span>
+					        <span style="vertical-align: middle;">Items ({{cart.current.qty || 0}})</span>
+				        </a>
 				        <div class="uk-accordion-content">
 					        
 					        <div ng-if="!cart.current.qty">No items in your cart.</div>
@@ -60,7 +73,7 @@
 							            </div>
 							            <div class="uk-width-expand">
 							                <h3 class="uk-card-title uk-margin-remove-bottom">
-								                <a href="/menu?sku={{item.sku}}&id={{item.id}}" class="text-black btn-link link" style="text-decoration: none;">{{item.title}}</a>
+								                <a href="/menu?sku={{item.sku}}&id={{item.id}}" class="btn-link link" ng-class="{'strike text-mute': !item.qty}">{{item.title}}</a>
 							                </h3>
 							                <p class="uk-text-meta uk-margin-remove-top">
 								                <span>${{item.amount * item.qty | formatPrice}}</span>
@@ -77,80 +90,139 @@
 				        </div>
 				    </li>
 				    
-				    <li class="uk-open" ng-if="cart.current.qty">
+				    <li class="uk-open" ng-if="cart.current.qty && cart.current.confirmed.handling && cart.current.confirmed.items">
 				        <a class="uk-accordion-title" href="#">Payment Method</a>
 				        <div class="uk-accordion-content">
+							
+							<div style="font-size: 12px;">
+								<i>Fees, discounts, and taxes applied.</i>
+								<b>Please select a method:</b>
+							</div>
+
+					        <div class="row" style="margin: -5px; margin-top: 5px;">
+						        <div class="col" style="padding: 5px;" ng-repeat="method in node.data.methods" data-inlocation="{{method.inlocation}}">
+							        
+							        <button class="uk-button uk-button-default btn-block" ng-click="cart.pay(method);" style="line-height: 20px; padding: 15px 15px; height: 100%; line-height: 16px;" ng-disabled="method.disabled || cart.current.due <= 0">
+							        
+										<span>{{method.title}}</span>
+										
+										<div ng-if="cart.current.due > 0" style="margin-top: 7px; font-size: 22px;">
+											<b>${{b = cart.current.due; b = (b + (b * (method.fee.interchange || 0) / 100)); b = (b + method.fee.processing || 0); b = (b + (b * (method.tax || 0) / 100)); b - cart.current.paid | formatPrice}}</b>
+										</div>
+										
+							        </button>
+							        
+						        </div>
+					        </div>		
 					        
-				            <p>Coming soon. The order system is being worked on. Sebastian. 9/11/23 @1PM.</p>
-				            
+							<div>
+								
+								<div ng-repeat="payment in cart.current.payments" class="uk-card uk-card-default" style="margin-top: 10px;">
+								    <div class="uk-card-header" style="border: none;">
+								        <div class="uk-grid-small uk-flex-middle" uk-grid>
+								            <div class="uk-width-auto">
+									            <div class="uk-border-circle" style="width: 60px; height: 60px; background-color: #f2f2f2; padding: 15px;">
+										            <div style="height: 100%; width: 100%; background-size: contain; background-position: center center; background-repeat: no-repeat; background-image: url('/assets/img/payment-networks/{{payment.network}}.svg');"></div>
+									            </div>
+								            </div>
+								            <div class="uk-width-expand">
+								                <h3 class="uk-card-title uk-margin-remove-bottom">
+									                
+									                <span editable-number="payment.amount" e-keyboard="$0.00" e-autocomplete="off" onaftersave="cart.store();" class="ng-scope ng-binding editable editable-click">${{payment.amount | formatPrice}}</span>
+									                
+									                
+									                <b ng-if="payment.paid < payment.amount" class="text-danger">(${{(payment.amount - payment.paid) | formatPrice}})</b>
+									                
+									                <b ng-if="payment.paid > payment.amount" class="text-success">(${{(payment.amount - payment.paid) * -1 | formatPrice}})</b>
+									                
+									                <b ng-if="payment.paid == payment.amount">($0)</b>
+									                
+								                </h3>
+								                <p class="uk-text-meta uk-margin-remove-top">
+									                <span>{{payment.title}}</span>
+									                <span ng-if="payment.network" style="text-transform: uppercase;">({{payment.network}})</span>
+								                </p>
+								            </div>
+								        </div>
+								    </div>
+								    <div class="uk-card-body" style="padding: 0;" ng-include="'/templates/checkout-' + payment.network + '.html?cid=' + cid"></div>
+								    <div class="uk-card-footer">
+								        <button href="#" class="uk-button uk-button-text" ng-click="cart.pay(payment, 'delete');">Delete</button>
+								    </div>
+								</div> <!-- END CARD -->
+							
+							</div>
+
 				        </div>
 				    </li>
 				    
-				</ul>
+				</ul> <!-- END ACCORDIONS -->
 
-			</div>
+			</div> <!-- END CART LEFT -->
 			
-			<div class="col text-right" style="padding: 0 15px;">
+			<div class="col text-right my-right-col" style="padding: 0 15px;">
 				
-				
-				<div class="uk-background-muted uk-height-large">
-				    <div class="uk-card uk-card-default uk-card-body uk-text-left uk-position-z-index" uk-sticky="end: !.container; offset: 80">
+				<div uk-sticky="end: .my-right-col; offset: 25" style="z-index: 1;">
+				    <div class="uk-card uk-card-default uk-card-body uk-text-left uk-position-z-index">
 					    
 					    <div style="font-weight: bold;">Order Summary</div>
 					    
 					    <div style="padding-left: 15px; margin-top: 10px;">
 	
 							<div class="uk-grid-small" uk-grid>
-							    <div class="uk-width-expand" uk-leader>Sub-total:</div>
+							    <div class="uk-width-expand" uk-leader>Items:</div>
 							    <div>${{cart.current.amount | formatPrice}}</div>
 							</div>	
 	
+<!--
 							<div class="uk-grid-small" uk-grid>
-							    <div class="uk-width-expand" uk-leader>Shipping & handling:</div>
-							    <div>$0.00</div>
-							</div>	
-	
-							<div class="uk-grid-small" uk-grid>
-							    <div class="uk-width-expand" uk-leader>Your coupon savings:</div>
-							    <div>$0.00</div>
-							</div>	
+							    <div class="uk-width-expand" uk-leader>Savings:</div>
+							    <div>${{cart.current.savings | formatPrice}}</div>
+							</div>
+-->
 	
 							<div class="uk-grid-small" uk-grid>
 							    <div class="uk-width-expand" uk-leader>Fees:</div>
-							    <div>$0.00</div>
-							</div>	
+							    <div>${{cart.current.fees | formatPrice}}</div>
+							</div>
 	
 							<div class="uk-grid-small" uk-grid>
-							    <div class="uk-width-expand" uk-leader>Estimated tax to be collected:</div>
-							    <div>${{cart.current.tax | formatPrice}}</div>
-							</div>	
+							    <div class="uk-width-expand" uk-leader>Taxes:</div>
+							    <div>${{cart.current.taxes | formatPrice}}</div>
+							</div>
 						
 					    </div>	
 							
-							
-							
 						<table width="100%" style="font-size: 24px; margin-top: 10px;">
 							<tbody>
-								<tr>
+								
+								<tr ng-if="cart.current.taxes">
 									<td>
-										<div>Total:</div>
+										<div style="font-weight: bold;">Total:</div>
 									</td>
 									<td align="right">
-										<div class="text-danger" style="font-weight: bold;">$0.00</div>
+										<div class="text-info" style="font-weight: bold;">${{(cart.current.amount + cart.current.fees + cart.current.taxes) | formatPrice}}</div>
 									</td>
 								</tr>
+
+								<tr>
+									<td>
+										<div style="font-weight: bold;">Paid:</div>
+									</td>
+									<td align="right">
+										<div class="text-info" style="font-weight: bold;">${{(cart.current.paid) | formatPrice}}</div>
+									</td>
+								</tr>
+								
 							</tbody>
 						</table>		
 					    
-					    
 				    </div>
 				</div>
-				
 				
 			</div>
 			
 		</div>
 
-		
 	</div>
 </div>

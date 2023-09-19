@@ -42,6 +42,20 @@ app.filter('formatPrice', function($rootScope) {
 	}
 });
 
+app.filter('wholePrice', function($rootScope) {
+	return function(num, options)
+	{
+		// Parse a string to a floating-point number
+		var str = (num || 0).toString();
+		var num = parseFloat(str);
+		
+		// Round the number to two decimal places
+		var roundedNum = num.toFixed(0);
+		
+		return parseInt(roundedNum);
+	}
+});
+
 app.filter('format12h', function($rootScope) {
 	return function(ts, $scope)
 	{

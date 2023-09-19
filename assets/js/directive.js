@@ -505,7 +505,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
         restrict:'A',
         link: function(scope, elem, attrs)
         {
-	        scope.$form = scope[$(elem).attr('name')];
+	        //scope.$form = scope[$(elem).attr('name')];
+	        scope.$form = $(elem).data('$formController'); // changed to target forms outside of scope.. not sure
 	        
 	        var $form = scope.$form || {};
 	        
@@ -519,22 +520,48 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 		        {
 			        e.preventDefault();
 			        
+			        //$form = $(elem).data('$formController');
+			        
 			        var after = function(r)
 			        {
+				        if (r.data && r.data.location && r.data.location.indexOf('http') === 0) return $timeout(function()
+				        {
+							window.location = r.data.location; 
+					    }, 1000);
+					    
 			        	$form.$saving = false;
-
+					        
 						try {$form.$setPristine();} catch(err) {};
 						try {$form.$setUntouched();} catch(err) {};
 						
-				        if (r.data && (r.data.err || r.data.memo)) alert(r.data.err || r.data.memo);
+						var memo = r.data ? (r.data.memo || r.data.err || r.data.notify) : null;
+						
+				        if (memo) alert(memo);
 				        
 				        if (r.data && (r.data.payload || r.data.data)) if ($(elem).attr('key')) $timeout(function()
 				        {
+					        console.log('key', $(elem).attr('key'));
+					        
+					        
 					        setJsonValue($(elem).attr('key'), (r.data.payload|| r.data.data), window);
 				        });
 				        
-				        if (attrs.reset) $(elem)[0].reset();
-				        if (attrs.reload) $timeout($rootScope.templates.load); // reload view after submit
+				        //if (r.data && r.data.location) location.replace(r.data.location);
+				        if (r.data && r.data.location)
+				        {
+					        var l = r.data.location;
+					        
+					        delete r.data.location;
+					        
+					        if (l.indexOf('http') === 0) return $timeout(function() {
+						       window.location = l; 
+					        }, 1000);
+					        
+					        $rootScope.navigate(l, r.data);
+				        }
+				        
+				        if (attrs.reset != undefined) $(elem)[0].reset();
+				        if (attrs.reload != undefined) $timeout($rootScope.templates.load); // reload view after submit
 			        };
 			        
 			        var run = function()
@@ -585,6 +612,8 @@ app.directive('systemForm', function($rootScope, $timeout, Upload) {
 				        if (data['g-recaptcha-response'] === null) return alert('Please validate your request.');
 
 				        $form.$saving = true;
+				        
+				        //return;
 				        
 						Upload.http({
 							url: attrs.action,

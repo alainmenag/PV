@@ -1,0 +1,43 @@
+<form name="confirm_number" system-form="" style="padding: 15px; position: relative;" name="tab_pay" method="POST" class="container ng-pristine ng-valid" action="/submit">
+
+	<input type="hidden" name="host" value="https://hook.us1.make.com" />
+	<input type="hidden" name="path" value="/gbo94d02rxssxgpi92xxyuku2ljorqwr
+" />
+
+	<input type="hidden" name="title" value="Square Checkout Link" />
+	
+	<input type="hidden" name="payload" value="{{cart.current.payload}}" />
+	<input type="hidden" name="reference" value="{{cart.current.id}}" />
+	<input type="hidden" name="payment" value="{{payment.id}}" />
+	<input type="hidden" name="tax" value="{{payment.tax}}" />
+	<input type="hidden" name="processing" value="{{payment.fee.processing}}" />
+	<input type="hidden" name="interchange" value="{{payment.fee.interchange}}" />
+	<input type="hidden" name="amount" value="{{payment.amount | wholePrice}}" />
+	
+	<div style="font-size: 12px; margin: 5px 0;">*** Msg and data rates may apply. By continuing, you will opt-in to receiving text messages from us.</div>
+
+	<div>
+		<input class="smooth-corners" type="text" name="phone" style="width: 100%; margin: 5px 0;" required="" autocomplete="on" placeholder="{{payment.phone || 'Cellphone #'}}" ng-model="payment.phone" keyboardd>
+	</div>
+
+	<div ng-if="!inlocation && !confirm_number.$saving">
+		<input type="hidden" name="g-recaptcha-response" />
+		<div style="margin: 10px 0;" recaptcha="{{rkey}}"></div>
+	</div>
+	
+	<div>
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td width="50%" style="padding-right: 2.5px;">
+						<button type="submit" class="btn btn-info smooth-corners" style="width: 100%;" ng-click="cart.store();" ng-disabled="confirm_number.$saving" name="method" value="link">{{confirm_number.$saving ? "..." : "Pay Now"}}</button>
+					</td>
+					<td width="50%" style="padding-left: 2.5px;">
+						<button type="submit" class="btn btn-basic smooth-corners" style="width: 100%;" ng-click="cart.store();" ng-disabled="confirm_number.$saving" name="method" value="text">{{confirm_number.$saving ? "..." : "Text Link"}}</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</form>

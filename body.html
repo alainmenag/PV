@@ -28,6 +28,17 @@
 <div class="area" id="page"><%- include(__dirname + '/templates/page.html'); %></div>
 <% } %>
 
+<% if (node.memo) { %>
+<div style="padding-top: 25px;">
+	<div class="container">
+		<div class="uk-alert-primary" uk-alert>
+		    <a class="uk-alert-close" uk-close></a>
+		    <p><%- node.memo; %></p>
+		</div>
+	</div>
+</div>
+<% } %>
+
 <div class="area" id="sections"><%- include(__dirname + '/templates/sections.html', {modules: modules}); %></div>
 
 <div class="area" id="footer"><%- include(__dirname + '/templates/footer.html'); %></div>

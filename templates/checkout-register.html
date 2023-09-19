@@ -1,0 +1,32 @@
+<div style="text-align: center;">
+	
+	<div ng-if="!payment.paid" class="row" style="padding: 2.5px;">
+		
+		<div class="col-3" ng-repeat="d in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100]" style="padding: 2.5px;">
+			<button class="btn btn-basic btn-block" type="button" style="height: 100%; width: 100%; padding: 15px 25px;" ng-click="payment.paid = (d * 100); cart.store();" ng-class="{'active': payment.paid == (d * 100)}">${{d}}</button>
+		</div>
+		
+		<div class="col-6" style="padding: 2.5px;">
+			<button class="btn btn-basic btn-block" type="button" style="height: 100%; width: 100%; padding: 15px 25px;" ng-click="payment.paid = payment.amount; cart.store();" ng-class="{'active': payment.paid == payment.amount}">100%</button>
+		</div>
+		
+		<div class="col-6" style="padding: 2.5px;">
+			<button class="btn btn-basic btn-block" ng-model="payment.paid" style="height: 100%; width: 100%; padding: 15px 25px;" ng-class="{'active': payment.paid == payment.amount}" keyboard type="number" onchange="$rootScope.cart.store();" autocomplete="off">${{payment.paid | formatPrice}}</button>
+		</div>
+		
+	</div>
+	
+<!--
+	<form style="margin-top: 5px;" ng-submit="payments.pay(payment, payment.amount);">
+		
+		<input type="money" min="0" max="1000" step="any" style="height: 60px; width: 205px; vertical-align: middle;" placeholder="Pay {{(data.ticket.due / 100) | formatPrice}}" ng-model="payment.amount" ng-change="payments.pay(payment, payment.amount);" />
+		
+		<button class="btn" style="margin: 5px 0; height: 60px; vertical-align: middle; padding: 5px 25px; border: 1px solid #cccccc; width: 100px;" type="submit">Apply</button>
+		
+		<button ng-if="payment.amount > 0" class="btn" style="margin: 5px 0; height: 60px; vertical-align: middle; padding: 5px 25px; border: 1px solid #cccccc; width: 100px;" type="button" ng-click="payment.amount = null; ticket.sync();">Clear</button>
+
+		
+	</form>
+-->
+
+</div>

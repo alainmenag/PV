@@ -718,6 +718,16 @@ var main = function (
 			});
 			*/
 
+		},
+		
+		remove: function(confirm, parent, thing, callback) {
+			try
+			{
+				$timeout(function() {
+					delete parent[thing];
+				});
+				
+			} catch(err) {};
 		}
 	};
 

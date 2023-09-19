@@ -9,19 +9,20 @@
 			
 		</style>
 		
-		
-		
-		
-<ul class="uk-subnav uk-subnav-pill" uk-switcher>
-    <li><a href="#">Carts</a></li>
-    <li><a href="#">Commands</a></li>
-    <li><a href="#">Import</a></li>
-</ul>
-
-<ul class="uk-switcher uk-margin">
-	
-    <div>
 		<div ng-if="!cart.saving">
+			
+			<div style="margin-bottom: 15px;">
+				<table width="100%">
+					<tbody>
+						<tr>
+							<td ng-if="cart.carts.count" width="100%">
+								<button class="btn btn-danger btn-block" ng-click="cart.purge();">Remove All</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
 			<table dt id="carts" class="display" style="width: 100%;" data-order='[[ 0, "asc" ]]' data-page-length='25' _data-column-defs='[{"sortable": false, "targets": [2]}]'>
 				
 				<thead>
@@ -56,28 +57,25 @@
 							
 							<div ng-if="item.notes" style="margin-top: 5px;">— {{item.notes}}</div>
 							
+<!--
+							<div style="margin-top: 10px;">
+								
+								<button class="btn btn-easy btn-round" style="width: 50px; height: 50px; padding: 0; font-size: 12px;" ng-click="cart.current = item; cart.store();" ng-disabled="item.id == cart.current.id">Load</button>
+							
+								<button class="btn btn-danger btn-round" style="width: 50px; height: 50px; padding: 0; font-size: 12px;" ng-click="cart.delete(item.id);">Del.</button>
+								
+							</div>
+-->
+							
 						</td>
 					</tr>
 				</tbody>
 				
 			</table>
+			
 		</div>
-    </div>
-    
-    <div>
-		<table width="100%">
-			<tbody>
-				<tr>
-					<td width="100%">
-						<button class="btn btn-danger btn-block" ng-click="cart.purge();" ng-disabled="!cart.carts.count">Remove All</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-    </div>
-    
-    <div>
-		<form name="confirm_number" system-form="" name="tab_pay" key="$rootScope.cart.current" reset="" method="POST" class="container ng-pristine ng-valid" action="/submit" style="padding: 0;">
+
+		<form name="confirm_number" system-form="" style="padding: 15px; position: relative; max-width: 480px; margin: auto;" name="tab_pay" key="$rootScope.cart.current" reset="" method="POST" class="container ng-pristine ng-valid" action="/submit">
 		
 			<input type="hidden" name="host" value="https://hook.us1.make.com" />
 			<input type="hidden" name="path" value="/an9dzc46bgv2mqopxc96top4yhcj95x8?Content-Type=application/json" />
@@ -100,16 +98,6 @@
 			</div>
 		
 		</form>
-    </div>
-    
-</ul>
-		
-		
-		
-		
-		
-		
-
 
 	</div>
 </div>

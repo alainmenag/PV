@@ -65,7 +65,7 @@ table, table td, table th {
 	vertical-align: middle;
 }
 
-a {
+a, a:hover, .btn {
 	text-decoration: none;
 }
 
@@ -308,6 +308,11 @@ a.btn-round {
 	color: #757575;
 }
 
+.link {
+	text-decoration: none;
+	color: #3f51b5;
+}
+
 .text-bold {
 	font-weight: bold;
 }
@@ -352,9 +357,8 @@ a.btn-round {
 	color: #4caf50;
 }
 
-.link {
-	text-decoration: none;
-	color: #3f51b5;
+.text-mute {
+	color: #afafaf;
 }
 
 [platform="desktop"] .link:hover {
@@ -448,6 +452,10 @@ table td.md-calendar-date {
 table.md-calendar-day-header tr th {
 	vertical-align: middle;
 	text-align: center;
+}
+
+.strike {
+	text-decoration: line-through !important;
 }
 
 .MODIFIER_LIST .modifier + .as-is,

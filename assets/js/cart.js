@@ -35,14 +35,17 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			$rootScope.cart.current.ref = '#' + $rootScope.cart.current.id.substr(-4);
 			$rootScope.cart.current.count = Object.keys($rootScope.cart.current.items).length;
 			$rootScope.cart.current.qty = 0;
+			
+			$rootScope.cart.current.payments = $rootScope.cart.current.payments || {};
 			$rootScope.cart.current.amount = 0;
-			$rootScope.cart.current.tax = 0;
+			$rootScope.cart.current.paid = 0;
+			$rootScope.cart.current.taxes = 0;
+			$rootScope.cart.current.fees = 0;
+			$rootScope.cart.current.due = 0;
 			
 			_.each($rootScope.cart.current.items, function(item)
 			{
 				var elm = $('.entry.item#' + item.id);
-				
-				$rootScope.cart.current.qty += item.qty || 0;
 				
 				if (elm.length)
 				{
@@ -65,10 +68,28 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 					});
 				}
 				
-				$rootScope.cart.current.amount += item.amount;
+				$rootScope.cart.current.qty += item.qty || 0;
+				
+				if (item.qty)
+				{
+					$rootScope.cart.current.amount += item.amount * item.qty;	
+				}
 			});
 			
-			$rootScope.cart.current.tax = $rootScope.cart.current.amount * .07;
+			$rootScope.cart.current.due = $rootScope.cart.current.amount;
+
+			_.each($rootScope.cart.current.payments, function(payment)
+			{
+				
+/*
+				if (payment.taxes) $rootScope.cart.current.taxes += payment.taxes;
+				if (payment.fees) $rootScope.cart.current.fees += payment.fees;
+				if (payment.paid) $rootScope.cart.current.paid += payment.paid;
+*/
+				
+			});
+			
+			delete $rootScope.cart.current.payload;
 			
 			$rootScope.cart.carts.list[$rootScope.cart.current.id] = $rootScope.cart.current;
 			
@@ -77,10 +98,11 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			localStorage['cart'] = JSON.stringify($rootScope.cart.current);
 			localStorage['carts'] = JSON.stringify($rootScope.cart.carts);
 			
+			$rootScope.cart.current.payload = JSON.stringify($rootScope.cart.current);
+			
 			$timeout(function() {
 				$rootScope.cart.saving = false;
 			}, 100);
-		
 		});
 	};
 		
@@ -144,9 +166,21 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			localStorage['carts'] = JSON.stringify(carts);
 		}
 
-		var cart = {ts: Date.now(), items: {}, skus: {}, qty: 0, handling: 'TAKEOUT'};
+		var cart = {
+			status: 'OPEN',
+			ts: Date.now(),
+			items: {},
+			skus: {},
+			qty: 0,
+			handling: 'TAKEOUT',
+			payments: {},
+			confirmed: {}
+		};
 		
-		cart.id = cart.ts.toString();
+		//cart.id = cart.ts.toString();
+		//cart.id = (Array.from({length: 2}, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('') + Array.from({length: 1}, () => Math.floor(Math.random() * 10)).join('') + Date.now().toString().substr(-3);
+		cart.id = [...'ABCDEFGHKMNPRSTWXZ'].sort(() => Math.random() - 0.5).slice(0, 2).join('') + Array.from({ length: 2 }, () => Math.floor(Math.random() * 10)).join('') + String(Math.floor(Date.now() / 1000)).slice(-2);
+;
 
 		$rootScope.navigate('/menu');
 		
@@ -317,6 +351,64 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			
 			localStorage.removeItem('cart');
 			localStorage.removeItem('carts');
+		});
+	};
+
+//==========================================================================
+// CART - PAY
+//==========================================================================
+	
+	$rootScope.cart.pay = function(method, action)
+	{
+		if (!$rootScope.cart.current) return alert('No cart is loaded.');
+		
+		if (action == 'delete') return $timeout(function()
+		{
+			// to-do: emit required signals
+			
+			console.log(method);
+			
+			delete $rootScope.cart.current.payments[method.id];
+			
+			UIkit.update($('[uk-sticky]'), 'update');
+			
+			$rootScope.cart.store();
+		});
+		
+		if (!action) return $timeout(function()
+		{
+			method = angular.copy(method);
+			
+			method.ts = Date.now();
+			method.id = method.ts.toString();
+			method.fees = 0;
+			method.paid = 0;
+			method.taxes = 0;
+			method.amount = $rootScope.cart.current.due;
+			
+			/*
+			if (method.fee && method.fee.interchange)
+			{
+				method.fees += (method.amount * (method.fee.interchange / 100));
+			}
+			
+			if (method.fee && method.fee.processing)
+			{
+				method.fees += method.fee.processing;
+			}
+			
+			method.amount += method.fees; // apply fees
+
+			method.taxes = (method.amount * ((method.tax || 0) / 100)); // taxes
+			
+			method.amount += method.taxes; // tax
+			
+			method.amount -= $rootScope.cart.current.paid; // applied credits
+			*/
+
+			$rootScope.cart.current.payments[method.id] = method;
+			
+			$rootScope.cart.store();
 		});
 	};
 

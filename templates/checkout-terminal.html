@@ -1,0 +1,22 @@
+<form name="square_terminal" system-form="" style="padding: 15px; position: relative;" name="tab_pay" method="POST" class="container ng-pristine ng-valid" action="/api/square/process">
+
+	<input type="hidden" name="payment" value="{{payment.id}}" />
+	<input type="hidden" name="reference" value="{{cart.current.id}}" />
+	<input type="hidden" name="amount" value="{{cart.current.due}}" />
+	
+	<div style="margin-top: 5px;">
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td width="100%">
+						<button type="submit" class="btn btn-info smooth-corners" style="width: 100%;" ng-click="payment.paid = payment.amount; cart.store();" ng-disabled="square_terminal.$saving">{{square_terminal.$saving ? '...' : 'Pay'}}</button>
+					</td>
+					<td ng-if="query.payment == payment.id && query.confirmation" style="padding-left: 5px;">
+						<button type="submit" class="btn btn-danger smooth-corners" style="width: 100%;" ng-click="payment.paid = 0; cart.store();" ng-disabled="square_terminal.$saving" value="{{query.confirmation}}" name="confirmation">{{square_terminal.$saving ? '...' : 'Cancel'}}</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</form>

@@ -1,0 +1,16 @@
+<form name="square_terminal" system-form="" style="padding: 15px; position: relative;" name="tab_pay" method="POST" class="container ng-pristine ng-valid" action="/api/square/checkout">
+
+	<input type="hidden" name="payment" value="{{payment.id}}" />
+	<input type="hidden" name="fee_processing" value="{{payment.fee.processing}}" />
+	<input type="hidden" name="fee_interchange" value="{{payment.fee.interchange}}" />
+	
+	<input type="hidden" name="redirect" value="https://www.tudays.com/checkout?reference={{cart.current.id}}&payment={{payment.id}}" />
+	
+	<input type="hidden" name="reference" value="{{cart.current.id}}" />
+	<input type="hidden" name="amount" value="{{cart.current.amount}}" />
+	
+	<div style="margin-top: 5px;">
+		<button type="submit" class="btn btn-info smooth-corners" style="width: 100%;" ng-click="payment.paid = payment.amount; cart.store();" ng-disabled="square_terminal.$saving">{{square_terminal.$saving ? '...' : 'Pay'}}</button>
+	</div>
+
+</form>

@@ -62,6 +62,10 @@
 		
 		<style><%- include('assets/css/defaults.css'); %></style>
 		
+		<% if ((config.inlocation || []).indexOf(req.headers['x-real-ip']) == -1) { %>
+			<style>[data-inlocation="true"] {display: none !important}</style>
+		<% } %>
+		
 		<script>
 			
 			window.DOMURL = window.URL || window.webkitURL || window;
@@ -81,12 +85,17 @@
 			window.gid = window.uid || (window.sessionStorage.gid) || Date.now().toString(); // guest id
 			window.tid = window.sessionStorage.tid || Date.now().toString(); // tab id
 			
+			window.rkey = '<%- config?.reCAPTCHA?.key %>'; // cache id
+			
 			window.sessionStorage.gid = window.gid;
 			window.sessionStorage.tid = window.tid;
 			
+			window.inlocation = <%- (config.inlocation || []).indexOf(req.headers['x-real-ip']) > -1 %>;
+			window.ip = "<%- req.headers['x-real-ip'] %>";
+			
 			var cache = {};
 
-			window.$rootScope = {cid: cid, cache: cache};
+			window.$rootScope = {cid: cid, rkey: window.rkey, cache: cache, inlocation: inlocation};
 			
 		</script>
 		

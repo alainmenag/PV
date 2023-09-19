@@ -71,7 +71,7 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 				//jQuery(temp1).data('$ngModelController').$setViewValue('4')
 				if (elem.nodeName == 'BUTTON')
 				{
-					jQuery(elem).data('$ngModelController').$setViewValue($rootScope.keyboard.focus.type == 'number' ? parseInt(v) : v);
+					jQuery(elem).data('$ngModelController').$setViewValue($rootScope.keyboard.focus.type == 'number' ? (parseInt(v) || null) : v);
 				}
 				
 				if (elem) $(elem).val(v).trigger('change').trigger('blur');

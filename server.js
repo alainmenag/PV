@@ -467,6 +467,7 @@ modules.exp.use(['/node_modules', '/cdn'], function(req, res, next)
 	next();
 });
 
+modules.exp.use('/templates', modules.express.static(__dirname + '/templates'));
 modules.exp.use('/nodes', modules.express.static(__dirname + '/nodes'));
 modules.exp.use('/assets', modules.express.static(__dirname + '/assets'));
 modules.exp.use('/cdn', modules.express.static(__dirname + '/cdn'));
@@ -574,18 +575,47 @@ modules.exp.get('*.js.map', function(req, res, next) // ignore 404 maps if not i
 
 modules.exp.use('/submit', function(req, res)
 {
-	var recaptcha = req.body && req.body['g-recaptcha-response']
+	var recaptcha = req.body && req.body['g-recaptcha-response'];
+	var proceed = function()
+	{
+		var host = req.body['host'] || 'https://prod-95.westus.logic.azure.com:443';
+		var path = req.body['path'] || '/workflows/d964853827a64f3b8acb3f2de6e85a98/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=l8CxDnmUEX80cleOw2y-mUqWQ7JJz7qw6GKDsKcgptw';
+		
+		delete req.body['host'];
+		delete req.body['path'];
+		
+		modules.request({
+			url: host + path,
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			json: req.body
+		}, function(err, r, body)
+		{
+			res.send(body);
+		});
+	};
+	
+	var ip = (req.headers['x-forwarded-for'] || '').split(',')[0];
+	
+	// no recaptcha required for inlocation rquests
+	if (config.inlocation && ip && config.inlocation.indexOf(ip) > -1) return proceed();
 	
 	if (!recaptcha) return res.status(501).end();
 	
 	modules.request({
-		url: 'https://prod-95.westus.logic.azure.com:443/workflows/d964853827a64f3b8acb3f2de6e85a98/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=l8CxDnmUEX80cleOw2y-mUqWQ7JJz7qw6GKDsKcgptw',
+		url: 'https://www.google.com/recaptcha/api/siteverify',
 		method: 'POST',
-		headers: {'Content-Type': 'application/json'},
-		json: req.body
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+		body: 'secret=6Ld8v3YnAAAAAEKHn5KwLk80TDobjbuLcYBYmkKf&response=' + recaptcha
 	}, function(err, r, body)
 	{
-		res.send(body);
+		try {
+			body = JSON.parse(body);
+		} catch(err) {};
+		
+		if (!body.success || body.hostname != req.headers.host) return res.status(501).end();
+		
+		proceed();
 	});
 });
 
@@ -722,6 +752,7 @@ modules.exp.use(function(req, res, next)
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, _Cookie');
 	
 	req.headers.remote = (req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || '').split(',')[0] ? true : false;
+	req.headers['x-real-ip'] = (req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || '').split(',')[0];
 
 	req.site = {}; try
 	{

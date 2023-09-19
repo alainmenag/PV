@@ -35,6 +35,14 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 
 });
 
+app.filter("trust", ['$sce', function($sce)
+{
+	return function(htmlCode)
+	{
+		return $sce.trustAsHtml(htmlCode);
+	}
+}]);
+
 /*
 window.addEventListener('beforeunload', function()
 {	

@@ -32,12 +32,20 @@
 
 </script>
 
-<div id="menu_board" class="no-select" oncontextmenu="event.preventDefault(); window.location.reload(true);">
+<div id="menu_board" class="no-select" oncontextmenu="event.preventDefault(); window.location.reload(true);" style="line-height: 20px;">
 
 	<style>
 		
 		#menu_board {
 			min-height: 100vh;
+		}
+		
+		#menu_board * {
+			line-height: 25px;
+		}
+		
+		#menu_board .item-title-name {
+			line-height: 25px;
 		}
 		
 		#menu_board a {
