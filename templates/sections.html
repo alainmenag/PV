@@ -39,7 +39,7 @@
 	<div
 		id="<%- section.id || ('section_' + i) %>"
 		class="section <%- section.tab ? 'section-tab' : '' %>"
-		style="background: <%- section.background || 'transparent' %>; padding: <%- section.padding || '0px' %>;"
+		style="background: <%- section?.background?.color || section?.background || 'transparent' %>; padding: <%- section.padding || '0px' %>; min-height: <%- section.height || '0px' %>;"
 		data-template="<%- section.template %>"
 		data-collapse="<%- section.collapse %>"
 		ng-if="<%- section.if || true %>"
@@ -60,7 +60,7 @@
 		<div class="container" style="overflow: auto; padding-left: 30px; padding-right: 30px; position: relative;">
 			
 			<% if (section.title) { %>
-				<h1 style="font-weight: 300; padding-top: 50px; padding-bottom: 10px; margin: 0; z-index: 1;">
+				<h1 style="font-weight: 300; padding-top: 15px; padding-bottom: 10px; margin: 0; z-index: 1;">
 					
 					<a <%- section.link ? '' : '_' %>href="<%- section.link %>" target="_top" style="text-decoration: none; color: #000000;"><%- section.title %></a>
 					

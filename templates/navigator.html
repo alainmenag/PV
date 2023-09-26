@@ -1,11 +1,13 @@
 <%
+
 	var nav = []; try {
-		nav = JSON.parse(include(__dirname + site.menu.src));
+		nav = JSON.parse(include(__dirname + (section?.src || site.menu.src)));
 	} catch(err) {};
 	
 	var colors = {links: '#000000'};
 	
 	if (site.colors && site.colors.links) colors.links = site.colors.links;
+	
 %>
 <div style="background-color: #ffffff;">
 
@@ -38,23 +40,25 @@
 	
 	<div>
 		
+		<%- include('navigator-offcanvas.html', {nav}) %>
+		
 		<div id="main_nav_wrapper" class="row align-items-center" style="position: relative; z-index: 1;">
 		
 			<div class="col-3" style="padding: 15px 25px;">
 				
 				<a onclick="window.sessionStorage.clear();" href="/" target="_top" style="display: block; width: 100%; height: 60px; margin: auto; background-image: url(<%- node.logo || site.logo || '/assets/img/logo.svg' %>); background-repeat: no-repeat; background-position: center center; background-size: contain;"></a>
-				
+					
 			</div>
 			
 			<div class="col">
 				<nav id="main_nav" style="padding: 15px 5px;">
 					
-					<% nav.forEach(function(item) { %>
+					<% nav.slice(0, 3).forEach(function(item, index) { %>
 					
-						<a href="<%- item.href %>" class="<%- pathname.indexOf((item.href == '/' ? '/home' : item.href)) > -1 ? 'in-path' : '' %>" target="<%- item.target || '' %>"><%- item.title || item.href %></a>
+						<a href="<%- item.href %>" class="<%- pathname.indexOf((item.href == '/' ? '/home' : item.href)) > -1 ? 'in-path' : '' %> <%- index > 1 ? 'uk-visible@s' : '' %>" target="<%- item.target || '' %>"><%- item.title || item.href %></a>
 					
 					<% }) %>
-					
+
 				</nav>
 			</div>
 		
@@ -76,6 +80,18 @@
 				</div>
 			<% } %>
 			
+			<div ng-if="<%- nav.length >= 3 %>" class="col-auto <%- nav.length == 3 ? 'uk-hidden@s' : '' %>" style="position: relative; text-align: right; padding: 0 25px;">
+				<button class="btn btn-link text-center"
+					type="button"
+					uk-toggle="target: #main_nav_wrapper_offcanvas_block"
+					style="
+				    padding: 5px 15px;
+				    font-size: 40px;
+				">
+					<i class="bi bi-list" style="color: #000000;"></i>
+				</button>
+			</div>
+				
 		</div>
 	
 	</div>

@@ -61,8 +61,16 @@ table, table td, table th {
 	border-collapse: collapse;
 }
 
+[valign="top"] {
+	vertical-align: top;
+}
+
 [valign="middle"] {
 	vertical-align: middle;
+}
+
+[valign="bottom"] {
+	vertical-align: bottom;
 }
 
 a, a:hover, .btn {
@@ -116,6 +124,26 @@ label {
 .bg-blur-5 {
 	backdrop-filter: blur(5px);
 	-webkit-backdrop-filter: blur(5px);
+}
+
+.bg-blur::before {
+	backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.bg-blur {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+	
+.bg-blur-15::before {
+	backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.bg-blur-15 {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 			
 .noselect,
@@ -212,6 +240,7 @@ a.btn-round {
     background-color: transparent;
     border: 2px solid #ffffff;
     color: #ffffff;
+    font-weight: bold;
 }
 
 .btn-easy {

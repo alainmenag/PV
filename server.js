@@ -578,8 +578,13 @@ modules.exp.use('/submit', function(req, res)
 	var recaptcha = req.body && req.body['g-recaptcha-response'];
 	var proceed = function()
 	{
+/*
 		var host = req.body['host'] || 'https://prod-95.westus.logic.azure.com:443';
 		var path = req.body['path'] || '/workflows/d964853827a64f3b8acb3f2de6e85a98/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=l8CxDnmUEX80cleOw2y-mUqWQ7JJz7qw6GKDsKcgptw';
+*/
+
+		var host = req.body['host'] || 'https://hook.us1.make.com';
+		var path = req.body['path'] || '/i5mia279dudqz5a56cyqhwgxfs1r8ueo';
 		
 		delete req.body['host'];
 		delete req.body['path'];
@@ -952,25 +957,47 @@ async function render(req, res, callback = function() {})
 		var d = null;
 		var o = payload.node.resources[k];
 		
+		if (!o.key || !o.src) continue;
+		
 		if (o.src.indexOf('http') === 0)
 		{
-			try {
+			try
+			{
 				d = await modules.got(modules.mustache.render(o.src, payload), {json: true});
 			}
 			catch(err) {};
-		} else if (o.src.indexOf('.node') > -1)
+		}
+		else if (o.src.indexOf('.node') > -1)
 		{
 			if (payload.node.secure[o.config])
 			{
 				Object.assign(o, payload.node.secure[o.config]);
 			}
 			
-			try {
+			try
+			{
 				var fn = modules.resolveParent(modules[o.src], o.fn);
 				
 				d = {body: await fn(payload, o)};
 			}
 			catch(err) {};
+		}
+		else if (o.src)
+		{
+			var d = {};
+			
+			try
+			{
+				d.body = modules.fs.readFileSync(__dirname + o.src, {
+					encoding:'utf8',
+					flag:'r'
+				});
+			} catch(err) {};
+			
+			try
+			{
+				d.body = JSON.parse(d.body);
+			} catch(err) {};
 		}
 		
 		payload.node.data[o.key] = d && d.body;

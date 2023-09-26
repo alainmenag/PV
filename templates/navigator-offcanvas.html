@@ -1,0 +1,28 @@
+<%
+
+	var nav = nav || []; if (!nav.length) try {
+		nav = JSON.parse(include(__dirname + (section?.src || site.menu.src)));
+	} catch(err) {};
+	
+%>
+<div id="main_nav_wrapper_offcanvas_block" uk-offcanvas="overlay: true; mode: push; flip: true;">
+    <div class="uk-offcanvas-bar" style="background-color: #000000; padding: 25px;">
+
+        <button class="uk-offcanvas-close" type="button" uk-close></button>
+		
+		<div style="letter-spacing: 2px;">
+	        <ul class="uk-nav uk-nav-primary uk-nav-center uk-margin-auto-vertical">
+
+				<% nav.forEach(function(item, index) {if (item.href || item?.link?.href) { href = item.href || item?.link?.href; %>
+	            <li ng-class="{'uk-active': '<%- href %>'.split('?')[0] === $location.$$path}">
+	            	<a href="<%- href %>">
+		            	<span class="hide-overflow"><%- item.title || href %></span>
+	            	</a>
+	            </li>
+				<% }}) %>
+
+	        </ul>
+        </div>
+
+    </div>
+</div>

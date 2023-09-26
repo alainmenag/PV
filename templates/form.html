@@ -254,7 +254,7 @@
 			</div>
 			
 			<% if (section.action && section.submittable !== false) { %>
-			<div ng-if="!$form.$saving">
+			<div ng-if="!inlocation && !$form.$saving">
 				<input type="hidden" name="g-recaptcha-response" />
 				<div style="margin: 10px 0;" recaptcha="<%- config.reCAPTCHA.key %>"></div>
 			</div>

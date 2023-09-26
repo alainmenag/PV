@@ -15,7 +15,7 @@
 	
 </style>
 
-<div class="container catalog" style="padding-top: 5px; padding-bottom: 35px;">
+<div class="container catalog" style="padding-top: 10px; padding-bottom: 10px;">
 	<div class="row" style="margin: -5px;">
 	
 		<% var i = 0; for (var prop in items)
@@ -67,7 +67,7 @@
 								<% } %>
 								
 								<% if (item.bullets) { %>
-								<ul style="margin-bottom: 20px; padding-left: 15px; font-size: 14px;">
+								<ul style="margin-bottom: 20px; padding-left: 15px; font-size: 14px; list-style: initial;">
 									<% item.bullets.forEach(function(bullet, i) { %>
 									<li><%- bullet %></li>
 									<% }) %>
