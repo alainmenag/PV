@@ -1023,6 +1023,7 @@ async function render(req, res, callback = function() {})
 	}
 	
 	delete payload.modules;
+	delete payload.config;
 	
 	if (res.finished) return; //_headerSent // _contentLength // stop if already sent data
 	
