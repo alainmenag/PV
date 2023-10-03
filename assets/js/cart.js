@@ -411,8 +411,8 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 				tax calc. needs to be fixed, so that tickts can be split into multiple payment types*/
 
 /*
-			$rootScope.cart.current.payments[method.id] = method;
 */
+			$rootScope.cart.current.payments[method.id] = method;
 			
 			$rootScope.cart.store();
 		});

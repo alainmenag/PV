@@ -17,10 +17,18 @@
 			<div style="flex: 1; text-align: center; padding: 2.5px;" ng-class="{'active-step': !query.modifier}">
 				
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': !query.modifier}">
-					<div class="hide-overflow">
-						<i class="fa {{cart.current.items[query.id].modifiers[undefined] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
-						<span style="vertical-align: middle;">{{node.data.payload.items[query.sku].item_data.name || 'Details'}}</span>
-					</div>
+					<table width="100%" height="100%">
+						<tbody>
+							<tr>
+								<td valign="middle" align="center">
+									<div class="hide-overflow">
+										<i class="fa {{cart.current.items[query.id].modifiers[undefined] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
+										<span style="vertical-align: middle;">{{node.data.payload.items[query.sku].item_data.name || 'Details'}}</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</a>
 				
 				<!-- SET THAT THIS MOD HAS BEEN SEEN -->
@@ -31,10 +39,18 @@
 			<div ng-repeat="modifier_list_info in node.data.payload.items[query.sku].item_data.modifier_list_info" ng-init="MODIFIER_LIST = node.data.payload.mappings.MODIFIER_LIST[modifier_list_info.modifier_list_id];" style="flex: 1; text-align: center; padding: 2.5px;" ng-class="{'active-step': modifier_list_info.modifier_list_id == query.modifier}">
 				
 				<a href="/menu?sku={{query.sku}}&id={{query.id}}&modifier={{modifier_list_info.modifier_list_id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': modifier_list_info.modifier_list_id == query.modifier}">
-					<div class="hide-overflow">
-						<i class="fa {{cart.current.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
-						<span style="vertical-align: middle;">{{MODIFIER_LIST.modifier_list_data.name}}</span>
-					</div>
+					<table width="100%" height="100%">
+						<tbody>
+							<tr>
+								<td valign="middle" align="center">
+									<div class="hide-overflow">
+										<i class="fa {{cart.current.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
+										<span style="vertical-align: middle;">{{MODIFIER_LIST.modifier_list_data.name}}</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</a>
 				
 				<!-- SET THAT THIS MOD HAS BEEN SEEN -->
