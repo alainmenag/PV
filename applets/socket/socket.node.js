@@ -53,7 +53,11 @@ module.exports = function(modules, config) {
 		if (client.request.sessionID) client.join(client.request.sessionID);
 		if (cookies.bid) client.join(cookies.bid);
 		
-		client.on('message', function(payload) {});
+		client.on('message', function(payload) {
+			
+			console.log(payload);
+			
+		});
 		
 		client.on('disconnect', function() {});
 	};

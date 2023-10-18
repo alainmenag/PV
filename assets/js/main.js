@@ -14,6 +14,7 @@ var main = function (
 	$templateCache,
 	$compile
 ) {
+	$rootScope.page = 0;
 	$rootScope.site = window.site;
 	$rootScope.node = window.node;
 	$rootScope.session = window.session;
@@ -55,6 +56,8 @@ var main = function (
 	
 	$rootScope.location.loading = false;
 	
+	$rootScope.channels = {};
+
 	$rootScope.$watch('uncashed', function(v)
 	{
 		if (v) $timeout(function()
@@ -855,6 +858,9 @@ var main = function (
 	$rootScope.state =
 	{
 		list: [],
+		refresh: function() {
+			window.location.reload();
+		},
 		init: function()
 		{
 			var key = 'history_' + window.gid;
@@ -905,6 +911,16 @@ var main = function (
 	$rootScope.state.init(); // ensure there is a place to store
 	
 	$timeout($rootScope.state.store);
+
+	$(window).on('scroll DOMMouseScroll mousewheel touchmove', function(e)
+	{
+		var currentPage = $rootScope.page;
+		var newPage = parseInt((((document.documentElement.scrollTop / document.documentElement.clientHeight) || 0) + '._').split('.')[0]);
+		
+		if (currentPage != newPage) $timeout(function() {
+			$rootScope.page = newPage;
+		});
+	});
 };
 
 app.controller('main', main);

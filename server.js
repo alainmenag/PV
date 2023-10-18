@@ -7,6 +7,8 @@ root@pos1-N4:~#
 
 */
 
+global.defaults = {ts: Date.now()};
+
 // ==========================================================================
 // TUDAYS - MODUELS
 // ==========================================================================
@@ -54,11 +56,13 @@ const modules = {
 	os: require('os'),
 	passport: require('passport'),
 	LocalStrategy: require('passport-local'),
+	electron: require('electron'),
 };
 
 try {modules.html_to_pdf = require('html-pdf-node');} catch(err) {};
 
-modules.uuid = function() {
+modules.uuid = function()
+{
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
@@ -107,7 +111,12 @@ process.on('uncaughtException', function(err) {
 
 //https://www.npmjs.com/package/@aws-sdk/client-s3
 
-const {S3Client, AbortMultipartUploadCommand, ListObjectsCommand, PutObjectCommand} = require('@aws-sdk/client-s3');
+const {
+	S3Client,
+	AbortMultipartUploadCommand,
+	ListObjectsCommand,
+	PutObjectCommand
+} = require('@aws-sdk/client-s3');
 
 modules.s3 = new S3Client(config.s3);
 
@@ -425,16 +434,16 @@ modules.router.mount = function(options) {
 // TUDAYS - HTTP
 // ==========================================================================
 
-var app = modules.express();
+var express = modules.express();
 
-modules.exp = app;
+modules.exp = express;
 modules.httpServer = modules.http.createServer(modules.exp);
 
 async function startApollo()
 {
 	await apollo.start();
 	
-	apollo.applyMiddleware({ app, path: '/graphql' });
+	//apollo.applyMiddleware({ express, path: '/graphql' });
 }
 
 startApollo().catch(error =>
@@ -518,6 +527,7 @@ modules.exp.use(function(req, res, next)
     res.locals.warnings = req.flash('warning');
     res.locals.error = req.flash('error');
 */
+	req.headers.host = config.host || req.headers.host.split(':')[0];
 	req.website = (req.headers['upgrade-insecure-requests'] ? 'https' : 'http') + '://' + req.headers.host;
 	req.link =  req.website + req._parsedUrl.href;
     
@@ -821,6 +831,7 @@ modules.exp.use(function(req, res, next)
 // TUDAYS - MODUELS EXPORTS
 // ==========================================================================
 
+modules['window.node'] = require(__dirname + '/applets/window/window.node.js')(modules, config);
 modules['access.node'] = require(__dirname + '/applets/access/access.node.js')(modules, config);
 modules['data.node'] = require(__dirname + '/applets/data/data.node.js')(modules, config);
 modules['profiles.node'] = require(__dirname + '/applets/profiles/profiles.node.js')(modules, config);
@@ -832,7 +843,6 @@ modules['avatars.node'] = require(__dirname + '/applets/avatars/avatars.node.js'
 modules['square.node'] = require(__dirname + '/applets/square/square.node.js')(modules, config);
 modules['oryk.node'] = require(__dirname + '/applets/oryk/oryk.node.js')(modules, config);
 modules['pos.node'] = require(__dirname + '/applets/pos/pos.node.js')(modules, config);
-
 
 modules.pubSub.subscribe('profiles');
 
@@ -850,19 +860,12 @@ modules['ads.node'] = require(__dirname + '/assets/applets/ads/ads.node.js')(mod
 //modules['delivery.node'] = require(__dirname + '/assets/applets/delivery/delivery.node.js')(modules, config);
 */
 
-
-
-
-
-
 modules.exp.get('/preload.svg', function(req, res)
 {
 	var data = modules.fs.readFileSync(__dirname + '/assets/vendor/SVG-Loaders-master/svg-loaders/audio.svg', 'utf8');
 	
 	res.send(data);
 });
-
-
 
 async function render(req, res, callback = function() {})
 {
@@ -1059,6 +1062,9 @@ modules.exp.use(main);
 
 modules.httpServer.listen(config.port || process.env.PORT || 5555, '0.0.0.0', function(e)
 {
+	config.port = modules.httpServer._connectionKey.split(':').pop();
+	config.localhost = 'http://localhost:' + config.port;
+	
 	console.log('***** HTTP: listening:', modules.httpServer._connectionKey);
 });
 
@@ -1179,7 +1185,6 @@ modules.reloadScript = function(p, load) {
 const chokidar = require('chokidar');
 const { exec, spawn } = require('node:child_process');
 
-
 try
 {
 	chokidar.watch(__dirname + '/applets/*/*.node.js', {
@@ -1226,3 +1231,29 @@ try
 	});
 }
 catch(err) {};
+
+
+
+// Preload (Isolated World)
+const { contextBridge, ipcRenderer, ipcMain } = require('electron')
+
+ipcMain.on('asynchronous-message', (event, arg) =>
+{
+	
+	//manage data
+	console.log('asynchronous-message', event, arg);
+	
+/*
+	const response = { message: 'Hello from the main process!' };
+	
+	event.reply('receive-data-from-main', response);
+*/
+	
+});
+
+
+
+
+
+
+

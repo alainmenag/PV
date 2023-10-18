@@ -6,6 +6,35 @@
 
 <% if (site.gtag) include(__dirname + '/templates/ga.html'); %>
 
+
+<div style="position: relative; position: fixed; left: 0; right: 0; top: 0; z-index: 100;" class="drag-region">
+	<div style="width: 200px; background-color: #000000; margin: auto; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;" class="drag-region-off">
+		
+		<div class="row">
+			
+			<div ng-if="page > 0" class="col text-white">
+				<button class="btn btn-link btn-block text-white" style="height: 35px; width: 100%;" ng-click="scroll.top();">
+					<i class="bi bi-caret-up-square"></i>
+				</button>
+			</div>
+			
+			<div class="col text-white">
+				<button class="btn btn-link btn-block text-white" style="height: 35px; width: 100%;" ng-disabled="!socket.connected" ng-click="scroll.top(); state.refresh();">
+					<i class="bi bi-reception-4"></i>
+				</button>
+			</div>
+			
+			<div class="col text-white">
+				<button class="btn btn-link btn-block text-white" style="height: 35px; width: 100%;" ng-click="fullscreen.active ?  fullscreen.close() : fullscreen.open();">
+					<i class="bi {{fullscreen.active ? 'bi-fullscreen-exit' : 'bi-fullscreen'}}"></i>
+				</button>
+			</div>
+			
+		</div>
+		
+	</div>
+</div>
+
 <div class="area" id="memo"><%- include(__dirname + '/templates/memo.html'); %></div>
 
 <% if (site.banner && site.banner.template) { %>
