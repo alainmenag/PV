@@ -22,6 +22,7 @@ if (elem.requestFullscreen)
 app.run(function($rootScope, $http, $templateCache, editableOptions, editableThemes)
 {
 	$rootScope.fullscreen = {
+		allowed: document.fullscreenEnabled,
 		active: document.fullscreenElement ? true : false
 	};
 	

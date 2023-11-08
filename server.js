@@ -595,12 +595,13 @@ modules.exp.use('/submit', function(req, res)
 
 		var host = req.body['host'] || 'https://hook.us1.make.com';
 		var path = req.body['path'] || '/i5mia279dudqz5a56cyqhwgxfs1r8ueo';
+		var url = host + path;
 		
 		delete req.body['host'];
 		delete req.body['path'];
 		
 		modules.request({
-			url: host + path,
+			url: url,
 			method: 'POST',
 			headers: {'Content-Type': 'application/json'},
 			json: req.body

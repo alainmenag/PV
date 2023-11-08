@@ -9,7 +9,7 @@
 	if (site.colors && site.colors.links) colors.links = site.colors.links;
 	
 %>
-<div style="background-color: #ffffff;">
+<div>
 
 	<style>
 		
@@ -36,6 +36,14 @@
 			color: <%- colors.links; %>;
 		}
 		
+		#main_nav {
+			padding: 15px 5px;
+		}
+		
+		#main_nav:empty {
+			padding: 0;
+		}
+		
 	</style>
 	
 	<div>
@@ -43,23 +51,21 @@
 		<%- include('navigator-offcanvas.html', {nav}) %>
 		
 		<div id="main_nav_wrapper" class="row align-items-center" style="position: relative; z-index: 1;">
-		
+			
+			<% if (node.logo || site.logo) { %>
 			<div class="col-3" style="padding: 15px 25px;">
 				
-				<a onclick="window.sessionStorage.clear();" href="/" target="_top" style="display: block; width: 100%; height: 60px; margin: auto; background-image: url(<%- node.logo || site.logo || '/assets/img/logo.svg' %>); background-repeat: no-repeat; background-position: center center; background-size: contain;"></a>
+				<a onclick="window.sessionStorage.clear();" href="/" target="_top" style="display: block; width: 100%; height: 60px; margin: auto; background-image: url(<%- node.logo || site.logo %>); background-repeat: no-repeat; background-position: center center; background-size: contain;"></a>
 					
 			</div>
+			<% } %>
 			
 			<div class="col">
-				<nav id="main_nav" style="padding: 15px 5px;">
-					
-					<% nav.slice(0, 3).forEach(function(item, index) { %>
+				<nav id="main_nav"><% nav.slice(0, 3).forEach(function(item, index) { %>
 					
 						<a href="<%- item.href %>" class="<%- pathname.indexOf((item.href == '/' ? '/home' : item.href)) > -1 ? 'in-path' : '' %> <%- index > 1 ? 'uk-visible@s' : '' %>" target="<%- item.target || '' %>"><%- item.title || item.href %></a>
 					
-					<% }) %>
-
-				</nav>
+				<% }) %></nav>
 			</div>
 		
 			<% if (site.menu && site.menu.right && site.menu.right.src) { %>

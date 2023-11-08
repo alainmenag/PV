@@ -1,6 +1,7 @@
 <%
 
 	var items = section.data || [];
+	var reCAPTCHA = config?.reCAPTCHA?.key || site?.reCAPTCHA?.key;
 
 %>
 
@@ -256,7 +257,7 @@
 			<% if (section.action && section.submittable !== false) { %>
 			<div ng-if="!inlocation && !$form.$saving">
 				<input type="hidden" name="g-recaptcha-response" />
-				<div style="margin: 10px 0;" recaptcha="<%- config.reCAPTCHA.key %>"></div>
+				<div style="margin: 10px 0;" recaptcha="<%- reCAPTCHA %>"></div>
 			</div>
 			<% } %>
 			
