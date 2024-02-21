@@ -1,0 +1,52 @@
+<% if (site?.cart?.enabled) { %>
+	<div uk-sticky>
+		<table ng-if="cart.current.id" width="100%" height="100%" style="min-height: 100vh;">
+			<tbody>
+				<tr>
+					<td id="checkout_ticket_wrapper" ng-show="cart.current.id" width="100%">
+						<div style="min-width: calc(100vw/3.5);"><%- include('cart-ticket.html'); %></div>
+					</td>
+					<td width="0" style="background-color: #000000;" valign="top">
+						
+						<div>
+							
+							<a href="/menu" class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-class="{'active': $location.$$url == '/menu'}">
+								<div style="position: relative;">
+									
+									<span>Menu</span>
+	
+								</div>
+							</a>
+							
+							<a href="/carts" class="btn btn-block text-center btn-black" style="margin: 0;" ng-class="{'active': location.pathname == '/carts'}">
+								<div style="position: relative;">
+									
+									<i class="fa fa-folder-open-o"></i>
+									
+									<span ng-if="cart.carts.count" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">
+										<span class="hide-overflow" style="margin: auto; width: 12px;">{{cart.carts.count}}</span>
+									</span>
+									
+								</div>
+							</a>
+							
+							<button ng-if="cart.current.id" class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-click="cache.confirm == cart.current.id ? cart.delete(cart.current.id) : cache.confirm = cart.current.id;">
+								<span>{{cache.confirm == cart.current.id ? 'Sure?' : 'Del.'}}</span>
+							</button>
+							
+							<button ng-if="cart.current.id" class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-click="cart.unload();">
+								<i class="fa fa-eject"></i>
+							</button>
+							
+							<button class="btn btn-block text-center btn-info" style="margin: 0; font-size: 12px;" ng-click="cart.new();">
+								<span>New</span>
+							</button>
+						
+						</div>
+						
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+<% } // if cart is enabled %>

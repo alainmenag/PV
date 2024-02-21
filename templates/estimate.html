@@ -70,6 +70,8 @@ app.directive('runEstimate', function($timeout) {
 			
 			scope.estimate.params = params.join('&');
 			
+			$rootScope.cache.estimate = scope.estimate;
+			
 	        console.log('***** Estimate:', scope.estimate);
         }        
     };

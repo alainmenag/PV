@@ -1,5 +1,59 @@
 <div>
 	
+	<style>
+		
+		.step-button {
+			flex: 1;
+			text-align: center;
+			padding: 0;
+			border-bottom: 2px solid #000000;
+			position: relative;
+		}
+		
+		.step-button .step-icon {
+			position: absolute;
+			bottom: -26px;
+			left: 0;
+			right: 0;
+			z-index: 1;
+			text-align: center;
+			pointer-events: none;
+		}
+		
+		.step-button .step-icon i {
+			height: 50px;
+			line-height: 50px;
+			width: 50px;
+			display: block;
+			margin: auto;
+			background-color: #f2f2f2;
+			border: 2px solid #cccccc;
+			border-radius: 100%;
+			background-size: 20px auto;
+			background-repeat: no-repeat;
+			background-position: center center;
+		}
+		
+		.step-button.active-step .step-icon i {
+			border-color: #E91E63 !important;
+		}
+		
+		.step-button .step-icon.active i {
+			border-color: #000000;
+			background-image: url('/assets/vendor/Font-Awesome-SVG-PNG/black/svg/check.svg');
+		}
+		
+		.step-button a {
+			display: inline-block;
+			height: 100%;
+			width: 100%;
+			font-size: 12px;
+			padding: 25px 15px;
+			position: relative;
+		}
+	
+	</style>
+	
 	<div ng-if="!cart.current.items[query.id]" style="padding: 45px;">
 		
 		<h1 style="margin: 0;">No Item Matched</h1>
@@ -11,24 +65,27 @@
 		
 	</div>
 	
-	<div ng-if="cart.current.items[query.id]" style="padding: 0 5px;">
-		<div style="margin-top: 5px; display: flex; justify-content: space-between; flex-wrap: wrap;">
+	<div ng-if="cart.current.items[query.id]" style="padding: 25px;">
+		<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
 			
-			<div style="flex: 1; text-align: center; padding: 2.5px;" ng-class="{'active-step': !query.modifier}">
+			<div class="step-button" ng-class="{'active-step': !query.modifier}">
 				
-				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': !query.modifier}">
+				<div class="step-icon" ng-class="{'active': cart.current.items[query.id].modifiers[undefined]}">
+					<i></i>
+				</div>
+				
+				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="btn" ng-class="{'btn-gray': !query.modifier}">
+					
 					<table width="100%" height="100%">
 						<tbody>
 							<tr>
 								<td valign="middle" align="center">
-									<div class="hide-overflow">
-										<i class="fa {{cart.current.items[query.id].modifiers[undefined] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
-										<span style="vertical-align: middle;">{{node.data.payload.items[query.sku].item_data.name || 'Details'}}</span>
-									</div>
+									<span style="vertical-align: middle;">{{node.data.payload.items[query.sku].item_data.name || 'Details'}}</span>
 								</td>
 							</tr>
 						</tbody>
 					</table>
+					
 				</a>
 				
 				<!-- SET THAT THIS MOD HAS BEEN SEEN -->
@@ -36,21 +93,24 @@
 				
 			</div>
 			
-			<div ng-repeat="modifier_list_info in node.data.payload.items[query.sku].item_data.modifier_list_info" ng-init="MODIFIER_LIST = node.data.payload.mappings.MODIFIER_LIST[modifier_list_info.modifier_list_id];" style="flex: 1; text-align: center; padding: 2.5px;" ng-class="{'active-step': modifier_list_info.modifier_list_id == query.modifier}">
+			<div class="step-button" ng-repeat="modifier_list_info in node.data.payload.items[query.sku].item_data.modifier_list_info" ng-init="MODIFIER_LIST = node.data.payload.mappings.MODIFIER_LIST[modifier_list_info.modifier_list_id];" ng-class="{'active-step': modifier_list_info.modifier_list_id == query.modifier}">
 				
-				<a href="/menu?sku={{query.sku}}&id={{query.id}}&modifier={{modifier_list_info.modifier_list_id}}" class="btn btn-outline text-black" style="display: inline-block; height: 100px; line-height: 100px; width: 100%; font-size: 12px; margin: -5px; padding: 0 10px;" ng-class="{'btn-gray': modifier_list_info.modifier_list_id == query.modifier}">
+				<div class="step-icon" ng-class="{'active': cart.current.items[query.id].modifiers[modifier_list_info.modifier_list_id]}">
+					<i></i>
+				</div>
+				
+				<a href="/menu?sku={{query.sku}}&id={{query.id}}&modifier={{modifier_list_info.modifier_list_id}}" class="btn" ng-class="{'btn-gray': modifier_list_info.modifier_list_id == query.modifier}">
+					
 					<table width="100%" height="100%">
 						<tbody>
 							<tr>
 								<td valign="middle" align="center">
-									<div class="hide-overflow">
-										<i class="fa {{cart.current.items[query.id].modifiers[modifier_list_info.modifier_list_id] ? 'fa-check-circle' : 'fa-circle-thin'}}" style="font-size: 22px; vertical-align: middle;"></i>
-										<span style="vertical-align: middle;">{{MODIFIER_LIST.modifier_list_data.name}}</span>
-									</div>
+									<span style="vertical-align: middle;">{{MODIFIER_LIST.modifier_list_data.name}}</span>
 								</td>
 							</tr>
 						</tbody>
 					</table>
+					
 				</a>
 				
 				<!-- SET THAT THIS MOD HAS BEEN SEEN -->
@@ -61,7 +121,7 @@
 		</div>
 	</div>
 	
-	<div ng-if="cart.current.items[query.id]" style="padding: 15px 25px;">
+	<div ng-if="cart.current.items[query.id]" style="padding: 50px 25px;">
 		
 		<div class="row _align-items-center" style="margin: -15px;">
 			
@@ -69,21 +129,20 @@
 				<div style="width: 125px; height: 125px; border-radius: 100%; background-color: #cccccc; margin: auto; background-size: cover; background-position: center center; background-image: url('{{node.data.payload.items[query.sku].item_data.ecom_image_uris[0]}}');"></div>
 			</div>
 			
-			<div class="col" style="padding: 15px;">
-				<a href="/menu?sku={{query.sku}}&id={{query.id}}" class="link" style="margin: 0; font-size: 35px;">
+			<div class="col" style="padding: 15px; line-height: 40px;">
+				
+				<div style="margin: 0; font-size: 35px;">
 					<b>({{cart.current.items[query.id].qty || 1}}x)</b>
 					<span>{{node.data.payload.items[query.sku].item_data.name || 'item'}}:</span>
-				</a>
+				</div>
+				
 				<div style="margin-top: 5px;">
 					<b ng-if="node.data.payload.items[query.modifier].modifier_list_data.name" style="font-size: 22px;">{{node.data.payload.items[query.modifier].modifier_list_data.name}}</b>
 				</div>
+				
 			</div>
 
 			<div class="col col-auto text-right" style="padding: 15px;">
-				
-				<!--
-				<button class="btn btn-easy btn-round" style="padding: 0; line-height: 55px; height: 55px; width: 55px; font-size: 12px;" onclick="$rootScope.navigate('/menu');">Done</button>
-				-->
 				
 				<button class="btn btn-gray btn-round" style="padding: 0; line-height: 55px; height: 55px; width: 55px; font-size: 12px;" onclick="$rootScope.navigate('/menu');">Done</button>
 				
@@ -170,7 +229,7 @@
 													<i class="{{cart.current.items[query.id].modifiers[query.modifier][query.modifier].value == MODIFIER.id ? 'fa fa-check-circle text-success' : 'fa fa-circle-thin'}}"></i>
 												</span>
 											
-												<input class="hide" type="radio" name="{{query.modifier}}" ng-model="cart.current.items[query.id].modifiers[query.modifier][query.modifier].value" value="{{MODIFIER.id}}" ng-change="cart.store();" />
+												<input class="hide" type="radio" name="{{query.modifier}}" ng-model="cart.current.items[query.id].modifiers[query.modifier][query.modifier].value" value="{{MODIFIER.id}}" ng-change="cart.current.items[query.id].modifiers[query.modifier][query.modifier].name = MODIFIER.modifier_data.name; cart.current.items[query.id].modifiers[query.modifier][query.modifier].amount = MODIFIER.modifier_data.price_money.amount; cart.store();" />
 												
 											</span>
 	
@@ -180,7 +239,7 @@
 													<i class="{{cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].value == MODIFIER.id ? 'fa fa-check-circle text-success' : 'fa fa-circle-thin'}}"></i>
 												</span>
 											
-												<input class="hide" type="checkbox" name="{{MODIFIER.id}}" style="vertical-align: middle;" ng-model="cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].value" value="{{MODIFIER.id}}" ng-change="cart.store();" ng-true-value="'{{MODIFIER.id}}'" ng-false-value="null" />
+												<input class="hide" type="checkbox" name="{{MODIFIER.id}}" style="vertical-align: middle;" ng-model="cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].value" value="{{MODIFIER.id}}" ng-change="cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].name = MODIFIER.modifier_data.name; cart.current.items[query.id].modifiers[query.modifier][MODIFIER.id].amount = MODIFIER.modifier_data.price_money.amount; cart.store();" ng-true-value="'{{MODIFIER.id}}'" ng-false-value="null" />
 												
 											</span>
 											
@@ -189,7 +248,7 @@
 										</div>
 										
 										<div ng-if="MODIFIER.modifier_data.price_money.amount">
-											<span style="vertical-align: middle; font-weight: normal; font-style: italic;">${{(MODIFIER.modifier_data.price_money.amount | formatPrice)}}</span>
+											<span style="vertical-align: middle; font-weight: normal; font-style: italic;">(+{{(MODIFIER.modifier_data.price_money.amount | formatPrice)}})</span>
 										</div>
 										
 									</td>

@@ -41,10 +41,6 @@
 			min-height: 100vh;
 		}
 		
-		#menu_board * {
-			line-height: 25px;
-		}
-		
 		#menu_board .item-title-name {
 			line-height: 25px;
 		}
@@ -99,10 +95,6 @@
 
 		#menu_board {
 			background-color: #f2f2f2;
-		}
-		
-		#menu_board {
-			padding: 25px 0;
 		}
 		
 	</style>
@@ -223,292 +215,152 @@
 	</style>
 	<% } %>
 	
+	<div ng-if="!query.view && query.id"><%- include('menu-modify.html'); %></div>
 	
-	<style ng-if="!cart.fit">
-		@media screen and (max-width: 768px) {
-			#checkout_ticket_wrapper {
-				display: none;
-			}
-		}
-	</style>
+	<div style="padding: 10px;">
+		<div ng-if="!query.view && !query.id" class="row">
+			
+		<% var p = 0; for (var prop in layout) {p++; items = layout[prop] %>
 	
-	
-	<style ng-if="cart.fit">
-		@media screen and (max-width: 768px) {
-			#menu_left_wrapper {
-				display: none;
-			}
-		}
-	</style>
-	
-	<style>
-		@media screen and (min-width: 768px) {
-
-			.cart-toggled,
-			#menuToggleHint {
-				display: none;
-			}
-		}
-	</style>
-	
-	<table width="100%">
-		<tbody>
-			<tr height="100%">
-				<td id="menu_left_wrapper" width="100%" valign="top">
+			<div class="col category" data-category="<%- items[0].title %>">
+				
+				<div>
+				
+				<% var i = 0; for (var prop in items) {i++; item = items[prop];
+				
+					if (item.active === false) continue;
+				
+					var _item = node.data.payload ? (node.data.payload.items[item.id] || {}) : {};
 					
-					<div ng-if="query.view == 'carts'"><%- include('menu-carts.html'); %></div>
-					
-					<div ng-if="!query.view && query.id"><%- include('menu-modify.html'); %></div>
-					
-					<div ng-if="!query.view && !query.id" class="row">
+					if (_item.item_data)
+					{
+						if (!item.title && _item.item_data.name) item.title = _item.item_data.name;
+						if (!item.description && _item.item_data.description) item.description = _item.item_data.description;
 						
-					<% var p = 0; for (var prop in layout) {p++; items = layout[prop] %>
+						if (!item.price && item.price !== false && _item.item_data.variations) item.price = _item.item_data.variations[0].item_variation_data.price_money.amount / 100;
+					}
 				
-						<div class="col category" data-category="<%- items[0].title %>">
-							
-							<div>
-							
-							<% var i = 0; for (var prop in items) {i++; item = items[prop];
-							
-								if (item.active === false) continue;
-							
-								var _item = node.data.payload ? (node.data.payload.items[item.id] || {}) : {};
-								
-								if (_item.item_data)
-								{
-									if (!item.title && _item.item_data.name) item.title = _item.item_data.name;
-									if (!item.description && _item.item_data.description) item.description = _item.item_data.description;
-									
-									if (!item.price && item.price !== false && _item.item_data.variations) item.price = _item.item_data.variations[0].item_variation_data.price_money.amount / 100;
-								}
-							
-							%>
-								
-								<% if (!item.id) { %>
-								<h4 class="section-heading"><%- item.title %></h4>
-								<% } %>
-								
-								<% if (item.id) { %>			
-								<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
-									
-									<div n<%- enableCart ? '' : '_' %>g-click="cart.append('<%- item.id %>');" class="<%- enableCart ? 'btn-link' : '' %>">
-										
-										<table class="item-heading" width="100%" style="margin: 0;">
-											<tbody>
-												<tr style="border: none;">
-													
-													<td width="100%" style="padding: 0;" valign="middle">
-														
-														<h3 class="item-title" style="margin: 0; font-weight: bolder;">
-															
-<!-- 															<i ng-if="cart.current.skus['<%- item.id %>']" class="fa fa-shopping-cart text-pink"></i> -->
-															
-															<i ng-if="cart.current || query.order == 'online'" class="fa fa-plus <%- enableCart ? 'btn-link' : '' %>" style="vertical-align: middle; font-size: 12px;"></i>
-															
-															<% if (item.popular) { %>
-															<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
-															<% } %>
-															
-															<% if (item.new) { %>
-															<span style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
-															<% } %>
-															
-															<% if (item.limited) { %>
-															<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
-															<% } %>
-															
-															<span class="item-title-name <%- enableCart ? 'btn-link' : '' %>" ng-class="{'text-pink': cart.current.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
-														</h3>
-														
-													</td>
-													
-													<td align="right" style="padding: 0; padding-left: 5px; white-space: nowrap;" valign="middle">
-														<% if (item.price) { %>
-														<div class="item-price">
-															<span>$<%- item.price %></span>
-														</div>
-														<% } %>
-													
-													</td>
-													
-												</tr>
-											</tbody>
-										</table>
-									   
-										<% if (item.description) { %>
-										<div class="item-description">
-											<span>—</span>
-											<span><%- item.description %></span>
-										</div>
-										<% } %>
-										
-									</div>
-									
-									<div ng-if="cart.current.skus['<%- item.id %>']" style="margin-top: 5px;">
-										<div ng-repeat="(ID, has) in cart.current.skus['<%- item.id %>'].items" style="margin: 3px 0;">
-											
-											
-											
-											<table width="100%">
-												<tbody>
-													<tr>
-														<td valign="top" style="padding-right: 10px;">
-															
-															<button class="btn btn-link block" style="font-size: 16px;" ng-click="cart.remove(cart.current.items[ID].sku, ID);">
-																<i class="fa fa-trash-o ng-scope block"></i>
-															</button>
-															
-														</td>
-														<td valign="top" width="100%">
-															
-															<div>
-																<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" class="link">
-																	<b>({{cart.current.items[ID].qty}}x)</b>
-																	<span style="font-size: 12px;">{{cart.current.items[ID].ref}}</span>
-																</a>
-															</div>
-															
-															<div style="line-height: 14px; font-size: 14px;">
-																
-																<span ng-repeat="(mod_id, modifiers) in cart.current.items[ID].modifiers" ng-if="node.data.payload.items[mod_id]">
-																	<a ng-repeat="modifier in modifiers" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" class="link">
-																		<span ng-if="v.name" style="vertical-align: middle;">●</span>
-																		<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v ? (v.name) : '');}}</span>
-																	</a>
-																</span>
-																
-																<a ng-if="cart.current.items[ID].notes" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;" class="link">— {{cart.current.items[ID].notes}}</a>
-																
-															</div>
-															
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											
-											
-											<!--
-											<span>{{cart.current.items[ID].ref}}</span>
-													
-											<button class="btn btn-link" style="font-size: 16px; vertical-align: middle; margin-right: 5px;" ng-click="cart.remove(cart.current.items[ID].sku, ID);">
-												<i class="fa fa-trash-o ng-scope"></i>
-											</button>
-											
-											<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
-												<b style="vertical-align: middle;">({{cart.current.items[ID].qty}}x)</b>
-											</a>
-											
-											<span ng-repeat="(mod_id, modifiers) in cart.current.items[ID].modifiers" style="vertical-align: middle;" ng-if="node.data.payload.items[mod_id]">
-												<a ng-repeat="modifier in modifiers" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" style="vertical-align: middle;">
-													<span ng-if="v.name" style="vertical-align: middle;">●</span>
-													<span style="vertical-align: middle;">{{v = (node.data.payload.items[mod_id].modifier_list_data.modifiers | filter: {id: modifier.value})[0].modifier_data; (v ? (v.name) : '');}}</span>
-												</a>
-											</span>
-											
-											<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;">
-												<span ng-if="cart.current.items[ID].notes" style="vertical-align: middle;">● {{cart.current.items[ID].notes}}</span>
-												
-												<i class="fa fa-pencil" style="vertical-align: middle;"></i>
-											</a>
-											
-											-->
-
-											
-										</div>
-									</div>
-								   
-								</div>
-								<% } %>
-								
-							<% } %>
-								
-							</div>
-							
-						</div>
-				
+				%>
+					
+					<% if (!item.id) { %>
+					<h4 class="section-heading"><%- item.title %></h4>
 					<% } %>
 					
-					</div>
-				</td>
-				
-				<% if (enableCart) { %>
-				<td id="menu_right_wrapper" valign="top" style="position: relative; overflow: hidden;">
-					<table width="100%" height="100%" style="min-height: 100vh;">
-						<tbody>
-							<tr>
-								<td id="checkout_ticket_wrapper" ng-show="cart.current.id" width="100%">
-									<div style="min-width: calc(100vw/3.5);"><%- include('menu-checkout.html'); %></div>
-								</td>
-								<td width="0" style="background-color: #000000;" valign="top">
-									
-									<div>
+					<% if (item.id) { %>			
+					<div class="item" style="margin-bottom: 5px 0;" data-name="<%- item.title %>" data-id="<%- item.id %>" role="button" tabindex="<%- p.toString() + i.toString() %>">
+						
+						<div n<%- enableCart ? '' : '_' %>g-click="cart.append('<%- item.id %>');" class="<%- enableCart ? 'btn-link' : '' %>">
+							
+							<table class="item-heading" width="100%" style="margin: 0;">
+								<tbody>
+									<tr style="border: none;">
 										
-										<button ng-if="cart.current" class="btn btn-block text-center btn-black" title="Save" style="margin: 0; font-size: 16px;" ng-click="cart.fit = cart.fit ? false : true; cart.store();">
+										<td width="100%" style="padding: 0;" valign="middle">
 											
-											<div style="position: relative;">
+											<h3 class="item-title" style="margin: 0; font-weight: bolder; line-height: 22px;">
 												
-												<div class="cart-toggled" style="font-size: 10px;">{{cart.fit ? 'Hide' : 'Show'}}</div>
+												<i ng-if="cart.current || query.order == 'online'" class="fa fa-plus <%- enableCart ? 'btn-link' : '' %>" style="vertical-align: middle; font-size: 12px;"></i>
 												
-												<i class="fa {{cart.saving ? 'fa-floppy-o' : 'fa-shopping-cart'}}"></i>
+												<% if (item.popular) { %>
+												<span style="vertical-align: middle; font-size: 15px; color: orange;">★</span>
+												<% } %>
 												
+												<% if (item.new) { %>
+												<span style="vertical-align: middle; font-size: 15px; color: coral;">(NEW)</span>
+												<% } %>
 												
-												<span ng-if="cart.current.qty" style="position: absolute; font-size: 10px;height: 20px; width: 20px; line-height: 20px; border-radius: 100%; background-color: rgba(0,0,0,.5); bottom: -10px; color: #fff; font-weight: bold;">
-													<span class="hide-overflow" style="margin: auto; width: 12px;">{{cart.current.qty}}</span>
-												</span>
+												<% if (item.limited) { %>
+												<span style="vertical-align: middle; font-size: 15px; color: red;">(LIMITED)</span>
+												<% } %>
 												
+												<span class="item-title-name <%- enableCart ? 'btn-link' : '' %>" ng-class="{'text-pink': cart.current.skus['<%- item.id %>']}" style="vertical-align: middle;"><%- item.title %></span>
+											</h3>
+											
+										</td>
+										
+										<td align="right" style="padding: 0; padding-left: 5px; white-space: nowrap;" valign="middle">
+											<% if (item.price) { %>
+											<div class="item-price">
+												<span>$<%- item.price %></span>
 											</div>
-												
-										</button>
+											<% } %>
 										
-										<a href="/menu" class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-class="{'active': $location.$$url == '/menu'}">
-											<div style="position: relative;">
-												
-												<span>Menu</span>
-												
-<!--
-												<span ng-if="cart.current.qty" style="position: absolute; font-size: 10px;height: 20px; width: 20px; line-height: 20px; border-radius: 100%; background-color: rgba(0,0,0,.5); bottom: -10px; color: #fff; font-weight: bold;">
-													<span class="hide-overflow" style="margin: auto; width: 12px;">{{cart.current.qty}}</span>
-												</span>
--->
-												
-											</div>
-										</a>
+										</td>
 										
-										<a href="/menu?view=carts" class="btn btn-block text-center btn-black" style="margin: 0;" ng-class="{'active': query.view == 'carts'}">
-											<div style="position: relative;">
+									</tr>
+								</tbody>
+							</table>
+						   
+							<% if (item.description) { %>
+							<div class="item-description">
+								<span>—</span>
+								<span><%- item.description %></span>
+							</div>
+							<% } %>
+							
+						</div>
+						
+						<div ng-if="cart.current.skus['<%- item.id %>']" style="margin-top: 5px;">
+							<div ng-repeat="(ID, has) in cart.current.skus['<%- item.id %>'].items" style="margin: 3px 0;">
+								
+								
+								
+								<table width="100%">
+									<tbody>
+										<tr>
+											<td valign="top" style="padding-right: 10px;">
 												
-												<i class="fa fa-folder-open-o"></i>
+												<button class="btn btn-link block" style="font-size: 16px;" ng-click="cart.remove(cart.current.items[ID].sku, ID);">
+													<i class="fa fa-trash-o ng-scope block"></i>
+												</button>
 												
-												<span ng-if="cart.carts.count" style="position: absolute;font-size: 10px;height: 20px;width: 20px;line-height: 20px;border-radius: 100%;background-color: rgba(0,0,0,.5);bottom: -10px;color: #fff;font-weight: bold;">
-													<span class="hide-overflow" style="margin: auto; width: 12px;">{{cart.carts.count}}</span>
-												</span>
+											</td>
+											<td valign="top" width="100%">
 												
-											</div>
-										</a>
-										
-										<button class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-click="cart.new();">
-											<span>New</span>
-										</button>
-										
-										<button ng-if="cart.current.id" class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-click="cart.delete(cart.current.id);">
-											<span>Del.</span>
-										</button>
-										
-										<button ng-if="cart.current.id" class="btn btn-block text-center btn-black" style="margin: 0; font-size: 12px;" ng-click="cart.unload();">
-											<span>Close</span>
-										</button>
-									
-									</div>
-									
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
-				<% } // if cart is enabled %>
+												<div>
+													<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" class="link">
+														<b>({{cart.current.items[ID].qty}}x)</b>
+														<span style="font-size: 12px;">{{cart.current.items[ID].ref}}</span>
+													</a>
+												</div>
+												
+												<div style="line-height: 14px; font-size: 14px;">
+													
+													<span ng-repeat="(mod_id, modifiers) in cart.current.items[ID].modifiers">
+														<a ng-repeat="modifier in modifiers" ng-if="modifier.value" href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}&modifier={{mod_id}}" class="link">
+															<span ng-if="modifier.name" style="vertical-align: middle;">●</span>
+															<span style="vertical-align: middle;">{{modifier.name}}</span>
+															<span ng-if="modifier.amount" style="vertical-align: middle;">(+{{modifier.amount | formatPrice}})</span>
+														</a>
+													</span>
+	
+													<div ng-if="cart.current.items[ID].notes">
+														<a href="/menu?sku={{cart.current.items[ID].sku}}&id={{ID}}" style="vertical-align: middle;" class="link">— {{cart.current.items[ID].notes}}</a>
+													</div>
+													
+												</div>
+												
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								
+							</div>
+						</div>
+					   
+					</div>
+					<% } %>
+					
+				<% } %>
+					
+				</div>
 				
-			</tr>
-		</tbody>
-	</table>
+			</div>
+	
+		<% } %>
+		
+		</div>
+	</div>
+
 
 </div>

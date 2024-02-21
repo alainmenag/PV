@@ -1,0 +1,15 @@
+{
+	"title": "Carts",
+	"description": "Your carts.",
+	"keywords": ["pay"],
+	"sections": [
+		
+		{
+			"id": "checkout",
+			"template": "/templates/carts.html",
+			"data": []
+		}	
+
+	],
+	"resources": []
+}

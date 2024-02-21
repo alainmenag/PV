@@ -65,7 +65,132 @@
 					        
 					        <div ng-if="!cart.current.qty">No items in your cart.</div>
 					        
-					        <%- include('cart-items.html'); %>
+					        
+					        <!--
+							<div class="uk-card uk-card-default" ng-repeat="item in cart.current.items" style="margin-top: {{$first ? '0' : '10px'}};">
+							   
+							    <div class="uk-card-header">
+							        <div class="uk-grid-small uk-flex-middle" uk-grid>
+							            <div class="uk-width-auto">
+							                <input ng-model="item.qty" keyboard autocomplete="off" type="number" placeholder="Qty." style="max-width: 60px; height: 60px; border-radius: 100% !important; text-align: center;" onchange="$rootScope.cart.store();" />
+							            </div>
+							            <div class="uk-width-expand">
+								            
+							                <h3 class="uk-card-title uk-margin-remove-bottom">
+								                <a href="/menu?sku={{item.sku}}&id={{item.id}}" class="btn-link link" ng-class="{'strike text-mute': !item.qty}">{{item.title}}</a>
+							                </h3>
+							                
+							                
+										    <div>
+													
+												<span ng-repeat="(mod_id, modifiers) in item.modifiers" style="vertical-align: middle;">
+													<a ng-repeat="modifier in modifiers" ng-if="modifier.value" href="/menu?sku={{item.sku}}&id={{item.id}}&modifier={{mod_id}}">
+														<span ng-if="modifier.name" style="vertical-align: middle;">●</span>
+														<span style="vertical-align: middle;">{{modifier.name}}</span>
+														<span ng-if="modifier.amount" style="vertical-align: middle;">(+{{modifier.amount | formatPrice}})</span>
+													</a>
+												</span>
+										    
+												
+												<span class="item-notes" editable-textarea="item.notes" e-keyboard="..." e-autocomplete="on" onaftersave="cart.store();" style="word-break: break-word; white-space: break-spaces; vertical-align: middle;">{{(item.notes ? ('— ' + item.notes) : null) || '...'}}</span>
+												
+										    </div>
+							                
+							                <p class="uk-text-meta uk-margin-remove-top" style="margin: 0;">
+								                <span>${{item.amount * item.qty | formatPrice}}</span>
+							                </p>
+							                
+							                
+							            </div>
+							        </div>
+							    </div>
+
+							</div>
+							-->
+							
+							
+							
+				<div class="item entry" ng-repeat="ENTRY in cart.current.items" style="padding: 0 15px; margin: 15px 0;" ng-class="{'active-entry': query.sku == ENTRY.sku && query.id == ENTRY.id}" id="{{ENTRY.id}}" data-msrp="{{ENTRY.msrp}}">
+					
+					<table width="100%">
+						<tbody>
+							<tr>
+								<td valign="top" style="position: relative; white-space: nowrap;" align="center">
+									
+									<button class="btn btn-easy btn-round hide-overflow ng-pristine ng-untouched ng-valid ng-binding ng-not-empty" type="number" placeholder="1" keyboard min="1" ng-model="ENTRY.qty" ng-change="cart.store();" autocomplete="off" aria-invalid="false">{{ENTRY.qty}}</button>
+									
+									<div style="margin-top: 3px;">
+										<button class="btn btn-link" style="font-size: 16px;" ng-click="cart.remove(ENTRY.sku, ENTRY.id);">
+											<i class="fa fa-trash-o"></i>
+										</button>
+									</div>
+									
+								</td>
+								<td valign="top" width="100%" style="padding-left: 10px;">
+									
+									<div class="row">
+										
+										<div class="col">
+									
+											<a href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}" style="font-size: 20px; word-break: break-word;" class="entry-link text-black btn-link {{query.sku == ENTRY.sku && query.id == ENTRY.id ? 'text-pink' : 'link'}}">
+												<b class="item-title">{{ENTRY.title}}</b>
+												<div style="margin-top: 5px; font-size: 12px;">{{ENTRY.ref}}</div>
+											</a>
+											
+										</div>
+									
+										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
+
+											<div>
+												<span editable-number="ENTRY.price" e-keyboard="$0.00" e-autocomplete="off" onaftersave="cart.store();">${{(ENTRY.price == 0 ? 0 : (ENTRY.price || ENTRY.msrp || 0)) | formatPrice}}</span>
+											</div>
+											
+										</div>
+									
+									</div>
+									
+									
+									<div class="item-addons">
+										<span ng-repeat="(mod_id, modifiers) in ENTRY.modifiers">
+											<a ng-repeat="modifier in modifiers" ng-if="modifier.value" href="/menu?sku={{ENTRY.sku}}&id={{ENTRY.id}}&modifier={{mod_id}}" class="{{query.modifier == mod_id ? 'text-pink' : 'link'}}">
+												<span ng-if="modifier.name" style="vertical-align: middle;">●</span>
+												<span style="vertical-align: middle;">{{modifier.name}}</span>
+												<span ng-if="modifier.amount" style="vertical-align: middle;">(+{{modifier.amount | formatPrice}})</span>
+											</a>
+										</span>	
+									</div>
+
+									<div class="row" style="margin-top: 5px;">
+										
+										<div class="col">
+											<span class="item-notes" editable-textarea="ENTRY.notes" e-keyboard="..." e-autocomplete="on" onaftersave="cart.store();" style="word-break: break-word; white-space: break-spaces;">{{(ENTRY.notes ? ('— ' + ENTRY.notes) : null) || '...'}}</span>
+										</div>
+									
+										<div class="col col-auto text-right" style="max-width: 100%; padding: 0 2.5px;">
+					
+											<div>
+												<b style="white-space: nowrap;">${{(ENTRY.amount || 0) | formatPrice}}</b>
+											</div>
+
+										</div>
+									
+									</div>
+									
+								</td>
+
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+							
+							
+							
+							
+							
+							
+							
+							
 							
 				        </div>
 				    </li>

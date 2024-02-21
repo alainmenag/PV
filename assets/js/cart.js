@@ -19,6 +19,8 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 
 	$rootScope.cart.store = function()
 	{
+		$rootScope.cache.confirm = null;
+		
 		$rootScope.cart.carts.list = $rootScope.cart.carts.list || {};
 		
 		$rootScope.cart.saving = true;
@@ -32,50 +34,66 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			
 			$rootScope.cart.current.id = ($rootScope.cart.current.id || $rootScope.cart.current.ts).toString();
 			$rootScope.cart.current.ref = '#' + $rootScope.cart.current.id.substr(-4);
-			$rootScope.cart.current.count = Object.keys($rootScope.cart.current.items).length;
+			//$rootScope.cart.current.count = Object.keys($rootScope.cart.current.items).length;
 			$rootScope.cart.current.qty = 0;
-			
 			$rootScope.cart.current.payments = $rootScope.cart.current.payments || {};
 			$rootScope.cart.current.amount = 0;
 			$rootScope.cart.current.paid = 0;
+			$rootScope.cart.current.tax = 0;
 			$rootScope.cart.current.taxes = 0;
 			$rootScope.cart.current.fees = 0;
 			$rootScope.cart.current.due = 0;
 			
 			_.each($rootScope.cart.current.items, function(item)
 			{
-				var elm = $('.entry.item#' + item.id);
+				item.qty = item.qty || 0;
 				
-				if (elm.length)
+				item.tax = item.tax || 0;
+				item.taxes = 0; // zero out tax due to calculate
+				
+				item.amount = item.price == 0 ? 0 : (item.price || item.msrp || 0); // set item cost
+				item.tags = [];
+				
+				// add modifier costs to item cost
+				_.each(item.modifiers, function(modifiers)
 				{
+					_.each(modifiers, function(modifier)
+					{
+						if (modifier.value)
+						{
+							item.tags.push(modifier.name);
+							
+							item.amount += modifier.amount || 0;
+						}
+					})
+				});
+				
+				item.amount = (item.amount * item.qty); // multiply cost by qty.
+
+				if (item.tax) // add taxes to item based on item's tax
+				{
+					var taxes = (item.amount * (item.tax / 100) / 10).toString().split('.');
 					
-					item.price = item.price !== null ? item.price : (parseInt($(elm).data('msrp')) || null);
-					item.amount = item.price; // reset total price
+					taxes[0] = parseInt(taxes[0] || 0);
 					
-					item.title = $(elm).find('.item-title').text();
-					item.description = ($(elm).find('.item-addons')[0] || {}).innerText || null;
+					if (taxes[1] && taxes[1].substr(0, 1) > 5) taxes[0] += 1;
 					
-					var copy = $($(elm).find('.item-addons')[0].innerHTML);
-					
-					$(copy).find('.item-addon-price').remove();
-					
-					// include a clean version of the item description (w/o prices);
-					item.subject = $(copy).text().replace(/\n\n/g, '').replace(/\n/g, ' ').trim() || null;
-					
-					_.each($(elm).find('[data-addon]'), function(addon) {
-						item.amount += $(addon).data('addon') || 0;
-					});
+					item.taxes = taxes[0];
 				}
 				
+				
+				
+				item.description = item.tags.join(', ').trim();
+				
+				// append breakdown onto cart calcs.
+				$rootScope.cart.current.amount += item.amount;
+				$rootScope.cart.current.taxes += item.taxes;
 				$rootScope.cart.current.qty += item.qty || 0;
-				
-				if (item.qty)
-				{
-					$rootScope.cart.current.amount += item.amount * item.qty;	
-				}
 			});
 			
 			$rootScope.cart.current.due = $rootScope.cart.current.amount;
+			
+/*
 
 			_.each($rootScope.cart.current.payments, function(payment)
 			{
@@ -84,14 +102,8 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 					$rootScope.cart.current.paid += payment.paid;
 					$rootScope.cart.current.due -= payment.paid;
 				}
-				
-/*
-				if (payment.taxes) $rootScope.cart.current.taxes += payment.taxes;
-				if (payment.fees) $rootScope.cart.current.fees += payment.fees;
-				if (payment.paid) $rootScope.cart.current.paid += payment.paid;
-*/
-				
 			});
+*/
 			
 			delete $rootScope.cart.current.payload;
 			
@@ -104,10 +116,20 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			
 			$rootScope.cart.current.payload = JSON.stringify($rootScope.cart.current);
 			
-			$timeout(function() {
+			$timeout(function()
+			{
 				$rootScope.cart.saving = false;
-			}, 100);
+			});
 		});
+	};
+		
+	$rootScope.cart.load = function(id)
+	{
+		if (!$rootScope.cart.carts.list[id]) return $rootScope.cart.store();
+		
+		$rootScope.cart.current = $rootScope.cart.carts.list[id];
+		
+		$rootScope.cart.store();
 	};
 		
 	$rootScope.cart.unload = function()
@@ -141,8 +163,13 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			$timeout(function() {
 				$rootScope.cart.saving = false;
 			});
-		};
 
+			$rootScope.navigate('/carts');
+		};
+		
+		proceed();
+
+/*
 		$rootScope.notify({
 			type: 'question',
 			memo: 'Delete cart?'
@@ -150,6 +177,7 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 		{
 			if (c.value) proceed();
 		});
+*/
 	};
 		
 	$rootScope.cart.new = function()
@@ -235,8 +263,6 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			}
 		}
 		
-		console.log(nextLink);
-		
 		if (nextLink.length && $(nextLink).attr('href') == $location.$$url) nextLink = null;
 
 		if (nextLink.length)
@@ -265,12 +291,41 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 		var ts = Date.now();
 		var id = (id || ts).toString();
 		var ITEM = node.data.payload.items[sku];
-		var item = {id: id, sku: sku, qty: 1, ts: ts, modifiers: {}, amount: 0, price: null};
+		var TAX = null; try {
+			TAX = $rootScope.node.data.payload.items[ITEM.item_data.tax_ids[0]].tax_data;
+		} catch(err) {};
+
+		var item = {
+			id: id,
+			sku: sku,
+			qty: 1,
+			ts: ts,
+			modifiers: {},
+			msrp: 0,
+			amount: 0,
+			taxes: 0,
+			tax: 0,
+			price: null
+		};
 		
 		item.ref = '#' + id.substr(-4);
 		
-		if (ITEM) _.each(ITEM.item_data.modifier_list_info, function(modifier) {
-			_.each(modifier.modifier_overrides, function(override) {
+		if (ITEM) try {
+			item.msrp = ITEM.item_data.variations[0].item_variation_data.price_money.amount;
+			item.amount = item.msrp;
+		} catch(err) {};
+		
+		if (ITEM) item.title = ITEM.item_data.name;
+		
+		if (TAX)
+		{			
+			item.tax = parseFloat(TAX.percentage) * 10;
+		}
+
+		if (ITEM) _.each(ITEM.item_data.modifier_list_info, function(modifier)
+		{
+			_.each(modifier.modifier_overrides, function(override)
+			{
 				if (override.on_by_default)
 				{
 					if (!item.modifiers[modifier.modifier_list_id])
@@ -287,8 +342,14 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 						selection_type = 'SINGLE';
 					}
 					
+					var MODIFIER = _.find(node.data.payload.items[modifier.modifier_list_id].modifier_list_data.modifiers, {
+						id: override.modifier_id
+					});
+					
 					item.modifiers[modifier.modifier_list_id][selection_type == 'SINGLE' ? modifier.modifier_list_id : override.modifier_id] = {
-						value: override.modifier_id	
+						name: MODIFIER && MODIFIER.modifier_data && MODIFIER.modifier_data.name,
+						amount: MODIFIER && MODIFIER.modifier_data && MODIFIER.modifier_data.price_money && MODIFIER.modifier_data.price_money.amount,
+						value: override.modifier_id
 					};
 				}
 			});
@@ -363,12 +424,13 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 	$rootScope.cart.pay = function(method, action)
 	{
 		if (!$rootScope.cart.current) return alert('No cart is loaded.');
+			
+		console.log('$rootScope.cart.pay', method, action);
 		
+/*
 		if (action == 'delete') return $timeout(function()
 		{
 			// to-do: emit required signals
-			
-			console.log(method);
 			
 			delete $rootScope.cart.current.payments[method.id];
 			
@@ -385,7 +447,7 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			method.id = method.ts.toString();
 			method.fees = 0;
 			method.paid = 0;
-			method.taxes = 0;
+			method.tax = 0;
 			method.amount = $rootScope.cart.current.amount - $rootScope.cart.current.paid;
 
 			if (method.fee && method.fee.interchange)
@@ -400,22 +462,17 @@ app.run(function($rootScope, $http, $templateCache, editableOptions, editableThe
 			
 			method.amount += method.fees; // apply fees
 
-			method.taxes = (method.amount * ((method.tax || 0) / 100)); // taxes
+			method.tax = (method.amount * ((method.tax || 0) / 100)); // tax
 			
-			method.amount += method.taxes; // tax
+			method.amount += method.tax; // tax
 			
-			console.log(method);
 			
-			/*
-				
-				tax calc. needs to be fixed, so that tickts can be split into multiple payment types*/
 
-/*
-*/
 			$rootScope.cart.current.payments[method.id] = method;
 			
 			$rootScope.cart.store();
 		});
+*/
 	};
 
 //==========================================================================

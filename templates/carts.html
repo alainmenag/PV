@@ -1,0 +1,48 @@
+<div style="min-height: 50vh; padding: 65px 0;">
+	<div class="container" ng-if="!cart.saving">
+		<table dt id="carts" class="display" style="width: 100%;" data-order='[[ 0, "asc" ]]' data-page-length='25' _data-column-defs='[{"sortable": false, "targets": [2]}]'>
+			
+			<thead>
+				<tr>
+					<th width="50%" valign="top">Cart</th>
+					<th width="50%">Name</th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				<tr class="dt-row" ng-repeat="item in cart.carts.list" ng-class="{'active': item.id == cart.current.id}" ng-click="cart.load(item.id);">
+					<td valign="top">
+						<div style="font-size: 12px;">{{item.ts | date: 'h:mm:ss a • MMM d, y'}}</div>
+						<div>
+							<b ng-class="{'text-pink': cart.current.id == item.id}">{{item.ref}}</b>
+						</div>
+						
+						<div style="margin-top: 10px;">
+							
+							<button ng-if="cart.current.id != item.id" class="btn btn-link" style="font-size: 12px; padding: 5px 10px;" ng-click="cart.load(item.id);" stop-propagation>Load</button>
+							
+							<button ng-if="cart.current.id == item.id" class="btn btn-link" style="font-size: 12px; padding: 5px 10px;" ng-click="cart.unload();" stop-propagation>Unload</button>
+							
+							<button class="btn btn-link" style="font-size: 12px; padding: 5px 10px;" ng-click="cache.confirm == item.id ? cart.delete(item.id) : cache.confirm = item.id;" stop-propagation>{{cache.confirm == item.id ? 'Confirm Delete' : 'Delete'}}</button>
+							
+						</div>
+						
+					</td>
+					<td valign="top">
+						
+						<div style="font-size: 20px; font-weight: bold;" ng-class="{'text-pink': cart.current.id == item.id}">{{item.name || 'N/A'}}</div>
+						
+						<div ng-repeat="entry in item.items">
+							<b>({{entry.qty || 0}}x)</b>
+							<span>{{entry.title || entry.ref}}</span>
+						</div>
+						
+						<div ng-if="item.notes" style="margin-top: 5px;">— {{item.notes}}</div>
+						
+					</td>
+				</tr>
+			</tbody>
+			
+		</table>
+	</div>
+</div>
